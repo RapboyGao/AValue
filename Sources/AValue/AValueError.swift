@@ -1,4 +1,4 @@
-enum AValueError: Error {
+enum AValueError: Error, Sendable, Codable {
     case invalidOperation // 无效操作
     case divisionByZero // 除零错误
     case comparisonError // 比较错误

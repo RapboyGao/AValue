@@ -3,7 +3,16 @@ import Foundation
 import SwiftUI
 
 /// `AValue` 是一个支持多种类型值的枚举
-public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, ExpressibleByStringLiteral, ExpressibleByBooleanLiteral {
+public enum AValue:
+    Codable,
+    Hashable,
+    Sendable,
+    ExpressibleByFloatLiteral,
+    ExpressibleByIntegerLiteral,
+    ExpressibleByStringLiteral,
+    ExpressibleByStringInterpolation,
+    ExpressibleByBooleanLiteral
+{
     /// 表示一个数值 (例如: 42.0)
     case number(Double)
 
@@ -87,7 +96,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         case let (.dateDifference(value1), .calendar(value2)):
             return try self.addDateDifference(to: value2, difference: value1)
         default:
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
     }
 
@@ -100,7 +109,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
     @Sendable private func addDateDifference(to calendarValue: Date, difference: DateComponents) throws -> AValue {
         let calendar = Calendar.current
         guard let newDate = calendar.date(byAdding: difference, to: calendarValue) else {
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
         return .calendar(newDate)
     }
@@ -123,7 +132,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         case let (.dateDifference(value1), .calendar(value2)):
             return try self.subtractDateDifference(from: value2, difference: value1)
         default:
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
     }
 
@@ -143,7 +152,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         negativeComponents.minute = -(difference.minute ?? 0)
         negativeComponents.second = -(difference.second ?? 0)
         guard let newDate = calendar.date(byAdding: negativeComponents, to: calendarValue) else {
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
         return .calendar(newDate)
     }
@@ -166,7 +175,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         case let (.number(value1), .minutes(value2)):
             return .minutes(Int(value1 * Double(value2)))
         default:
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
     }
 
@@ -179,21 +188,21 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         switch (self, value) {
         case let (.number(value1), .number(value2)):
             guard value2 != 0 else {
-                throw AError.divisionByZero
+                throw AValueError.divisionByZero
             }
             return .number(value1 / value2)
         case let (.point(x1, y1), .number(value2)):
             guard value2 != 0 else {
-                throw AError.divisionByZero
+                throw AValueError.divisionByZero
             }
             return .point(x: x1 / value2, y: y1 / value2)
         case let (.minutes(value1), .number(value2)):
             guard value2 != 0 else {
-                throw AError.divisionByZero
+                throw AValueError.divisionByZero
             }
             return .minutes(Int(Double(value1) / value2))
         default:
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
     }
 
@@ -206,7 +215,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         guard case let .number(value1) = self,
               case let .number(value2) = value
         else {
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
         return .number(value1.truncatingRemainder(dividingBy: value2))
     }
@@ -219,7 +228,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         guard case let .number(value1) = self,
               case let .number(value2) = value
         else {
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
         return .number(pow(value1, value2))
     }
@@ -232,7 +241,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         guard case let .boolean(value1) = self,
               case let .boolean(value2) = value
         else {
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
         return .boolean(value1 && value2)
     }
@@ -245,7 +254,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         guard case let .boolean(value1) = self,
               case let .boolean(value2) = value
         else {
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
         return .boolean(value1 || value2)
     }
@@ -255,7 +264,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
     /// - Returns: 非运算结果作为一个新的 `AValue` 返回
     @Sendable func not() throws -> AValue {
         guard case let .boolean(value) = self else {
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
         return .boolean(!value)
     }
@@ -271,7 +280,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         case let (.calendar(value1), .calendar(value2)):
             return value1 > value2
         default:
-            throw AError.comparisonError
+            throw AValueError.comparisonError
         }
     }
 
@@ -300,7 +309,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         case let .minutes(value):
             return .minutes(-value)
         default:
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
     }
 
@@ -308,7 +317,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         if case let .groundWind(limit) = self {
             return limit
         } else {
-            throw AError.typeMismatch(expected: .groundWind, actual: self.type)
+            throw AValueError.typeMismatch(expected: .groundWind, actual: self.type)
         }
     }
 
@@ -325,7 +334,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         case let .minutes(value):
             return .minutes(abs(value))
         default:
-            throw AError.invalidOperation
+            throw AValueError.invalidOperation
         }
     }
 
@@ -333,11 +342,11 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         self = .number(value)
     }
 
-    public  init(booleanLiteral value: Bool) {
+    public init(booleanLiteral value: Bool) {
         self = .boolean(value)
     }
 
-    public  init(stringLiteral value: String) {
+    public init(stringLiteral value: String) {
         self = .string(value)
     }
 
@@ -425,7 +434,7 @@ extension AValue {
 extension [AValue] {
     @Sendable private func value(at index: Int) throws -> AValue {
         guard index >= 0 && index < self.count else {
-            throw AError.indexOutOfBounds
+            throw AValueError.indexOutOfBounds
         }
         return self[index]
     }
@@ -435,7 +444,7 @@ extension [AValue] {
         if case let .number(number) = value {
             return number
         } else {
-            throw AError.typeMismatch(expected: .number, actual: value.type)
+            throw AValueError.typeMismatch(expected: .number, actual: value.type)
         }
     }
 
@@ -444,7 +453,7 @@ extension [AValue] {
         if case let .point(x, y) = value {
             return SIMD2(x, y)
         } else {
-            throw AError.typeMismatch(expected: .point, actual: value.type)
+            throw AValueError.typeMismatch(expected: .point, actual: value.type)
         }
     }
 
@@ -453,7 +462,7 @@ extension [AValue] {
         if case let .location(latitude, longitude) = value {
             return (latitude, longitude)
         } else {
-            throw AError.typeMismatch(expected: .location, actual: value.type)
+            throw AValueError.typeMismatch(expected: .location, actual: value.type)
         }
     }
 
@@ -462,7 +471,7 @@ extension [AValue] {
         if case let .boolean(boolean) = value {
             return boolean
         } else {
-            throw AError.typeMismatch(expected: .boolean, actual: value.type)
+            throw AValueError.typeMismatch(expected: .boolean, actual: value.type)
         }
     }
 
@@ -471,7 +480,7 @@ extension [AValue] {
         if case let .string(string) = value {
             return string
         } else {
-            throw AError.typeMismatch(expected: .string, actual: value.type)
+            throw AValueError.typeMismatch(expected: .string, actual: value.type)
         }
     }
 
@@ -480,7 +489,7 @@ extension [AValue] {
         if case let .minutes(minutes) = value {
             return minutes
         } else {
-            throw AError.typeMismatch(expected: .minutes, actual: value.type)
+            throw AValueError.typeMismatch(expected: .minutes, actual: value.type)
         }
     }
 
@@ -489,7 +498,7 @@ extension [AValue] {
         if case let .calendar(calendar) = value {
             return calendar
         } else {
-            throw AError.typeMismatch(expected: .calendar, actual: value.type)
+            throw AValueError.typeMismatch(expected: .calendar, actual: value.type)
         }
     }
 
@@ -498,13 +507,12 @@ extension [AValue] {
         if case let .dateDifference(dateDifference) = value {
             return dateDifference
         } else {
-            throw AError.typeMismatch(expected: .dateDifference, actual: value.type)
+            throw AValueError.typeMismatch(expected: .dateDifference, actual: value.type)
         }
     }
 }
 
 // MARK: - Binding
-
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 extension Binding<AValue?> {

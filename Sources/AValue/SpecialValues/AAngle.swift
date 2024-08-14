@@ -1,9 +1,9 @@
 import Foundation
 
-private let twoPi = 6.283185307179586
-private let factor57 = 57.29577951308232
+private let twoPi = 6.28318530717958647692528676655900576839433879875020
+private let factor57 = 57.29577951308232087679815481410517033240547246656432
 
-public protocol AAngleProtocol: AdditiveArithmetic, Hashable, Sendable, Codable, CustomStringConvertible, Comparable {
+public protocol AAngleProtocol: AdditiveArithmetic, Hashable, Sendable, Codable, Comparable {
     var radians: Double { get set }
     var degrees: Double { get set }
     init(radians: Double)
@@ -37,11 +37,7 @@ public extension AAngleProtocol {
         Darwin.tanh(radians)
     }
 
-    var description: String {
-        String(degrees) + "degrees  " + String(radians) + " rad"
-    }
-
-    var asAngle: AAngle {
+    func toAngle() -> AAngle {
         (self as? AAngle) ?? AAngle(radians: radians)
     }
 
