@@ -15,8 +15,20 @@ public enum ACoordinateValue: Codable, Sendable, Hashable, CustomStringConvertib
     }
     
     @Sendable
+    public init(latitude: Double, format: Format) {
+        let someValue: ACoordinateValue = .latitude(isNorth: latitude >= 0, degrees: abs(latitude))
+        self = someValue.toFormat(format)
+    }
+    
+    @Sendable
     public init(longitude: Double) {
         self = .longitude(isEast: longitude >= 0, degrees: abs(longitude))
+    }
+    
+    @Sendable
+    public init(longitude: Double, format: Format) {
+        let someValue: ACoordinateValue = .longitude(isEast: longitude >= 0, degrees: abs(longitude))
+        self = someValue.toFormat(format)
     }
     
     @Sendable

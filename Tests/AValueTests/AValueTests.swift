@@ -25,4 +25,11 @@ final class AValueTests: XCTestCase {
         let latitude = ACoordinateValue.latitude(isNorth: true, degrees: 2 + 59 / 60 + 59.96 / 3600)
         XCTAssert(latitude.toDMS().toString(digits: 1) == "N03°00'00.0\"")
     }
+
+    func testHMDescription() throws {
+        for timeValue in [1552, -1552, 35, -20] {
+            let time = AHourMinuteValue(minutes: timeValue)
+            print(time.toHM(), time.toDHM(), time.toTotalHours(), time.toTotalMinutes())
+        }
+    }
 }
