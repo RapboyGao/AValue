@@ -1,7 +1,7 @@
 import Foundation
 
 // 枚举定义，表示经纬度的不同格式
-public enum ACoordinateFormat: Codable, Sendable, Hashable {
+public enum ACoordinateValue: Codable, Sendable, Hashable {
     // 仅度数表示的纬度
     case latitude(isNorth: Bool, degrees: Double)
     // 度分表示的纬度
@@ -47,7 +47,7 @@ public enum ACoordinateFormat: Codable, Sendable, Hashable {
     
     // 将当前坐标转换为十进制度数格式
     @Sendable
-    public func toD() -> ACoordinateFormat {
+    public func toD() -> ACoordinateValue {
         switch self {
         case .latitude, .longitude:
             return self
@@ -68,7 +68,7 @@ public enum ACoordinateFormat: Codable, Sendable, Hashable {
     
     // 将当前坐标转换为度分格式
     @Sendable
-    public func toDM() -> ACoordinateFormat {
+    public func toDM() -> ACoordinateValue {
         switch self {
         case .latitude(let isNorth, let degrees):
             let degreesInt = Int(degrees)
@@ -91,7 +91,7 @@ public enum ACoordinateFormat: Codable, Sendable, Hashable {
     
     // 将当前坐标转换为度分秒格式
     @Sendable
-    public func toDMS() -> ACoordinateFormat {
+    public func toDMS() -> ACoordinateValue {
         switch self {
         case .latitude(let isNorth, let degrees):
             let degreesInt = Int(degrees)
