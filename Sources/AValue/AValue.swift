@@ -66,7 +66,7 @@ public enum AValue:
             let longitudeStr = ACoordinateValue(longitude: longitude).toDM()
             return "\(latitudeStr) \(longitudeStr)"
         case let .boolean(value):
-            return "\(value)"
+            return value ? "✓" : "x"
         case let .string(value):
             return "`\(value)`"
         case let .groundWind(limit):
