@@ -56,10 +56,16 @@ public struct AWindLimit: Hashable, Sendable, Codable {
         set { totalWindWrapped = abs(newValue) }
     }
 
-    // 跑道方向属性，确保值在 [0, 360] 的范围内
+    // 跑道方向属性，确保值在 [0, 360) 的范围内
     public var runwayHeading: AAngle {
         get { runwayHeadingWrapped }
         set { runwayHeadingWrapped = newValue.in360() }
+    }
+
+    // 跑道方向属性，确保值在 [0, 360) 的范围内
+    public var runwayHeadingInDegrees: Double {
+        get { runwayHeadingWrapped.converted(to: .degrees).value }
+        set { runwayHeadingWrapped = .degrees(newValue) }
     }
 
     // 返回风速中的最大值
