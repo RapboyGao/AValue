@@ -1,7 +1,7 @@
 import Foundation
 
 // 枚举定义，表示经纬度的不同格式
-enum ACoordinateFormat: Codable, Sendable, Hashable {
+public enum ACoordinateFormat: Codable, Sendable, Hashable {
     // 仅度数表示的纬度
     case latitude(isNorth: Bool, degrees: Double)
     // 度分表示的纬度
@@ -17,17 +17,20 @@ enum ACoordinateFormat: Codable, Sendable, Hashable {
     case longitudeDMS(isEast: Bool, degrees: Int, minutes: Int, seconds: Double)
     
     // 使用十进制度数初始化纬度
+    @Sendable
     public init(latitude: Double) {
         self = .latitude(isNorth: latitude >= 0, degrees: abs(latitude))
     }
     
     // 使用十进制度数初始化经度
+    @Sendable
     public init(longitude: Double) {
         self = .longitude(isEast: longitude >= 0, degrees: abs(longitude))
     }
     
     // 判断当前是否为纬度
-    func isLatitude() -> Bool {
+    @Sendable
+    public func isLatitude() -> Bool {
         switch self {
         case .latitude, .latitudeDM, .latitudeDMS:
             return true
@@ -37,12 +40,14 @@ enum ACoordinateFormat: Codable, Sendable, Hashable {
     }
     
     // 判断当前是否为经度
-    func isLongitude() -> Bool {
+    @Sendable
+    public func isLongitude() -> Bool {
         !isLatitude()
     }
     
     // 将当前坐标转换为十进制度数格式
-    func toD() -> ACoordinateFormat {
+    @Sendable
+    public func toD() -> ACoordinateFormat {
         switch self {
         case .latitude, .longitude:
             return self
@@ -62,7 +67,8 @@ enum ACoordinateFormat: Codable, Sendable, Hashable {
     }
     
     // 将当前坐标转换为度分格式
-    func toDM() -> ACoordinateFormat {
+    @Sendable
+    public func toDM() -> ACoordinateFormat {
         switch self {
         case .latitude(let isNorth, let degrees):
             let degreesInt = Int(degrees)
@@ -84,7 +90,8 @@ enum ACoordinateFormat: Codable, Sendable, Hashable {
     }
     
     // 将当前坐标转换为度分秒格式
-    func toDMS() -> ACoordinateFormat {
+    @Sendable
+    public func toDMS() -> ACoordinateFormat {
         switch self {
         case .latitude(let isNorth, let degrees):
             let degreesInt = Int(degrees)
@@ -112,7 +119,8 @@ enum ACoordinateFormat: Codable, Sendable, Hashable {
     }
     
     // 将坐标格式转换为十进制度数，并返回结果
-    func toNumber() -> Double {
+    @Sendable
+    public func toNumber() -> Double {
         switch self {
         // 处理纬度格式
         case .latitude(let isNorth, let degrees):
