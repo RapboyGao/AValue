@@ -80,11 +80,7 @@ public enum AValue:
         }
     }
 
-    /// 为两个 `AValue` 的数值、点、分钟、日历时间或日期差相加
-    ///
-    /// - Parameter value: 要添加的 `AValue`
-    /// - Returns: 加法结果作为一个新的 `AValue` 返回
-    /// - Throws: 如果操作无效，则抛出 `AValueCalcError`
+
     @Sendable func add(_ value: AValue) throws -> AValue {
         switch (self, value) {
         case let (.number(value1), .number(value2)):
@@ -93,6 +89,10 @@ public enum AValue:
             return .point(x: x1 + x2, y: y1 + y2)
         case let (.minutes(value1), .minutes(value2)):
             return .minutes(value1 + value2)
+        case let (.calendar(value1), .minutes(value2)):
+            return try self.addMinutes(to: value1, minutes: value2)
+        case let (.minutes(value1), .calendar(value2)):
+            return try self.addMinutes(to: value2, minutes: value1)
         case let (.calendar(value1), .dateDifference(value2)):
             return try self.addDateDifference(to: value1, difference: value2)
         case let (.dateDifference(value1), .calendar(value2)):
@@ -102,12 +102,15 @@ public enum AValue:
         }
     }
 
-    /// 为日历值添加日期差异
-    ///
-    /// - Parameters:
-    ///   - calendarValue: 日历值
-    ///   - difference: 日期差异
-    /// - Returns: 加法结果作为一个新的 `AValue` 返回
+    @Sendable private func addMinutes(to calendarValue: Date, minutes: Int) throws -> AValue {
+        let calendar = Calendar.current
+        guard let newDate = calendar.date(byAdding: .minute, value: minutes, to: calendarValue) else {
+            throw AValueError.invalidOperation
+        }
+        return .calendar(newDate)
+    }
+
+
     @Sendable private func addDateDifference(to calendarValue: Date, difference: DateComponents) throws -> AValue {
         let calendar = Calendar.current
         guard let newDate = calendar.date(byAdding: difference, to: calendarValue) else {
@@ -116,11 +119,6 @@ public enum AValue:
         return .calendar(newDate)
     }
 
-    /// 从这个 `AValue` 的数值、点、分钟、日历时间或日期差中减去另一个 `AValue` 的数值、分钟、日历时间或日期差
-    ///
-    /// - Parameter value: 要减去的 `AValue`
-    /// - Returns: 减法结果作为一个新的 `AValue` 返回
-    /// - Throws: 如果操作无效，则抛出 `AValueCalcError`
     @Sendable func subtract(_ value: AValue) throws -> AValue {
         switch (self, value) {
         case let (.number(value1), .number(value2)):
@@ -129,6 +127,8 @@ public enum AValue:
             return .point(x: x1 - x2, y: y1 - y2)
         case let (.minutes(value1), .minutes(value2)):
             return .minutes(value1 - value2)
+        case let (.calendar(value1), .minutes(value2)):
+            return try self.subtractMinutes(from: value1, minutes: value2)
         case let (.calendar(value1), .dateDifference(value2)):
             return try self.subtractDateDifference(from: value1, difference: value2)
         case let (.dateDifference(value1), .calendar(value2)):
@@ -138,12 +138,15 @@ public enum AValue:
         }
     }
 
-    /// 从日历值中减去日期差异
-    ///
-    /// - Parameters:
-    ///   - calendarValue: 日历值
-    ///   - difference: 日期差异
-    /// - Returns: 减法结果作为一个新的 `AValue` 返回
+    @Sendable private func subtractMinutes(from calendarValue: Date, minutes: Int) throws -> AValue {
+        let calendar = Calendar.current
+        guard let newDate = calendar.date(byAdding: .minute, value: -minutes, to: calendarValue) else {
+            throw AValueError.invalidOperation
+        }
+        return .calendar(newDate)
+    }
+
+
     @Sendable private func subtractDateDifference(from calendarValue: Date, difference: DateComponents) throws -> AValue {
         let calendar = Calendar.current
         var negativeComponents = DateComponents()
@@ -159,11 +162,7 @@ public enum AValue:
         return .calendar(newDate)
     }
 
-    /// 为两个 `AValue` 的数值相乘，或将分钟乘以一个数值
-    ///
-    /// - Parameter value: 要乘的 `AValue`
-    /// - Returns: 乘法结果作为一个新的 `AValue` 返回
-    /// - Throws: 如果操作无效，则抛出 `AValueCalcError`
+
     @Sendable func multiply(by value: AValue) throws -> AValue {
         switch (self, value) {
         case let (.number(value1), .number(value2)):
@@ -181,11 +180,6 @@ public enum AValue:
         }
     }
 
-    /// 将这个 `AValue` 的数值除以另一个 `AValue` 的数值
-    ///
-    /// - Parameter value: 要除的 `AValue`
-    /// - Returns: 除法结果作为一个新的 `AValue` 返回
-    /// - Throws: 如果操作无效，则抛出 `AValueCalcError`
     @Sendable func divide(by value: AValue) throws -> AValue {
         switch (self, value) {
         case let (.number(value1), .number(value2)):
@@ -208,11 +202,7 @@ public enum AValue:
         }
     }
 
-    /// 计算这个 `AValue` 的数值除以另一个 `AValue` 的数值的余数
-    ///
-    /// - Parameter value: 要除的 `AValue`
-    /// - Returns: 余数作为一个新的 `AValue` 返回
-    /// - Throws: 如果操作无效，则抛出 `AValueCalcError`
+
     @Sendable func remainder(dividingBy value: AValue) throws -> AValue {
         guard case let .number(value1) = self,
               case let .number(value2) = value
@@ -222,10 +212,7 @@ public enum AValue:
         return .number(value1.truncatingRemainder(dividingBy: value2))
     }
 
-    /// 将这个 `AValue` 的数值提升到另一个 `AValue` 的数值的幂
-    ///
-    /// - Parameter value: 指数 `AValue`
-    /// - Returns: 幂运算结果作为一个新的 `AValue` 返回
+
     @Sendable func power(of value: AValue) throws -> AValue {
         guard case let .number(value1) = self,
               case let .number(value2) = value
@@ -235,10 +222,7 @@ public enum AValue:
         return .number(pow(value1, value2))
     }
 
-    /// 两个布尔 `AValue` 之间的逻辑与运算
-    ///
-    /// - Parameter value: 要执行与运算的 `AValue`
-    /// - Returns: 与运算结果作为一个新的 `AValue` 返回
+
     @Sendable func and(_ value: AValue) throws -> AValue {
         guard case let .boolean(value1) = self,
               case let .boolean(value2) = value
@@ -248,10 +232,7 @@ public enum AValue:
         return .boolean(value1 && value2)
     }
 
-    /// 两个布尔 `AValue` 之间的逻辑或运算
-    ///
-    /// - Parameter value: 要执行或运算的 `AValue`
-    /// - Returns: 或运算结果作为一个新的 `AValue` 返回
+
     @Sendable func or(_ value: AValue) throws -> AValue {
         guard case let .boolean(value1) = self,
               case let .boolean(value2) = value
@@ -261,9 +242,7 @@ public enum AValue:
         return .boolean(value1 || value2)
     }
 
-    /// 布尔 `AValue` 的逻辑非运算
-    ///
-    /// - Returns: 非运算结果作为一个新的 `AValue` 返回
+
     @Sendable func not() throws -> AValue {
         guard case let .boolean(value) = self else {
             throw AValueError.invalidOperation
@@ -323,10 +302,7 @@ public enum AValue:
         }
     }
 
-    /// 为这个 `AValue` 取绝对值
-    ///
-    /// - Returns: 绝对值结果作为一个新的 `AValue` 返回
-    /// - Throws: 如果操作无效，则抛出 `AError.invalidOperation`
+
     @Sendable func absolute() throws -> AValue {
         switch self {
         case let .number(value):
