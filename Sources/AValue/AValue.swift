@@ -62,7 +62,9 @@ public enum AValue:
         case let .point(x, y):
             return "(\(x), \(y))"
         case let .location(latitude, longitude):
-            return "(\(latitude),\(longitude))"
+            let latitudeStr = ACoordinateValue(latitude: latitude).toDM()
+            let longitudeStr = ACoordinateValue(longitude: longitude).toDM()
+            return "\(latitudeStr) \(longitudeStr)"
         case let .boolean(value):
             return "\(value)"
         case let .string(value):
