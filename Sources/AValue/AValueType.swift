@@ -29,6 +29,45 @@ enum AValueType: Codable, Hashable, Sendable, CaseIterable {
     /// 表示两个日期之间的差异（以时间戳形式）类型
     case dateDifference
 
+    func randomValue() -> AValue {
+        switch self {
+        case .number:
+            return .number(Double.random(in: -1000.0...1000.0))
+        case .point:
+            let x = Double.random(in: -1000.0...1000.0)
+            let y = Double.random(in: -1000.0...1000.0)
+            return .point(x: x, y: y)
+        case .location:
+            let latitude = Double.random(in: -90.0...90.0)
+            let longitude = Double.random(in: -180.0...180.0)
+            return .location(latitude: latitude, longitude: longitude)
+        case .boolean:
+            return .boolean(Bool.random())
+        case .string:
+            let randomString = UUID().uuidString
+            return .string(randomString)
+        case .groundWind:
+            let limit = AWindLimit(headWind: Double.random(in: 0...50),
+                                   tailWind: Double.random(in: 0...50),
+                                   crossWind: Double.random(in: 0...50))
+            return .groundWind(limit: limit)
+        case .minutes:
+            return .minutes(Int.random(in: 0...1440)) // Random value within 24 hours
+        case .calendar:
+            let randomTimeInterval = TimeInterval.random(in: -1000000000...1000000000)
+            let randomDate = Date(timeIntervalSince1970: randomTimeInterval)
+            return .calendar(randomDate)
+        case .dateDifference:
+            let components = DateComponents(year: Int.random(in: -10...10),
+                                            month: Int.random(in: -12...12),
+                                            day: Int.random(in: -31...31),
+                                            hour: Int.random(in: -23...23),
+                                            minute: Int.random(in: -59...59),
+                                            second: Int.random(in: -59...59))
+            return .dateDifference(components)
+        }
+    }
+
     var symbolName: String {
         switch self {
         case .number:
