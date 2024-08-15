@@ -8,12 +8,12 @@ import SwiftUI
 // MARK: - iOS
 
 @available(iOS 13.0, *)
-struct AMapPointSelector: UIViewRepresentable {
+public struct AMapPointSelector: UIViewRepresentable {
     @Binding var selectedCoordinate: CLLocationCoordinate2D?
     var name: String
     var auxiliaryPoints: [ALocation] // Add auxiliary points
 
-    func makeUIView(context: Context) -> MKMapView {
+    public func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
         mapView.mapType = .hybrid
         mapView.showsScale = true
@@ -36,7 +36,7 @@ struct AMapPointSelector: UIViewRepresentable {
         return mapView
     }
 
-    func updateUIView(_ mapView: MKMapView, context: Context) {
+    public func updateUIView(_ mapView: MKMapView, context: Context) {
         if let coordinate = selectedCoordinate {
             // Center the map on the new selected coordinate with animation
             centerMap(on: coordinate, mapView: mapView, animated: true)
@@ -140,7 +140,7 @@ struct AMapPointSelector: NSViewRepresentable {
 
 @available(iOS 13.0, macOS 11, *)
 extension AMapPointSelector {
-    func makeCoordinator() -> Coordinator {
+    public func makeCoordinator() -> Coordinator {
         return Coordinator(self)
     }
 
@@ -155,20 +155,37 @@ extension AMapPointSelector {
     }
 }
 
+// MARK: - Initializer
+
+@available(iOS 14.0, macOS 11.0, *)
+public extension AMapPointSelector {
+    init(_ bindCoordinate: Binding<CLLocationCoordinate2D?>, name: String, other auxiliaryPoints: [ALocation]) {
+        self._selectedCoordinate = bindCoordinate
+        self.name = name
+        self.auxiliaryPoints = auxiliaryPoints
+    }
+
+    init(_ bindValue: Binding<AValue?>, name: String, other auxiliaryPoints: [ALocation]) {
+        self._selectedCoordinate = bindValue.locationValue()
+        self.name = name
+        self.auxiliaryPoints = auxiliaryPoints
+    }
+}
+
 // MARK: - Coordinator
 
 @available(iOS 13.0, macOS 11, *)
-extension AMapPointSelector {
+public extension AMapPointSelector {
     @available(macOS 11.0, *)
     class Coordinator: NSObject, MKMapViewDelegate {
-        var parent: AMapPointSelector
+        public var parent: AMapPointSelector
 
-        init(_ parent: AMapPointSelector) {
+        public init(_ parent: AMapPointSelector) {
             self.parent = parent
         }
 
         #if os(iOS)
-        @objc func handleLongPress(gesture: UILongPressGestureRecognizer) {
+        @objc public func handleLongPress(gesture: UILongPressGestureRecognizer) {
             if gesture.state == .began {
                 let location = gesture.location(in: gesture.view)
                 if let mapView = gesture.view as? MKMapView {
@@ -178,7 +195,7 @@ extension AMapPointSelector {
             }
         }
         #else
-        @objc func handleClick(gesture: NSClickGestureRecognizer) {
+        @objc public func handleClick(gesture: NSClickGestureRecognizer) {
             let location = gesture.location(in: gesture.view)
             if let mapView = gesture.view as? MKMapView {
                 let coordinate = mapView.convert(location, toCoordinateFrom: mapView)
@@ -187,7 +204,7 @@ extension AMapPointSelector {
         }
         #endif
 
-        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        public func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             guard !(annotation is MKUserLocation) else {
                 return nil
             }
@@ -223,7 +240,7 @@ private struct Example: View {
     private let locationName = "My Selected Location" // Define a location name
 
     var body: some View {
-        AMapPointSelector(selectedCoordinate: $selectedCoordinate, name: locationName, auxiliaryPoints: .examples)
+        AMapPointSelector($selectedCoordinate, name: locationName, other: .examples)
             .ignoresSafeArea()
     }
 }
