@@ -3,16 +3,7 @@ import Foundation
 import SwiftUI
 
 /// `AValue` 是一个支持多种类型值的枚举
-public enum AValue:
-    Codable,
-    Hashable,
-    Sendable,
-    ExpressibleByFloatLiteral,
-    ExpressibleByIntegerLiteral,
-    ExpressibleByStringLiteral,
-    ExpressibleByStringInterpolation,
-    ExpressibleByBooleanLiteral
-{
+public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, ExpressibleByStringLiteral, ExpressibleByStringInterpolation, ExpressibleByBooleanLiteral {
     /// 表示一个数值 (例如: 42.0)
     case number(Double)
 
@@ -80,7 +71,6 @@ public enum AValue:
         }
     }
 
-
     @Sendable func add(_ value: AValue) throws -> AValue {
         switch (self, value) {
         case let (.number(value1), .number(value2)):
@@ -109,7 +99,6 @@ public enum AValue:
         }
         return .calendar(newDate)
     }
-
 
     @Sendable private func addDateDifference(to calendarValue: Date, difference: DateComponents) throws -> AValue {
         let calendar = Calendar.current
@@ -146,7 +135,6 @@ public enum AValue:
         return .calendar(newDate)
     }
 
-
     @Sendable private func subtractDateDifference(from calendarValue: Date, difference: DateComponents) throws -> AValue {
         let calendar = Calendar.current
         var negativeComponents = DateComponents()
@@ -161,7 +149,6 @@ public enum AValue:
         }
         return .calendar(newDate)
     }
-
 
     @Sendable func multiply(by value: AValue) throws -> AValue {
         switch (self, value) {
@@ -202,7 +189,6 @@ public enum AValue:
         }
     }
 
-
     @Sendable func remainder(dividingBy value: AValue) throws -> AValue {
         guard case let .number(value1) = self,
               case let .number(value2) = value
@@ -211,7 +197,6 @@ public enum AValue:
         }
         return .number(value1.truncatingRemainder(dividingBy: value2))
     }
-
 
     @Sendable func power(of value: AValue) throws -> AValue {
         guard case let .number(value1) = self,
@@ -222,7 +207,6 @@ public enum AValue:
         return .number(pow(value1, value2))
     }
 
-
     @Sendable func and(_ value: AValue) throws -> AValue {
         guard case let .boolean(value1) = self,
               case let .boolean(value2) = value
@@ -232,7 +216,6 @@ public enum AValue:
         return .boolean(value1 && value2)
     }
 
-
     @Sendable func or(_ value: AValue) throws -> AValue {
         guard case let .boolean(value1) = self,
               case let .boolean(value2) = value
@@ -241,7 +224,6 @@ public enum AValue:
         }
         return .boolean(value1 || value2)
     }
-
 
     @Sendable func not() throws -> AValue {
         guard case let .boolean(value) = self else {
@@ -301,7 +283,6 @@ public enum AValue:
             throw AValueError.typeMismatch(expected: .groundWind, actual: self.type)
         }
     }
-
 
     @Sendable func absolute() throws -> AValue {
         switch self {
