@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// `AValueType` 是一个表示 `AValue` 可以持有的值类型的枚举
-enum AValueType: Codable, Hashable, Sendable, CaseIterable {
+enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, CaseIterable {
     /// 表示一个数值类型
     case number
 
@@ -48,7 +48,7 @@ enum AValueType: Codable, Hashable, Sendable, CaseIterable {
         case .calendar:
             return .calendar(.init(timeIntervalSinceNow: 0))
         case .dateDifference:
-            return .dateDifference(.init() )
+            return .dateDifference(.init())
         }
     }
 
