@@ -29,42 +29,26 @@ enum AValueType: Codable, Hashable, Sendable, CaseIterable {
     /// 表示两个日期之间的差异（以时间戳形式）类型
     case dateDifference
 
-    func randomValue() -> AValue {
+    func baseValue() -> AValue {
         switch self {
         case .number:
-            return .number(Double.random(in: -1000.0...1000.0))
+            return 0
         case .point:
-            let x = Double.random(in: -1000.0...1000.0)
-            let y = Double.random(in: -1000.0...1000.0)
-            return .point(x: x, y: y)
+            return .point(x: 0, y: 0)
         case .location:
-            let latitude = Double.random(in: -90.0...90.0)
-            let longitude = Double.random(in: -180.0...180.0)
-            return .location(latitude: latitude, longitude: longitude)
+            return .location(latitude: 0, longitude: 0)
         case .boolean:
-            return .boolean(Bool.random())
+            return .boolean(true)
         case .string:
-            let randomString = UUID().uuidString
-            return .string(randomString)
+            return .string("")
         case .groundWind:
-            let limit = AWindLimit(headWind: Double.random(in: 0...50),
-                                   tailWind: Double.random(in: 0...50),
-                                   crossWind: Double.random(in: 0...50))
-            return .groundWind(limit: limit)
+            return .groundWind(limit: .b737)
         case .minutes:
-            return .minutes(Int.random(in: 0...1440)) // Random value within 24 hours
+            return .minutes(0)
         case .calendar:
-            let randomTimeInterval = TimeInterval.random(in: -1000000000...1000000000)
-            let randomDate = Date(timeIntervalSince1970: randomTimeInterval)
-            return .calendar(randomDate)
+            return .calendar(.init(timeIntervalSinceNow: 0))
         case .dateDifference:
-            let components = DateComponents(year: Int.random(in: -10...10),
-                                            month: Int.random(in: -12...12),
-                                            day: Int.random(in: -31...31),
-                                            hour: Int.random(in: -23...23),
-                                            minute: Int.random(in: -59...59),
-                                            second: Int.random(in: -59...59))
-            return .dateDifference(components)
+            return .dateDifference(.init() )
         }
     }
 
