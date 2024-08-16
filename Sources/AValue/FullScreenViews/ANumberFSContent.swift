@@ -13,6 +13,7 @@ public struct ANumberFSContent: View {
             if allowSet {
                 TextField(name, value: $value, format: .number.precision(.significantDigits(0 ... 10)))
                     .focused($isFocused)
+                    .modifier(NumberKeyboardModifier(value: $value, digits: 10))
             } else if let value = value {
                 Text(value, format: .number.precision(.significantDigits(0 ... 10)))
             } else {
@@ -25,9 +26,21 @@ public struct ANumberFSContent: View {
             isFocused = true
         }
     }
+
+    public init(_ valueBinding: Binding<Double?>, name: String, allowSet: Bool) {
+        self._value = valueBinding
+        self.name = name
+        self.allowSet = allowSet
+    }
+
+    public init(aValue valueBinding: Binding<AValue?>, name: String, allowSet: Bool) {
+        self._value = valueBinding.doubleValue()
+        self.name = name
+        self.allowSet = allowSet
+    }
 }
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 #Preview {
-    ANumberFSContent(value: .constant(50), name: "hello", allowSet: true)
+    ANumberFSContent(.constant(-50), name: "hello", allowSet: false)
 }
