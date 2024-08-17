@@ -11,6 +11,12 @@ let package = Package(
         .library(
             name: "AValue",
             targets: ["AValue"]),
+        .library(
+            name: "AFunction",
+            targets: ["AFunction"]),
+        .library(
+            name: "AFormula",
+            targets: ["AFormula"]),
     ],
     dependencies: [
         .package(url: "https://github.com/RapboyGao/AUnit.git", branch: "main"),
@@ -21,6 +27,19 @@ let package = Package(
         .target(
             name: "AValue",
             dependencies: [
+                .product(name: "AUnit", package: "AUnit"),
+            ]),
+        .target(
+            name: "AFunction",
+            dependencies: [
+                "AValue",
+                .product(name: "AUnit", package: "AUnit"),
+            ]),
+        .target(
+            name: "AFormula",
+            dependencies: [
+                "AValue",
+                "AFunction",
                 .product(name: "AUnit", package: "AUnit"),
             ]),
         .testTarget(

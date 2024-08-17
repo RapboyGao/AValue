@@ -54,6 +54,7 @@ private struct Example: View {
         Button(aValue?.description ?? "nil") {
             showFSContent.toggle()
         }
+        #if os(iOS)
         .fullScreenCover(isPresented: $showFSContent) {
             NavigationView {
                 AValueFSContent(value: $aValue, type: aValue?.type ?? .number, allowInput: true, name: "Hello", unit: .constant(.knots))
@@ -66,6 +67,7 @@ private struct Example: View {
                     }
             }
         }
+        #endif
     }
 }
 
