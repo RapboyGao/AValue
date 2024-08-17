@@ -1,14 +1,19 @@
 import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-struct NumberKeyboardModifier: ViewModifier {
+public struct NumberKeyboardModifier: ViewModifier {
     @Binding var value: Double?
     var digits: Int
 
     @State private var rotationAngle: Double = 0 // State variable to track rotation
     @FocusState private var isFocused: Bool
 
-    func body(content: Content) -> some View {
+    public init(value: Binding<Double?>, digits: Int) {
+        self._value = value
+        self.digits = digits
+    }
+
+    public func body(content: Content) -> some View {
         content
             .autocorrectionDisabled()
             .focused($isFocused)

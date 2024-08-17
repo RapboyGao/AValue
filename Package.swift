@@ -9,6 +9,9 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
+            name: "CommonViews",
+            targets: ["CommonViews"]),
+        .library(
             name: "AValue",
             targets: ["AValue"]),
         .library(
@@ -24,20 +27,24 @@ let package = Package(
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
+        .target(name: "CommonViews"),
         .target(
             name: "AValue",
             dependencies: [
+                "CommonViews",
                 .product(name: "AUnit", package: "AUnit"),
             ]),
         .target(
             name: "AFunction",
             dependencies: [
+                "CommonViews",
                 "AValue",
                 .product(name: "AUnit", package: "AUnit"),
             ]),
         .target(
             name: "AFormula",
             dependencies: [
+                "CommonViews",
                 "AValue",
                 "AFunction",
                 .product(name: "AUnit", package: "AUnit"),
