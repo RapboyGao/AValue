@@ -74,12 +74,12 @@ public struct AMapPointSelector: UIViewRepresentable {
 // MARK: - MacOS
 
 @available(macOS 11, *)
-struct AMapPointSelector: NSViewRepresentable {
+public struct AMapPointSelector: NSViewRepresentable {
     @Binding var selectedCoordinate: CLLocationCoordinate2D?
     var name: String
     var auxiliaryPoints: [ALocation] // Add auxiliary points
 
-    func makeNSView(context: Context) -> MKMapView {
+    public func makeNSView(context: Context) -> MKMapView {
         let mapView = MKMapView()
         mapView.mapType = .hybrid
         mapView.showsScale = true
@@ -102,7 +102,7 @@ struct AMapPointSelector: NSViewRepresentable {
         return mapView
     }
 
-    func updateNSView(_ mapView: MKMapView, context: Context) {
+    public func updateNSView(_ mapView: MKMapView, context: Context) {
         if let coordinate = selectedCoordinate {
             // Center the map on the new selected coordinate with animation
             centerMap(on: coordinate, mapView: mapView, animated: true)

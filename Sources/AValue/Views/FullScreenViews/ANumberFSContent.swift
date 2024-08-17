@@ -42,5 +42,5 @@ public struct ANumberFSContent: View {
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 #Preview {
-    ANumberFSContent(.constant(-50), name: "hello", allowSet: false)
+    ANumberFSContent(.constant(-50), name: "hello", allowSet: true)
 }
