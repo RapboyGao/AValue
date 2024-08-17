@@ -6,6 +6,8 @@ public struct ADateFSContent: View {
     var name: String
     var allowSet: Bool
 
+    @State private var isUTC: Bool = false
+
     private var thisBinding: Binding<Date> {
         Binding {
             value ?? .now
@@ -16,13 +18,26 @@ public struct ADateFSContent: View {
 
     public var body: some View {
         List {
-            DatePicker(name, selection: thisBinding, displayedComponents: [.hourAndMinute, .date])
-                .datePickerStyle(.graphical)
+            if #available(macOS 13, iOS 16, tvOS 16, watchOS 9, *) {
+                DatePicker(name, selection: thisBinding, displayedComponents: [.hourAndMinute, .date])
+                    .datePickerStyle(.graphical)
+                    .environment(\.timeZone, isUTC ? .gmt : .current)
+                Toggle("UTC", isOn: $isUTC)
+            } else {
+                DatePicker(name, selection: thisBinding, displayedComponents: [.hourAndMinute, .date])
+                    .datePickerStyle(.graphical)
+            }
         }
     }
 
     public init(_ value: Binding<Date?>, name: String, allowSet: Bool) {
         self._value = value
+        self.name = name
+        self.allowSet = allowSet
+    }
+
+    public init(value: Binding<AValue?>, name: String, allowSet: Bool) {
+        self._value = value.calendarValue()
         self.name = name
         self.allowSet = allowSet
     }

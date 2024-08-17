@@ -63,7 +63,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         case let .groundWind(limit):
             return "\(limit)"
         case let .minutes(value):
-            return "\(value)"
+            return AHourMinuteValue(minutes: value).toFormat(.hourMinute).description
         case let .calendar(date):
             return "\(date)"
         case let .dateDifference(components):
