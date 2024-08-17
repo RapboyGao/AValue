@@ -1,6 +1,6 @@
 import Foundation
 
-extension [AValue] {
+public extension [AValue] {
     @Sendable private func value(at index: Int) throws -> AValue {
         guard index >= 0 && index < self.count else {
             throw AValueError.indexOutOfBounds

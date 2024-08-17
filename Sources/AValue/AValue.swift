@@ -30,7 +30,9 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
 
     /// 表示两个日期之间的差异
     case dateDifference(DateComponents)
+}
 
+public extension AValue {
     /// 一个返回 AValue 类型的计算属性
     var type: AValueType {
         switch self {
@@ -65,7 +67,10 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         case let .minutes(value):
             return AHourMinuteValue(minutes: value).toFormat(.hourMinute).description
         case let .calendar(date):
-            return "\(date)"
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .short
+            return formatter.string(from: date)
         case let .dateDifference(components):
             return "\(components)"
         }
@@ -297,19 +302,19 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
         }
     }
 
-    public init(floatLiteral value: Double) {
+    init(floatLiteral value: Double) {
         self = .number(value)
     }
 
-    public init(booleanLiteral value: Bool) {
+    init(booleanLiteral value: Bool) {
         self = .boolean(value)
     }
 
-    public init(stringLiteral value: String) {
+    init(stringLiteral value: String) {
         self = .string(value)
     }
 
-    public init(integerLiteral value: Int) {
+    init(integerLiteral value: Int) {
         self.init(floatLiteral: .init(value))
     }
 }

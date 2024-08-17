@@ -8,6 +8,9 @@ public struct AValueFSContent: View {
     var allowInput: Bool
     var name: String
 
+    @Binding var unit: AUnit?
+    var originalUnit: AUnit?
+
     public var body: some View {
         switch type {
         case .number:
@@ -31,12 +34,21 @@ public struct AValueFSContent: View {
             ProgressView()
         }
     }
+
+    public init(value: Binding<AValue?>, type: AValueType, allowInput: Bool, name: String, unit: Binding<AUnit?>, originalUnit: AUnit? = nil) {
+        self._value = value
+        self.type = type
+        self.allowInput = allowInput
+        self.name = name
+        self._unit = unit
+        self.originalUnit = originalUnit
+    }
 }
 
 @available(iOS 15.0, macOS 12.0, *)
 private struct Example: View {
     @State private var showFSContent = false
-    @State private var aValue: AValue? = .minutes(356)
+    @State private var aValue: AValue? = .calendar(.now)
 
     var body: some View {
         Button(aValue?.description ?? "nil") {
@@ -44,7 +56,7 @@ private struct Example: View {
         }
         .fullScreenCover(isPresented: $showFSContent) {
             NavigationView {
-                AValueFSContent(value: $aValue, type: aValue?.type ?? .number, allowInput: true, name: "Hello")
+                AValueFSContent(value: $aValue, type: aValue?.type ?? .number, allowInput: true, name: "Hello", unit: .constant(.knots))
                     .toolbar {
                         ToolbarItemGroup {
                             Button("Done") {

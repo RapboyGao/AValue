@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// `AValueType` 是一个表示 `AValue` 可以持有的值类型的枚举
-enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, CaseIterable {
+public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, CaseIterable {
     /// 表示一个数值类型
     case number
 
@@ -29,7 +29,7 @@ enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, CaseIter
     /// 表示两个日期之间的差异（以时间戳形式）类型
     case dateDifference
 
-    func baseValue() -> AValue {
+    public func baseValue() -> AValue {
         switch self {
         case .number:
             return 0
@@ -52,7 +52,7 @@ enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, CaseIter
         }
     }
 
-    var symbolName: String {
+    public var symbolName: String {
         switch self {
         case .number:
             return "number"
@@ -76,7 +76,7 @@ enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, CaseIter
     }
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-    func colorForLightTheme() -> Color {
+    public func colorForLightTheme() -> Color {
         switch self {
         case .number:
             return Color(red: 0.188, green: 0.498, blue: 0.0)
@@ -90,7 +90,7 @@ enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, CaseIter
     }
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-    func colorForDarkTheme() -> Color {
+    public func colorForDarkTheme() -> Color {
         switch self {
         case .number:
             return Color(red: 0.866, green: 0.866, blue: 0.586) // Light Yellow
