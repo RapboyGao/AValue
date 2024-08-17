@@ -48,7 +48,7 @@ public struct AValueFSContent: View {
 @available(iOS 15.0, macOS 12.0, *)
 private struct Example: View {
     @State private var showFSContent = false
-    @State private var aValue: AValue? = .calendar(.now)
+    @State private var aValue: AValue? = .location(latitude: 40.16415, longitude: 116.44354)
 
     var body: some View {
         Button(aValue?.description ?? "nil") {

@@ -70,6 +70,11 @@ enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Expressib
         }
     }
 
+    private func toNormalizedChildren(parent parentPriority: Int) -> Self {
+        // 如果当前的优先级靠后，父公式的优先级靠前，则需添加括号
+        priority > parentPriority ? .parenthesis(self) : self
+    }
+
     func toTokens() -> [AToken] {
         var tokens = [AToken]()
         let priority = self.priority // 定义当前公式的优先级
@@ -89,13 +94,13 @@ enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Expressib
 
         // 根据当前公式类型生成对应的 Token
         switch self {
-        case .value(let value):
+        case let .value(value):
             tokens.append(AToken(.value(value)))
 
-        case .row(let id):
+        case let .row(id):
             tokens.append(AToken(.row(id: id)))
 
-        case .function(let id, let args):
+        case let .function(id, args):
             tokens.append(AToken(.functionWithLeftParenthesis(id: id)))
             for (index, arg) in args.enumerated() {
                 addTokens(for: arg)
@@ -105,90 +110,90 @@ enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Expressib
             }
             tokens.append(AToken(.rightParenthesis))
 
-        case .parenthesis(let formula):
+        case let .parenthesis(formula):
             tokens.append(AToken(.leftParenthesis))
             tokens.append(contentsOf: formula.toTokens())
             tokens.append(AToken(.rightParenthesis))
 
-        case .absolute(let formula):
+        case let .absolute(formula):
             tokens.append(AToken(.absolute))
             addTokens(for: formula)
             tokens.append(AToken(.absolute))
 
-        case .negative(let formula):
+        case let .negative(formula):
             tokens.append(AToken(.minusOrNegative))
             addTokens(for: formula)
 
-        case .not(let formula):
+        case let .not(formula):
             tokens.append(AToken(.not))
             addTokens(for: formula)
 
-        case .power(let left, let right):
+        case let .power(left, right):
             addTokens(for: left)
             tokens.append(AToken(.power))
             addTokens(for: right)
 
-        case .multiply(let left, let right):
+        case let .multiply(left, right):
             addTokens(for: left)
             tokens.append(AToken(.asterisk))
             addTokens(for: right)
 
-        case .divide(let left, let right):
+        case let .divide(left, right):
             addTokens(for: left)
             tokens.append(AToken(.divide))
             addTokens(for: right)
 
-        case .remainder(let left, let right):
+        case let .remainder(left, right):
             addTokens(for: left)
             tokens.append(AToken(.remainder))
             addTokens(for: right)
 
-        case .add(let left, let right):
+        case let .add(left, right):
             addTokens(for: left)
             tokens.append(AToken(.plus))
             addTokens(for: right)
 
-        case .subtract(let left, let right):
+        case let .subtract(left, right):
             addTokens(for: left)
             tokens.append(AToken(.minusOrNegative))
             addTokens(for: right)
 
-        case .greaterThan(let left, let right):
+        case let .greaterThan(left, right):
             addTokens(for: left)
             tokens.append(AToken(.greaterThan))
             addTokens(for: right)
 
-        case .lessThan(let left, let right):
+        case let .lessThan(left, right):
             addTokens(for: left)
             tokens.append(AToken(.lessThan))
             addTokens(for: right)
 
-        case .greaterThanOrEqual(let left, let right):
+        case let .greaterThanOrEqual(left, right):
             addTokens(for: left)
             tokens.append(AToken(.greaterThanOrEqual))
             addTokens(for: right)
 
-        case .lessThanOrEqual(let left, let right):
+        case let .lessThanOrEqual(left, right):
             addTokens(for: left)
             tokens.append(AToken(.lessThanOrEqual))
             addTokens(for: right)
 
-        case .equal(let left, let right):
+        case let .equal(left, right):
             addTokens(for: left)
             tokens.append(AToken(.equal))
             addTokens(for: right)
 
-        case .and(let left, let right):
+        case let .and(left, right):
             addTokens(for: left)
             tokens.append(AToken(.and))
             addTokens(for: right)
 
-        case .or(let left, let right):
+        case let .or(left, right):
             addTokens(for: left)
             tokens.append(AToken(.or))
             addTokens(for: right)
 
-        case .ternary(let condition, let trueFormula, let falseFormula):
+        case let .ternary(condition, trueFormula, falseFormula):
             addTokens(for: condition)
             tokens.append(AToken(.questionMark))
             addTokens(for: trueFormula)
@@ -199,12 +204,12 @@ enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Expressib
         return tokens
     }
 
-    func isTheSame(as other: AFormula) -> Bool {
+    func isTheSame(as another: AFormula) -> Bool {
         let jsonEncoder = JSONEncoder()
         jsonEncoder.outputFormatting = .sortedKeys
         guard let thisData = try? jsonEncoder.encode(self),
               let thisString = String(data: thisData, encoding: .utf8),
-              let otherData = try? jsonEncoder.encode(self),
+              let otherData = try? jsonEncoder.encode(another),
               let otherString = String(data: otherData, encoding: .utf8)
         else { return false }
         return thisString == otherString

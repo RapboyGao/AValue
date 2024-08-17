@@ -55,8 +55,8 @@ public extension AValue {
         case let .point(x, y):
             return "(\(x), \(y))"
         case let .location(latitude, longitude):
-            let latitudeStr = ACoordinateValue(latitude: latitude).toDM()
-            let longitudeStr = ACoordinateValue(longitude: longitude).toDM()
+            let latitudeStr = ALatitude(latitude).toDM()
+            let longitudeStr = ALongitude(longitude).toDM()
             return "\(latitudeStr) \(longitudeStr)"
         case let .boolean(value):
             return value ? "✓" : "x"
