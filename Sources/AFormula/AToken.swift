@@ -2,19 +2,23 @@ import AValue
 import Foundation
 import SwiftUI
 
-struct AToken: Identifiable, Hashable, Sendable, Codable {
-    let id: Int
-    let type: Token
+public struct AToken: Identifiable, Hashable, Sendable, Codable {
+    public let id: Int
+    public var type: Token
 
-    init(_ type: Token) {
+    public init(_ type: Token) {
         self.id = .random(in: .min ... .max)
         self.type = type
+    }
+
+    func toString(rows rowNamesDict: [Int: String], functions functionNamesDict: [Int: String]) -> String {
+        self.type.toString(rows: rowNamesDict, functions: functionNamesDict)
     }
 }
 
 // MARK: - Token
 
-extension AToken {
+public extension AToken {
     enum Token: Hashable, Sendable, Codable {
         /// 左括号
         case leftParenthesis
@@ -46,7 +50,7 @@ extension AToken {
 
 // MARK: - toString
 
-extension AToken.Token {
+public extension AToken.Token {
     func toString(rows rowNamesDict: [Int: String], functions functionNamesDict: [Int: String]) -> String {
         switch self {
         case .leftParenthesis:
@@ -108,7 +112,7 @@ extension AToken.Token {
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-extension AToken.Token {
+public extension AToken.Token {
     func colorForLightTheme() -> Color {
         switch self {
         case .leftParenthesis, .rightParenthesis, .comma:

@@ -1,7 +1,7 @@
 import AValue
 import Foundation
 
-enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, ExpressibleByStringLiteral, ExpressibleByBooleanLiteral {
+public enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, ExpressibleByStringLiteral, ExpressibleByBooleanLiteral {
     // 表示一个常量值
     case value(AValue)
     // 表示通过其 ID 引用的行
@@ -45,7 +45,7 @@ enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Expressib
     // 表示三目运算符 (优先级 8)
     indirect case ternary(condition: AFormula, trueFormula: AFormula, falseFormula: AFormula)
 
-    var priority: Int {
+    public var priority: Int {
         switch self {
         case .function, .parenthesis:
             return 1
@@ -70,12 +70,7 @@ enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Expressib
         }
     }
 
-    private func toNormalizedChildren(parent parentPriority: Int) -> Self {
-        // 如果当前的优先级靠后，父公式的优先级靠前，则需添加括号
-        priority > parentPriority ? .parenthesis(self) : self
-    }
-
-    func toTokens() -> [AToken] {
+    public func toTokens() -> [AToken] {
         var tokens = [AToken]()
         let priority = self.priority // 定义当前公式的优先级
 
@@ -204,7 +199,7 @@ enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Expressib
         return tokens
     }
 
-    func isTheSame(as another: AFormula) -> Bool {
+    public func isTheSame(as another: AFormula) -> Bool {
         let jsonEncoder = JSONEncoder()
         jsonEncoder.outputFormatting = .sortedKeys
         guard let thisData = try? jsonEncoder.encode(self),
@@ -216,7 +211,7 @@ enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Expressib
     }
 }
 
-extension AFormula {
+public extension AFormula {
     static func point(x: Double, y: Double) -> AFormula {
         return .value(.point(x: x, y: y))
     }
@@ -254,7 +249,7 @@ extension AFormula {
     }
 }
 
-extension AFormula {
+public extension AFormula {
     static func + (left: AFormula, right: AFormula) -> AFormula {
         return .add(left: left, right: right)
     }
@@ -312,7 +307,7 @@ extension AFormula {
     }
 }
 
-extension AFormula {
+public extension AFormula {
     init(floatLiteral value: Double) {
         self = .value(.number(value))
     }
