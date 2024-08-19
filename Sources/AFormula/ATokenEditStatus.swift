@@ -21,6 +21,12 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
         }
     }
 
+    var canInsertLiteral: Bool {
+        tokensBeforeCursor.last?.content.canBeFollowedByLiteral() ??
+            tokensAfterCursor.first?.content.canBePrefixedByLiteral() ??
+            true
+    }
+
     mutating func setCursor(toBefore someToken: AToken) {
         if let index = (tokensBeforeCursor + tokensAfterCursor).firstIndex(of: someToken) {
             cursorPosition = index

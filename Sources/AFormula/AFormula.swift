@@ -116,7 +116,7 @@ public enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Ex
             tokens.append(AToken(.absolute))
 
         case let .negative(formula):
-            tokens.append(AToken(.minusOrNegative))
+            tokens.append(AToken(.minus))
             addTokens(for: formula)
 
         case let .not(formula):
@@ -150,7 +150,7 @@ public enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Ex
 
         case let .subtract(left, right):
             addTokens(for: left)
-            tokens.append(AToken(.minusOrNegative))
+            tokens.append(AToken(.minus))
             addTokens(for: right)
 
         case let .greaterThan(left, right):

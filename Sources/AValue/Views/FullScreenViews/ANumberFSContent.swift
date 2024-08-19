@@ -13,15 +13,17 @@ public struct ANumberFSContent: View {
         Group {
             if allowSet {
                 TextField(name, value: $value, format: .number.precision(.significantDigits(0 ... 10)))
+                    .font(.largeTitle)
                     .focused($isFocused)
                     .modifier(ANumberKeyboardModifier(value: $value, digits: 10))
             } else if let value = value {
                 Text(value, format: .number.precision(.significantDigits(0 ... 10)))
+                    .font(.largeTitle)
             } else {
                 Text("-")
+                    .font(.largeTitle)
             }
         }
-        .font(.largeTitle)
         .padding()
         .onAppear {
             isFocused = true

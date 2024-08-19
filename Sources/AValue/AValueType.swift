@@ -59,7 +59,7 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
     public var symbolName: String {
         switch self {
         case .number:
-            return "number"
+            return "numbersign"
         case .point:
             return "chart.xyaxis.line"
         case .location:

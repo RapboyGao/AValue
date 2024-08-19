@@ -5,7 +5,7 @@ import SwiftUI
 private let keyboardLine1: [AToken.Content] = [
     .leftParenthesis,
     .rightParenthesis,
-    .plus, .minusOrNegative,
+    .plus, .minus,
     .asterisk, .divide,
     .remainder,
     .power,

@@ -42,7 +42,7 @@ public extension AToken {
         case row(id: Int)
         // 各种运算法
         case plus
-        case minusOrNegative
+        case minus
         case asterisk
         case divide
         case remainder
@@ -58,8 +58,6 @@ public extension AToken {
 // MARK: - toString
 
 public extension AToken.Content {
-
-
     var description: String {
         switch self {
         case .leftParenthesis:
@@ -76,7 +74,7 @@ public extension AToken.Content {
             return "??"
         case .plus:
             return "+"
-        case .minusOrNegative:
+        case .minus:
             return "-"
         case .asterisk:
             return "×"
@@ -111,6 +109,32 @@ public extension AToken.Content {
         }
     }
 
+    func canBeFollowedByLiteral() -> Bool {
+        switch self {
+        case .leftParenthesis, .functionWithLeftParenthesis, .comma:
+            return true
+        case .rightParenthesis, .value, .row:
+            return false
+        case .plus, .minus, .asterisk, .divide, .remainder, .power:
+            return true
+        case .greaterThan, .lessThan, .greaterThanOrEqual, .lessThanOrEqual, .equal, .and, .or, .not, .absolute, .questionMark, .colon:
+            return true
+        }
+    }
+
+    func canBePrefixedByLiteral() -> Bool {
+        switch self {
+        case .leftParenthesis, .functionWithLeftParenthesis, .value, .row:
+            return false
+        case .comma, .rightParenthesis:
+            return true
+        case .plus, .minus, .asterisk, .divide, .remainder, .power:
+            return true
+        case .greaterThan, .lessThan, .greaterThanOrEqual, .lessThanOrEqual, .equal, .and, .or, .not, .absolute, .questionMark, .colon:
+            return true
+        }
+    }
+
     func toString(rows rowNamesDict: [Int: String], functions functionNamesDict: [Int: String]) -> String {
         switch self {
         case .leftParenthesis:
@@ -135,7 +159,7 @@ public extension AToken.Content {
             }
         case .plus:
             return " + "
-        case .minusOrNegative:
+        case .minus:
             return " - "
         case .asterisk:
             return " × "
@@ -181,7 +205,7 @@ public extension AToken {
             return Color(red: 0.733, green: 0.0, blue: 0.0) // Red
         case .value(let value):
             return value.type.colorForLightTheme()
-        case .plus, .minusOrNegative, .asterisk, .divide, .remainder, .power,
+        case .plus, .minus, .asterisk, .divide, .remainder, .power,
              .greaterThan, .lessThan, .greaterThanOrEqual, .lessThanOrEqual, .equal,
              .and, .or, .not, .absolute, .questionMark, .colon:
             return Color(red: 0.627, green: 0.627, blue: 0.627) // Gray
@@ -198,7 +222,7 @@ public extension AToken {
             return Color(red: 0.945, green: 0.329, blue: 0.404) // Light Red
         case .value(let value):
             return value.type.colorForDarkTheme()
-        case .plus, .minusOrNegative, .asterisk, .divide, .remainder, .power,
+        case .plus, .minus, .asterisk, .divide, .remainder, .power,
              .greaterThan, .lessThan, .greaterThanOrEqual, .lessThanOrEqual, .equal,
              .and, .or, .not, .absolute, .questionMark, .colon:
             return Color(red: 0.502, green: 0.502, blue: 0.502) // Gray

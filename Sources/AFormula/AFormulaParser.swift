@@ -109,14 +109,14 @@ struct AFormulaParser: Sendable, Hashable, Codable {
     /// 解析加法和减法运算
     private mutating func parseAdditive() throws -> AFormula {
         var result = try parseMultiplicative()
-        while let token = currentToken, [.plus, .minusOrNegative].contains(token.content) {
+        while let token = currentToken, [.plus, .minus].contains(token.content) {
             let operatorToken = token
             advance()
             let nextTerm = try parseMultiplicative()
             switch operatorToken.content {
             case .plus:
                 result = .add(left: result, right: nextTerm)
-            case .minusOrNegative:
+            case .minus:
                 result = .subtract(left: result, right: nextTerm)
             default:
                 throw AFormulaParserError.unexpectedToken // 意外的标记
@@ -164,7 +164,7 @@ struct AFormulaParser: Sendable, Hashable, Codable {
         }
 
         switch token.content {
-        case .minusOrNegative:
+        case .minus:
             advance()
             return try .negative(parseUnary()) // 解析负号或减号的表达式
         case .not:
