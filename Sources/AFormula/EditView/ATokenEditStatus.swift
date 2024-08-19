@@ -21,6 +21,18 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
         }
     }
 
+    mutating func setCursor(toBefore someToken: AToken) {
+        if let index = (tokensBeforeCursor + tokensAfterCursor).firstIndex(of: someToken) {
+            cursorPosition = index
+        }
+    }
+
+    mutating func setCursor(toAfter someToken: AToken) {
+        if let index = (tokensBeforeCursor + tokensAfterCursor).firstIndex(of: someToken) {
+            cursorPosition = index + 1
+        }
+    }
+
     public init(formula: AFormula) {
         tokensBeforeCursor = formula.toTokens()
         tokensAfterCursor = []
