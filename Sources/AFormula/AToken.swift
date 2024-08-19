@@ -2,24 +2,31 @@ import AValue
 import Foundation
 import SwiftUI
 
-public struct AToken: Identifiable, Hashable, Sendable, Codable {
+public struct AToken: Identifiable, Hashable, Sendable, Codable, CustomStringConvertible {
     public let id: Int
-    public var type: Token
+    /// 在第几个括号内
+    public var level: Int
+    public var content: Content
 
-    public init(_ type: Token) {
+    public init(_ content: Content) {
         self.id = .random(in: .min ... .max)
-        self.type = type
+        self.content = content
+        self.level = 0
+    }
+
+    public var description: String {
+        content.description
     }
 
     func toString(rows rowNamesDict: [Int: String], functions functionNamesDict: [Int: String]) -> String {
-        self.type.toString(rows: rowNamesDict, functions: functionNamesDict)
+        content.toString(rows: rowNamesDict, functions: functionNamesDict)
     }
 }
 
 // MARK: - Token
 
 public extension AToken {
-    enum Token: Hashable, Sendable, Codable {
+    enum Content: Hashable, Sendable, Codable, CustomStringConvertible {
         /// 左括号
         case leftParenthesis
         /// 右括号
@@ -34,23 +41,74 @@ public extension AToken {
         // 代表某个row
         case row(id: Int)
         // 各种运算法
-        case plus // +
-        case minusOrNegative // 代表减，或者 负
-        case asterisk // *
-        case divide // "/"
-        case remainder // "%"
-        case power // "^"
+        case plus
+        case minusOrNegative
+        case asterisk
+        case divide
+        case remainder
+        case power
         case greaterThan, lessThan, greaterThanOrEqual, lessThanOrEqual, equal
         case and, or, not
-        case absolute // "|" （左右都是这个）
-        case questionMark // "?"
-        case colon // ":"
+        case absolute
+        case questionMark
+        case colon
     }
 }
 
 // MARK: - toString
 
-public extension AToken.Token {
+public extension AToken.Content {
+    var description: String {
+        switch self {
+        case .leftParenthesis:
+            return "("
+        case .rightParenthesis:
+            return ")"
+        case .functionWithLeftParenthesis(let id):
+            return "??("
+        case .comma:
+            return ", "
+        case .value(let value):
+            return value.description
+        case .row(let id):
+            return "??"
+        case .plus:
+            return "+"
+        case .minusOrNegative:
+            return "-"
+        case .asterisk:
+            return "×"
+        case .divide:
+            return "÷"
+        case .remainder:
+            return "%"
+        case .power:
+            return "^"
+        case .greaterThan:
+            return ">"
+        case .lessThan:
+            return "<"
+        case .greaterThanOrEqual:
+            return "≥"
+        case .lessThanOrEqual:
+            return "≤"
+        case .equal:
+            return "="
+        case .and:
+            return "&"
+        case .or:
+            return "or"
+        case .not:
+            return "!"
+        case .absolute:
+            return "|"
+        case .questionMark:
+            return "?"
+        case .colon:
+            return ":"
+        }
+    }
+
     func toString(rows rowNamesDict: [Int: String], functions functionNamesDict: [Int: String]) -> String {
         switch self {
         case .leftParenthesis:
@@ -78,9 +136,9 @@ public extension AToken.Token {
         case .minusOrNegative:
             return " - "
         case .asterisk:
-            return " * "
+            return " × "
         case .divide:
-            return " / "
+            return " ÷ "
         case .remainder:
             return " % "
         case .power:
@@ -90,11 +148,11 @@ public extension AToken.Token {
         case .lessThan:
             return " < "
         case .greaterThanOrEqual:
-            return " >= "
+            return " ≥ "
         case .lessThanOrEqual:
-            return " <= "
+            return " ≤ "
         case .equal:
-            return " == "
+            return " = "
         case .and:
             return " & "
         case .or:
@@ -112,7 +170,7 @@ public extension AToken.Token {
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-public extension AToken.Token {
+public extension AToken.Content {
     func colorForLightTheme() -> Color {
         switch self {
         case .leftParenthesis, .rightParenthesis, .comma:

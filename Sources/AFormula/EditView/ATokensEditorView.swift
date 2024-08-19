@@ -3,14 +3,14 @@ import SwiftUI
 
 @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
 public struct ATokensEditorView: View {
-    @State private var status: ATokenEditStatus = .init(formula: (20 + 50) * 30)
+    @State private var status: ATokenEditStatus = .init(formula: (20 + 50 / 40) * 30)
 
     @State private var cursorOffset: CGSize = .zero
     @State private var isCursorVisible: Bool = true
 
     private func renderToken(token: AToken) -> some View {
         Text(token.toString(rows: [:], functions: [:]))
-            .foregroundStyle(token.type.colorForLightTheme())
+            .foregroundStyle(token.content.colorForLightTheme())
             .onTapGesture {
                 status.setCursor(toAfter: token)
             }

@@ -38,10 +38,10 @@ struct AFormulaParser: Sendable, Hashable, Codable {
     /// 解析三元运算符
     private mutating func parseTernary() throws -> AFormula {
         var result = try parseLogicalOr()
-        while let token = currentToken, token.type == .questionMark {
+        while let token = currentToken, token.content == .questionMark {
             advance()
             let trueFormula = try parseExpression()
-            guard let colonToken = currentToken, colonToken.type == .colon else {
+            guard let colonToken = currentToken, colonToken.content == .colon else {
                 throw AFormulaParserError.invalidOperatorUsage // 无效的操作符使用
             }
             advance()
@@ -54,7 +54,7 @@ struct AFormulaParser: Sendable, Hashable, Codable {
     /// 解析逻辑或运算
     private mutating func parseLogicalOr() throws -> AFormula {
         var result = try parseLogicalAnd()
-        while let token = currentToken, token.type == .or {
+        while let token = currentToken, token.content == .or {
             advance()
             let nextTerm = try parseLogicalAnd()
             result = .or(left: result, right: nextTerm)
@@ -65,7 +65,7 @@ struct AFormulaParser: Sendable, Hashable, Codable {
     /// 解析逻辑与运算
     private mutating func parseLogicalAnd() throws -> AFormula {
         var result = try parseEquality()
-        while let token = currentToken, token.type == .and {
+        while let token = currentToken, token.content == .and {
             advance()
             let nextTerm = try parseEquality()
             result = .and(left: result, right: nextTerm)
@@ -76,7 +76,7 @@ struct AFormulaParser: Sendable, Hashable, Codable {
     /// 解析等式运算
     private mutating func parseEquality() throws -> AFormula {
         var result = try parseComparison()
-        while let token = currentToken, token.type == .equal {
+        while let token = currentToken, token.content == .equal {
             advance()
             let nextTerm = try parseComparison()
             result = .equal(left: result, right: nextTerm)
@@ -87,10 +87,10 @@ struct AFormulaParser: Sendable, Hashable, Codable {
     /// 解析比较运算
     private mutating func parseComparison() throws -> AFormula {
         var result = try parseAdditive()
-        while let token = currentToken, [.greaterThan, .lessThan, .greaterThanOrEqual, .lessThanOrEqual].contains(token.type) {
+        while let token = currentToken, [.greaterThan, .lessThan, .greaterThanOrEqual, .lessThanOrEqual].contains(token.content) {
             advance()
             let nextTerm = try parseAdditive()
-            switch token.type {
+            switch token.content {
             case .greaterThan:
                 result = .greaterThan(left: result, right: nextTerm)
             case .lessThan:
@@ -109,11 +109,11 @@ struct AFormulaParser: Sendable, Hashable, Codable {
     /// 解析加法和减法运算
     private mutating func parseAdditive() throws -> AFormula {
         var result = try parseMultiplicative()
-        while let token = currentToken, [.plus, .minusOrNegative].contains(token.type) {
+        while let token = currentToken, [.plus, .minusOrNegative].contains(token.content) {
             let operatorToken = token
             advance()
             let nextTerm = try parseMultiplicative()
-            switch operatorToken.type {
+            switch operatorToken.content {
             case .plus:
                 result = .add(left: result, right: nextTerm)
             case .minusOrNegative:
@@ -128,11 +128,11 @@ struct AFormulaParser: Sendable, Hashable, Codable {
     /// 解析乘法、除法和取余运算
     private mutating func parseMultiplicative() throws -> AFormula {
         var result = try parsePower()
-        while let token = currentToken, [.asterisk, .divide, .remainder].contains(token.type) {
+        while let token = currentToken, [.asterisk, .divide, .remainder].contains(token.content) {
             let operatorToken = token
             advance()
             let nextFactor = try parsePower()
-            switch operatorToken.type {
+            switch operatorToken.content {
             case .asterisk:
                 result = .multiply(left: result, right: nextFactor)
             case .divide:
@@ -149,7 +149,7 @@ struct AFormulaParser: Sendable, Hashable, Codable {
     /// 解析幂运算
     private mutating func parsePower() throws -> AFormula {
         var result = try parseUnary()
-        while let token = currentToken, token.type == .power {
+        while let token = currentToken, token.content == .power {
             advance()
             let nextFactor = try parseUnary()
             result = .power(left: result, right: nextFactor)
@@ -163,7 +163,7 @@ struct AFormulaParser: Sendable, Hashable, Codable {
             throw AFormulaParserError.unexpectedToken // 意外的标记
         }
 
-        switch token.type {
+        switch token.content {
         case .minusOrNegative:
             advance()
             return try .negative(parseUnary()) // 解析负号或减号的表达式
@@ -173,7 +173,7 @@ struct AFormulaParser: Sendable, Hashable, Codable {
         case .absolute:
             advance()
             let formula = try parseExpression()
-            guard currentToken?.type == .absolute else {
+            guard currentToken?.content == .absolute else {
                 throw AFormulaParserError.mismatchedParenthesis // 绝对值括号不匹配
             }
             advance()
@@ -189,11 +189,11 @@ struct AFormulaParser: Sendable, Hashable, Codable {
             throw AFormulaParserError.unexpectedToken // 意外的标记
         }
 
-        switch token.type {
+        switch token.content {
         case .leftParenthesis:
             advance()
             let expression = try parseExpression()
-            guard currentToken?.type == .rightParenthesis else {
+            guard currentToken?.content == .rightParenthesis else {
                 throw AFormulaParserError.mismatchedParenthesis // 括号不匹配
             }
             advance()
@@ -204,14 +204,14 @@ struct AFormulaParser: Sendable, Hashable, Codable {
         case .functionWithLeftParenthesis(let id):
             advance()
             var args = [AFormula]()
-            while currentToken?.type != .rightParenthesis {
+            while currentToken?.content != .rightParenthesis {
                 let arg = try parseExpression()
                 args.append(arg)
-                if currentToken?.type == .comma {
+                if currentToken?.content == .comma {
                     advance() // 解析函数参数列表
                 }
             }
-            guard currentToken?.type == .rightParenthesis else {
+            guard currentToken?.content == .rightParenthesis else {
                 throw AFormulaParserError.mismatchedParenthesis // 函数参数括号不匹配
             }
             advance()
