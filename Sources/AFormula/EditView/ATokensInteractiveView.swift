@@ -3,7 +3,7 @@ import SwiftUI
 
 @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
 public struct ATokensInteractiveView: View {
-    @State private var status: ATokenEditStatus = .init(formula: (20 + 50 / 40) * 30)
+    @Binding private var status: ATokenEditStatus
 
     private func renderToken(token: AToken) -> some View {
         Text(token.toString(rows: [:], functions: [:]))
@@ -23,9 +23,31 @@ public struct ATokensInteractiveView: View {
             }
         }
     }
+
+    public init(_ status: Binding<ATokenEditStatus>) {
+        self._status = status
+    }
+}
+
+@available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+private struct Example: View {
+    @State private var status: ATokenEditStatus = .init(formula: 30 + 40 / 50)
+
+    var body: some View {
+        VStack {
+            ATokensInteractiveView($status)
+            Spacer()
+            VStack {
+                ATokenKeyboardOperatorsContentView {
+                    status.tokensBeforeCursor.append(.init($0))
+                }
+            }
+            .frame(height: 60)
+        }
+    }
 }
 
 @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
 #Preview {
-    ATokensInteractiveView()
+    Example()
 }

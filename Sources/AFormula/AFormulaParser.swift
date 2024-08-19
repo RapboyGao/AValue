@@ -200,7 +200,7 @@ struct AFormulaParser: Sendable, Hashable, Codable {
             return .parenthesis(expression) // 解析括号内的表达式
         case .row(let id):
             advance()
-            return .row(id: id) // 解析行引用
+            return .variable(id: id) // 解析行引用
         case .functionWithLeftParenthesis(let id):
             advance()
             var args = [AFormula]()

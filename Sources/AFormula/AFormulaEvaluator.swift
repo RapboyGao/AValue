@@ -15,7 +15,7 @@ struct AFormulaEvaluator: Sendable {
         switch formula {
         case .value(let value):
             return value
-        case .row(let id):
+        case .variable(let id):
             guard let value = rowValues[id] else {
                 throw AError.rowNotFound(id: id)
             }

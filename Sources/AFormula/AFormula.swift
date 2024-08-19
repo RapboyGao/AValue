@@ -5,7 +5,7 @@ public enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Ex
     // 表示一个常量值
     case value(AValue)
     // 表示通过其 ID 引用的行
-    case row(id: Int)
+    case variable(id: Int)
     // 表示一个带有参数的函数 (优先级 1)
     indirect case function(id: Int, args: [AFormula])
     // 表示包含在括号中的公式 (优先级 1)
@@ -65,7 +65,7 @@ public enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Ex
             return 7
         case .ternary:
             return 8
-        case .value, .row:
+        case .value, .variable:
             return 0 // constants and rows do not have operation priority
         }
     }
@@ -92,7 +92,7 @@ public enum AFormula: Codable, Sendable, Hashable, ExpressibleByFloatLiteral, Ex
         case let .value(value):
             tokens.append(AToken(.value(value)))
 
-        case let .row(id):
+        case let .variable(id):
             tokens.append(AToken(.row(id: id)))
 
         case let .function(id, args):
