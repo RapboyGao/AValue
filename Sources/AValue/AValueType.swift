@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// `AValueType` 是一个表示 `AValue` 可以持有的值类型的枚举
-public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, CaseIterable {
+public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, CaseIterable, Identifiable {
     /// 表示一个数值类型
     case number
 
@@ -28,6 +28,10 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
 
     /// 表示两个日期之间的差异（以时间戳形式）类型
     case dateDifference
+
+    public var id: Self {
+        self
+    }
 
     public func baseValue() -> AValue {
         switch self {

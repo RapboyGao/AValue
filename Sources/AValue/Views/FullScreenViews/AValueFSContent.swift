@@ -1,4 +1,5 @@
 import AUnit
+import AViewUI
 import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, *)
@@ -45,33 +46,21 @@ public struct AValueFSContent: View {
     }
 }
 
-@available(iOS 15.0, macOS 12.0, *)
+@available(iOS 16.0, macOS 13.0, *)
 private struct Example: View {
     @State private var showFSContent = false
     @State private var aValue: AValue? = .location(latitude: 40.16415, longitude: 116.44354)
 
     var body: some View {
-        Button(aValue?.description ?? "nil") {
-            showFSContent.toggle()
+        ASheetButton(type: .fullScreenCover, .button) {
+            Text(aValue?.description ?? "nil")
+        } cover: {
+            AValueFSContent(value: $aValue, type: aValue?.type ?? .number, allowInput: true, name: "Hello", unit: .constant(.knots))
         }
-        #if os(iOS)
-        .fullScreenCover(isPresented: $showFSContent) {
-            NavigationView {
-                AValueFSContent(value: $aValue, type: aValue?.type ?? .number, allowInput: true, name: "Hello", unit: .constant(.knots))
-                    .toolbar {
-                        ToolbarItemGroup {
-                            Button("Done") {
-                                showFSContent.toggle()
-                            }
-                        }
-                    }
-            }
-        }
-        #endif
     }
 }
 
-@available(iOS 15.0, macOS 12.0, *)
+@available(iOS 16.0, macOS 13.0, *)
 #Preview {
     Example()
 }

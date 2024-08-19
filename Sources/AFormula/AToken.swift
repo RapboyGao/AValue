@@ -58,19 +58,21 @@ public extension AToken {
 // MARK: - toString
 
 public extension AToken.Content {
+
+
     var description: String {
         switch self {
         case .leftParenthesis:
             return "("
         case .rightParenthesis:
             return ")"
-        case .functionWithLeftParenthesis(let id):
+        case .functionWithLeftParenthesis:
             return "??("
         case .comma:
             return ", "
         case .value(let value):
             return value.description
-        case .row(let id):
+        case .row:
             return "??"
         case .plus:
             return "+"
@@ -170,9 +172,9 @@ public extension AToken.Content {
 }
 
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-public extension AToken.Content {
+public extension AToken {
     func colorForLightTheme() -> Color {
-        switch self {
+        switch content {
         case .leftParenthesis, .rightParenthesis, .comma:
             return Color(red: 0.027, green: 0.302, blue: 0.423) // Dark Blue
         case .functionWithLeftParenthesis:
@@ -189,7 +191,7 @@ public extension AToken.Content {
     }
 
     func colorForDarkTheme() -> Color {
-        switch self {
+        switch content {
         case .leftParenthesis, .rightParenthesis, .comma:
             return Color(red: 0.608, green: 0.678, blue: 0.847) // Light Blue
         case .functionWithLeftParenthesis:

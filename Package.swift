@@ -9,9 +9,6 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "CommonViews",
-            targets: ["CommonViews"]),
-        .library(
             name: "AValue",
             targets: ["AValue"]),
         .library(
@@ -23,30 +20,29 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/RapboyGao/AUnit.git", branch: "main"),
+        .package(url: "https://github.com/RapboyGao/AViewUI.git", branch: "main"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
-        .target(name: "CommonViews"),
         .target(
             name: "AValue",
             dependencies: [
-                "CommonViews",
+                .product(name: "AViewUI", package: "AViewUI"),
                 .product(name: "AUnit", package: "AUnit"),
             ]),
         .target(
             name: "AFunction",
             dependencies: [
-                "CommonViews",
                 "AValue",
                 .product(name: "AUnit", package: "AUnit"),
             ]),
         .target(
             name: "AFormula",
             dependencies: [
-                "CommonViews",
                 "AValue",
                 "AFunction",
+                .product(name: "AViewUI", package: "AViewUI"),
                 .product(name: "AUnit", package: "AUnit"),
             ]),
         .testTarget(

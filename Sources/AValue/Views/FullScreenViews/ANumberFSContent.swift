@@ -1,4 +1,4 @@
-import CommonViews
+import AViewUI
 import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
@@ -14,7 +14,7 @@ public struct ANumberFSContent: View {
             if allowSet {
                 TextField(name, value: $value, format: .number.precision(.significantDigits(0 ... 10)))
                     .focused($isFocused)
-                    .modifier(NumberKeyboardModifier(value: $value, digits: 10))
+                    .modifier(ANumberKeyboardModifier(value: $value, digits: 10))
             } else if let value = value {
                 Text(value, format: .number.precision(.significantDigits(0 ... 10)))
             } else {
