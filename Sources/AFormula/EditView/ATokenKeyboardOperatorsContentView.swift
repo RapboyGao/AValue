@@ -31,9 +31,6 @@ public struct ATokenKeyboardOperatorsContentView: View {
     var handle: (AToken.Content) -> Void
 
     @ViewBuilder
-    private func render(content: AToken.Content) -> some View {}
-
-    @ViewBuilder
     private func renderOperators(_ array: [AToken.Content]) -> some View {
         LazyHStack {
             ForEach(array, id: \.self) { content in

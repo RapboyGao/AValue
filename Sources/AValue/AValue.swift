@@ -51,7 +51,11 @@ public extension AValue {
     var description: String {
         switch self {
         case let .number(value):
-            return "\(value)"
+            if value.truncatingRemainder(dividingBy: 1) == 0 {
+                return Int(value).description
+            } else {
+                return value.description
+            }
         case let .point(x, y):
             return "(\(x), \(y))"
         case let .location(latitude, longitude):

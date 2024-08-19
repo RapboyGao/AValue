@@ -33,6 +33,16 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
         }
     }
 
+    mutating func tryDeleteLeft() {
+        guard !tokensBeforeCursor.isEmpty else { return }
+        tokensBeforeCursor.removeLast()
+    }
+
+    mutating func tryDeleteRight() {
+        guard !tokensAfterCursor.isEmpty else { return }
+        tokensBeforeCursor.removeFirst()
+    }
+
     public init(formula: AFormula) {
         tokensBeforeCursor = formula.toTokens()
         tokensAfterCursor = []

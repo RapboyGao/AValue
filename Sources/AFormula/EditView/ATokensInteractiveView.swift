@@ -31,7 +31,7 @@ public struct ATokensInteractiveView: View {
 
 @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
 private struct Example: View {
-    @State private var status: ATokenEditStatus = .init(formula: 30 + 40 / 50)
+    @State private var status: ATokenEditStatus = .init(formula: .p(30 - 4.5) / 50)
 
     var body: some View {
         VStack {
@@ -41,8 +41,12 @@ private struct Example: View {
                 ATokenKeyboardOperatorsContentView {
                     status.tokensBeforeCursor.append(.init($0))
                 }
+                Divider()
+                LazyHStack {
+                    ATokenManipulationContentView(status: $status)
+                }
             }
-            .frame(height: 60)
+            .frame(height: 100)
         }
     }
 }
