@@ -5,21 +5,26 @@ import SwiftUI
 public struct ATokensInteractiveTextView: View {
     @Binding private var status: ATokenEditStatus
 
-    private func renderToken(token: AToken) -> some View {
-        Text(token.toString(rows: [:], functions: [:]))
-            .foregroundStyle(token.colorForLightTheme())
+    private func renderToken(_ bindToken: Binding<AToken>) -> some View {
+        ATokenMenu(bindToken) {
+            status.delete(bindToken.wrappedValue)
+        } cursorToLeft: {
+            status.setCursor(toBefore: bindToken.wrappedValue)
+        } cursorToRight: {
+            status.setCursor(toAfter: bindToken.wrappedValue)
+        }
     }
 
     public var body: some View {
         AWrappingStack {
-            ForEach(status.tokensBeforeCursor) { token in
-                renderToken(token: token)
+            ForEach($status.tokensBeforeCursor) { bindToken in
+                renderToken(bindToken)
             }
 
             AInputCursorView()
 
-            ForEach(status.tokensAfterCursor) { token in
-                renderToken(token: token)
+            ForEach($status.tokensAfterCursor) { bindToken in
+                renderToken(bindToken)
             }
         }
     }

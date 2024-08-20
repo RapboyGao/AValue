@@ -8,6 +8,7 @@ public struct ANumberFSContent: View {
     var allowSet: Bool
 
     @FocusState private var isFocused
+    @Environment(\.dismiss) private var dismiss
 
     public var body: some View {
         Group {
@@ -16,6 +17,11 @@ public struct ANumberFSContent: View {
                     .font(.largeTitle)
                     .focused($isFocused)
                     .modifier(ANumberKeyboardModifier(value: $value, digits: 10))
+                    .submitLabel(.done)
+                    .onSubmit {
+                        dismiss()
+                    }
+
             } else if let value = value {
                 Text(value, format: .number.precision(.significantDigits(0 ... 10)))
                     .font(.largeTitle)
