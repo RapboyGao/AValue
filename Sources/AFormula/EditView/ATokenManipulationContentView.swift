@@ -8,7 +8,7 @@ public struct ATokenManipulationContentView: View {
 
     public var body: some View {
         AKeyButton(cornerRadius: 4) {
-            status.cursorPosition -= 1
+            status.tryMoveLeft()
         } content: {
             Image(systemName: "chevron.left")
                 .font(.system(size: 15))
@@ -16,7 +16,7 @@ public struct ATokenManipulationContentView: View {
         .frame(width: 30, height: 30)
 
         AKeyButton(cornerRadius: 4) {
-            status.cursorPosition += 1
+            status.tryMoveRight()
         } content: {
             Image(systemName: "chevron.right")
                 .font(.system(size: 15))

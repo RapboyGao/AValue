@@ -8,7 +8,15 @@ public extension AFunction {
         public var detail: String
         // 可以接受的数据类型
         public var type: ArgumentType
-        public var constraint: ANumberConstraint = .realNumber(.infiniteRange)
+        public var constraint: ANumberConstraint
         public var unit: AUnit?
+
+        public init(name: String, detail: String, type: ArgumentType, constraint: ANumberConstraint = .realNumber(.infiniteRange), unit: AUnit? = nil) {
+            self.name = name
+            self.detail = detail
+            self.type = type
+            self.constraint = constraint
+            self.unit = unit
+        }
     }
 }
