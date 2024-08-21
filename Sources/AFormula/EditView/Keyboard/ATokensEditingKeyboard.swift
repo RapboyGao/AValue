@@ -7,15 +7,15 @@ public struct ATokensEditingKeyboard: View {
 
     public var body: some View {
         ZStack {
-            Rectangle()
-                .foregroundColor(.gray)
-            KeyBoardSpaceAroundStack(rows: 5, columns: 8, rowSpace: 5, columnSpace: 5) {
-                ATokenKeyboardOperatorsContentView { newToken in
-                    status.tokensBeforeCursor.append(AToken(newToken))
-                }
-                ATokenManipulationContentView(status: $status)
-                AValueTypesKeyboardContentView(canInsertLiteral: status.canInsertLiteral) { newToken in
-                    status.tokensBeforeCursor.append(AToken(newToken))
+            VStack {
+                KeyBoardSpaceAroundStack(rows: 5, columns: 8, rowSpace: 5, columnSpace: 5) {
+                    ATokenKeyboardOperatorsContentView { newToken in
+                        status.insert(newToken)
+                    }
+                    ATokenManipulationContentView(status: $status)
+                    AValueTypesKeyboardContentView(canInsertLiteral: status.canInsertLiteral) { newToken in
+                        status.insert(newToken)
+                    }
                 }
             }
         }
@@ -32,7 +32,7 @@ private struct Example: View {
 
     var body: some View {
         ATokensEditingKeyboard($status)
-            .frame(height: 400)
+            .frame(height: 300)
     }
 }
 

@@ -69,6 +69,10 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
         tokensAfterCursor = afterCursor
     }
 
+    mutating func insert(_ newToken: AToken.Content) {
+        tokensBeforeCursor.append(AToken(newToken))
+    }
+
     // 尝试删除光标左侧的一个token
     mutating func tryDeleteLeft() {
         guard !tokensBeforeCursor.isEmpty else { return }

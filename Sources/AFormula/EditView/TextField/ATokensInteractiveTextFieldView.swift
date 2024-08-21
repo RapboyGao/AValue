@@ -13,7 +13,7 @@ public struct ATokensInteractiveTextFieldView: View {
         } cursorToRight: {
             status.setCursor(toAfter: bindToken.wrappedValue)
         }
-        .font(.system(size: 30))
+        .font(.system(size: 24))
     }
 
     public var body: some View {
