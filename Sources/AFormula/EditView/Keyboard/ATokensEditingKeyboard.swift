@@ -6,17 +6,17 @@ public struct ATokensEditingKeyboard: View {
     @Binding private var status: ATokenEditStatus
 
     public var body: some View {
-        VStack(alignment: .center) {
-            AWrappingStack(vSpacing: 10, hSpacing: 10) {
-                AValueTypesKeyboardContentView(canInsertLiteral: status.canInsertLiteral) {
-                    status.tokensBeforeCursor.append(.init($0))
-                }
-            }
-            AWrappingStack(vSpacing: 10, hSpacing: 10) {
-                ATokenKeyboardOperatorsContentView {
-                    status.tokensBeforeCursor.append(.init($0))
+        ZStack {
+            Rectangle()
+                .foregroundColor(.gray)
+            KeyBoardSpaceAroundStack(rows: 5, columns: 8, rowSpace: 5, columnSpace: 5) {
+                ATokenKeyboardOperatorsContentView { newToken in
+                    status.tokensBeforeCursor.append(AToken(newToken))
                 }
                 ATokenManipulationContentView(status: $status)
+                AValueTypesKeyboardContentView(canInsertLiteral: status.canInsertLiteral) { newToken in
+                    status.tokensBeforeCursor.append(AToken(newToken))
+                }
             }
         }
     }
@@ -32,7 +32,7 @@ private struct Example: View {
 
     var body: some View {
         ATokensEditingKeyboard($status)
-            .padding()
+            .frame(height: 400)
     }
 }
 

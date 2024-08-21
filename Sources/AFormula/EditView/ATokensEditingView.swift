@@ -11,7 +11,7 @@ public struct ATokensEditingView: View {
                 .padding()
             Spacer()
             ATokensEditingKeyboard($status)
-                .padding()
+                .frame(height: 300)
         }
     }
 

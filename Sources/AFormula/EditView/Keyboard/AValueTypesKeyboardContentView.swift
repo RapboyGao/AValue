@@ -12,7 +12,6 @@ public struct AValueTypesKeyboardContentView: View {
             ASpecificValueTypeButtonView(valueType: $0, handle: handle)
                 .opacity(canInsertLiteral ? 1 : 0.7)
                 .disabled(!canInsertLiteral)
-                .frame(width: 50, height: 50)
         }
     }
 
