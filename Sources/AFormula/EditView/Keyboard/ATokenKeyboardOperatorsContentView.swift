@@ -2,15 +2,20 @@ import AValue
 import AViewUI
 import SwiftUI
 
-private let keyboardLine1: [AToken.Content] = [
+private let keyboardLine0: [AToken.Content] = [
     .leftParenthesis,
     .rightParenthesis,
+    .comma,
+    .absolute,
+    .questionMark,
+    .colon,
+]
+
+private let keyboardLine1: [AToken.Content] = [
     .plus, .minus,
     .asterisk, .divide,
     .remainder,
     .power,
-    .comma,
-    .absolute,
 ]
 
 private let keyboardLine2: [AToken.Content] = [
@@ -22,8 +27,6 @@ private let keyboardLine2: [AToken.Content] = [
     .and,
     .or,
     .not,
-    .questionMark,
-    .colon,
 ]
 
 @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
@@ -32,22 +35,20 @@ public struct ATokenKeyboardOperatorsContentView: View {
 
     @ViewBuilder
     private func renderOperators(_ array: [AToken.Content]) -> some View {
-        LazyHStack {
-            ForEach(array, id: \.self) { content in
-                AKeyButton(cornerRadius: 4) {
-                    handle(content)
-                } content: {
-                    Text(content.description)
-                        .font(.system(size: 15))
-                }
-                .frame(width: 30, height: 30)
+        ForEach(array, id: \.self) { content in
+            AKeyButton(cornerRadius: 4) {
+                handle(content)
+            } content: {
+                Text(content.description)
+                    .font(.system(size: 20))
             }
+            .frame(width: 50, height: 50)
         }
     }
 
     public var body: some View {
+        renderOperators(keyboardLine0)
         renderOperators(keyboardLine1)
-        Divider()
         renderOperators(keyboardLine2)
     }
 

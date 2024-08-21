@@ -2,7 +2,7 @@ import AViewUI
 import SwiftUI
 
 @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
-public struct ATokensInteractiveTextView: View {
+public struct ATokensInteractiveTextFieldView: View {
     @Binding private var status: ATokenEditStatus
 
     private func renderToken(_ bindToken: Binding<AToken>) -> some View {
@@ -13,6 +13,7 @@ public struct ATokensInteractiveTextView: View {
         } cursorToRight: {
             status.setCursor(toAfter: bindToken.wrappedValue)
         }
+        .font(.system(size: 30))
     }
 
     public var body: some View {
@@ -21,7 +22,7 @@ public struct ATokensInteractiveTextView: View {
                 renderToken(bindToken)
             }
 
-            AInputCursorView()
+            AInputCursorView(height: 35)
 
             ForEach($status.tokensAfterCursor) { bindToken in
                 renderToken(bindToken)

@@ -8,16 +8,12 @@ public struct AValueTypesKeyboardContentView: View {
     var canInsertLiteral: Bool
 
     public var body: some View {
-        ScrollView(.horizontal) {
-            LazyHStack {
-                ForEach(AValueType.allCases) {
-                    ASpecificValueTypeButtonView(valueType: $0, handle: handle)
-                        .opacity(canInsertLiteral ? 1 : 0.7)
-                        .disabled(!canInsertLiteral)
-                }
-            }
+        ForEach(AValueType.allCases) {
+            ASpecificValueTypeButtonView(valueType: $0, handle: handle)
+                .opacity(canInsertLiteral ? 1 : 0.7)
+                .disabled(!canInsertLiteral)
+                .frame(width: 50, height: 50)
         }
-        .padding(.horizontal)
     }
 
     public init(canInsertLiteral: Bool, handle: @escaping (AToken.Content) -> Void) {

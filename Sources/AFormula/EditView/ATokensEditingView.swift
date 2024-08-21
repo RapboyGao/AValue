@@ -7,23 +7,11 @@ public struct ATokensEditingView: View {
 
     public var body: some View {
         VStack {
-            ATokensInteractiveTextView($status)
+            ATokensInteractiveTextFieldView($status)
                 .padding()
             Spacer()
-            VStack {
-                AValueTypesKeyboardContentView(canInsertLiteral: status.canInsertLiteral) {
-                    status.tokensBeforeCursor.append(.init($0))
-                }
-                Divider()
-                ATokenKeyboardOperatorsContentView {
-                    status.tokensBeforeCursor.append(.init($0))
-                }
-                Divider()
-                LazyHStack {
-                    ATokenManipulationContentView(status: $status)
-                }
-            }
-            .frame(height: 150)
+            ATokensEditingKeyboard($status)
+                .padding()
         }
     }
 

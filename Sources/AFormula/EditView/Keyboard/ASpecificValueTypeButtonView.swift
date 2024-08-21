@@ -16,7 +16,6 @@ public struct ASpecificValueTypeButtonView: View {
                 Image(systemName: valueType.symbolName)
                     .symbolRenderingMode(.hierarchical)
                     .foregroundColor(.white)
-                    .frame(width: 30)
             }
 
         } cover: {
