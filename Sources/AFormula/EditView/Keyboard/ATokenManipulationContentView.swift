@@ -8,18 +8,6 @@ public struct ATokenManipulationContentView: View {
 
     public var body: some View {
         AKeyButtonWithZoom(cornerRadius: 4) {
-            status.tryMoveLeft()
-        } content: {
-            Image(systemName: "chevron.left")
-        }
-
-        AKeyButtonWithZoom(cornerRadius: 4) {
-            status.tryMoveRight()
-        } content: {
-            Image(systemName: "chevron.right")
-        }
-
-        AKeyButtonWithZoom(cornerRadius: 4) {
             status.tryDeleteLeft()
         } content: {
             Image(systemName: "delete.left")
@@ -29,6 +17,17 @@ public struct ATokenManipulationContentView: View {
             status.tryDeleteRight()
         } content: {
             Image(systemName: "delete.right")
+        }
+        AKeyButtonWithZoom(cornerRadius: 4) {
+            status.tryMoveLeft()
+        } content: {
+            Image(systemName: "arrowtriangle.backward")
+        }
+
+        AKeyButtonWithZoom(cornerRadius: 4) {
+            status.tryMoveRight()
+        } content: {
+            Image(systemName: "arrowtriangle.forward")
         }
     }
 }

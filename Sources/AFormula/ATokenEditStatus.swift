@@ -16,24 +16,30 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
         numberInputString = ""
     }
 
-    mutating func submitNumberInput() {
+    mutating func trySubmitNumberInput() {
         if let number = Double(numberInputString) {
-            insert(.value(.number(number)))
+            tokensBeforeCursor.append(AToken(.value(.number(number))))
         }
         clearNumberInput()
     }
 
     // 将光标移动到某个token之前
     mutating func setCursor(toBefore someToken: AToken) {
+        trySubmitNumberInput()
+        
         setCursor(to: someToken, placeCursorAfter: false)
     }
 
     // 将光标移动到某个token之后
     mutating func setCursor(toAfter someToken: AToken) {
+        trySubmitNumberInput()
+
         setCursor(to: someToken, placeCursorAfter: true)
     }
 
     mutating func delete(_ someToken: AToken) {
+        trySubmitNumberInput()
+
         var beforeCursor = [AToken]() // 用于存储光标之前的token
         var afterCursor = [AToken]() // 用于存储光标之后的token
         var found = false
@@ -56,6 +62,8 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
 
     // 根据参数设置光标位置，placeCursorAfter为true时光标放在token之后
     private mutating func setCursor(to someToken: AToken, placeCursorAfter: Bool) {
+        trySubmitNumberInput()
+
         var beforeCursor = [AToken]() // 用于存储光标之前的token
         var afterCursor = [AToken]() // 用于存储光标之后的token
         var found = false
@@ -82,6 +90,7 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
     }
 
     mutating func insert(_ newToken: AToken.Content) {
+        trySubmitNumberInput()
         tokensBeforeCursor.append(AToken(newToken))
     }
 
@@ -103,14 +112,14 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
 
     // 尝试将光标左移一位
     mutating func tryMoveLeft() {
-        submitNumberInput()
+        trySubmitNumberInput()
         guard let token = tokensBeforeCursor.popLast() else { return }
         tokensAfterCursor.insert(token, at: 0)
     }
 
     // 尝试将光标右移一位
     mutating func tryMoveRight() {
-        submitNumberInput()
+        trySubmitNumberInput()
         guard let token = tokensAfterCursor.first else { return }
         tokensAfterCursor.removeFirst()
         tokensBeforeCursor.append(token)

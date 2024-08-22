@@ -3,12 +3,12 @@ import AViewUI
 import SwiftUI
 
 private let allKeyboardKeys: [AToken.Content] = [
+    .plus, .minus,
+    .asterisk, .divide,
     .leftParenthesis,
     .rightParenthesis,
     .comma,
-    .absolute,
-    .plus, .minus,
-    .asterisk, .divide,
+    .absolute,    
     .remainder,
     .power,
     .questionMark,
