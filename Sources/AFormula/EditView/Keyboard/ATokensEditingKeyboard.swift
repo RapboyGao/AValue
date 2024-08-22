@@ -8,13 +8,13 @@ public struct ATokensEditingKeyboard: View {
     public var body: some View {
         ZStack {
             VStack {
-                KeyBoardSpaceAroundStack(rows: 4, columns: 11, rowSpace: 1, columnSpace: 1) {
+                KeyBoardSpaceAroundStack(rows: 4, columns: 11, rowSpace: 5, columnSpace: 5) {
                     ATokenNumberInputKeyboardContent(status: $status)
                     ATokenKeyboardOperatorsContentView { newToken in
                         status.insert(newToken)
                     }
                     ATokenManipulationContentView(status: $status)
-                    AValueTypesKeyboardContentView(canInsertLiteral: status.canInsertLiteral) { newToken in
+                    AValueTypesKeyboardContentView(canInsertLiteral: status.canInsertOtherLiterals) { newToken in
                         status.insert(newToken)
                     }
                 }

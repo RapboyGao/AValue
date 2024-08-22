@@ -17,7 +17,6 @@ public struct ASpecificValueTypeButtonView: View {
                     .symbolRenderingMode(.hierarchical)
                     .foregroundColor(.white)
             }
-
         } cover: {
             AValueFSContent(value: $value, type: valueType, allowInput: true, name: "New Value", unit: .constant(nil))
         } onSheetClosed: {

@@ -5,11 +5,14 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
     public var tokensAfterCursor: [AToken] // 光标后的token数组
     public var numberInputString: String
 
-    // 判断是否可以插入字面量
-    var canInsertLiteral: Bool {
+    var canInsertNumber: Bool {
         return tokensBeforeCursor.last?.content.canBeFollowedByLiteral() ??
             tokensAfterCursor.first?.content.canBePrefixedByLiteral() ??
             true
+    }
+
+    var canInsertOtherLiterals: Bool {
+        canInsertNumber && numberInputString.isEmpty
     }
 
     mutating func clearNumberInput() {
@@ -26,7 +29,7 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
     // 将光标移动到某个token之前
     mutating func setCursor(toBefore someToken: AToken) {
         trySubmitNumberInput()
-        
+
         setCursor(to: someToken, placeCursorAfter: false)
     }
 

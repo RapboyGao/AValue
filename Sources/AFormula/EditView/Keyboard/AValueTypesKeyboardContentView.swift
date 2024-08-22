@@ -4,8 +4,8 @@ import SwiftUI
 
 @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
 public struct AValueTypesKeyboardContentView: View {
-    var handle: (AToken.Content) -> Void
-    var canInsertLiteral: Bool
+    private var handle: (AToken.Content) -> Void
+    private var canInsertLiteral: Bool
 
     public var body: some View {
         ForEach(AValueType.allCases) {
