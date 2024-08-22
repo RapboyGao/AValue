@@ -13,7 +13,6 @@ public struct ATokensInteractiveTextFieldView: View {
         } cursorToRight: {
             status.setCursor(toAfter: bindToken.wrappedValue)
         }
-        .font(.system(size: 24))
     }
 
     public var body: some View {
@@ -21,13 +20,15 @@ public struct ATokensInteractiveTextFieldView: View {
             ForEach($status.tokensBeforeCursor) { bindToken in
                 renderToken(bindToken)
             }
+            Text(status.numberInputString)
 
-            AInputCursorView(height: 35)
+            AInputCursorView(height: 30)
 
             ForEach($status.tokensAfterCursor) { bindToken in
                 renderToken(bindToken)
             }
         }
+        .font(.system(size: 24))
     }
 
     public init(_ status: Binding<ATokenEditStatus>) {

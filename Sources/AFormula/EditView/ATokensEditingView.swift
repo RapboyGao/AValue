@@ -12,7 +12,7 @@ public struct ATokensEditingView: View {
             Spacer()
             Divider()
             ATokensEditingKeyboard($status)
-                .frame(height: 300)
+                .frame(height: 200)
         }
     }
 

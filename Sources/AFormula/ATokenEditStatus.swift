@@ -1,14 +1,26 @@
 import Foundation
 
 public struct ATokenEditStatus: Hashable, Sendable, Codable {
-    var tokensBeforeCursor: [AToken] // 光标前的token数组
-    var tokensAfterCursor: [AToken] // 光标后的token数组
+    public var tokensBeforeCursor: [AToken] // 光标前的token数组
+    public var tokensAfterCursor: [AToken] // 光标后的token数组
+    public var numberInputString: String
 
     // 判断是否可以插入字面量
     var canInsertLiteral: Bool {
         return tokensBeforeCursor.last?.content.canBeFollowedByLiteral() ??
             tokensAfterCursor.first?.content.canBePrefixedByLiteral() ??
             true
+    }
+
+    mutating func clearNumberInput() {
+        numberInputString = ""
+    }
+
+    mutating func submitNumberInput() {
+        if let number = Double(numberInputString) {
+            insert(.value(.number(number)))
+        }
+        clearNumberInput()
     }
 
     // 将光标移动到某个token之前
@@ -75,6 +87,10 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
 
     // 尝试删除光标左侧的一个token
     mutating func tryDeleteLeft() {
+        guard numberInputString.isEmpty else {
+            clearNumberInput()
+            return
+        }
         guard !tokensBeforeCursor.isEmpty else { return }
         tokensBeforeCursor.removeLast()
     }
@@ -87,12 +103,14 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
 
     // 尝试将光标左移一位
     mutating func tryMoveLeft() {
+        submitNumberInput()
         guard let token = tokensBeforeCursor.popLast() else { return }
         tokensAfterCursor.insert(token, at: 0)
     }
 
     // 尝试将光标右移一位
     mutating func tryMoveRight() {
+        submitNumberInput()
         guard let token = tokensAfterCursor.first else { return }
         tokensAfterCursor.removeFirst()
         tokensBeforeCursor.append(token)
@@ -102,5 +120,6 @@ public struct ATokenEditStatus: Hashable, Sendable, Codable {
     public init(formula: AFormula) {
         tokensBeforeCursor = formula.toTokens()
         tokensAfterCursor = []
+        numberInputString = ""
     }
 }

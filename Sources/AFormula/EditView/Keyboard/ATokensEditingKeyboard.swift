@@ -8,7 +8,8 @@ public struct ATokensEditingKeyboard: View {
     public var body: some View {
         ZStack {
             VStack {
-                KeyBoardSpaceAroundStack(rows: 5, columns: 8, rowSpace: 5, columnSpace: 5) {
+                KeyBoardSpaceAroundStack(rows: 4, columns: 11, rowSpace: 5, columnSpace: 5) {
+                    ATokenNumberInputKeyboardContent(status: $status)
                     ATokenKeyboardOperatorsContentView { newToken in
                         status.insert(newToken)
                     }
