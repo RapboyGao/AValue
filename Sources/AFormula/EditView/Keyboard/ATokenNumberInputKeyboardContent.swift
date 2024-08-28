@@ -2,7 +2,7 @@ import AValue
 import AViewUI
 import SwiftUI
 
-private let keys = ["."] + Array(0 ... 9).map { "\($0)" }
+private let keys = Array(1 ... 9).map { "\($0)" } + ["0", "."]
 
 @available(iOS 15, macOS 12, tvOS 15, watchOS 8, *)
 public struct ATokenNumberInputKeyboardContent: View {
