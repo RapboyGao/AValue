@@ -7,13 +7,13 @@ public struct ATokenManipulationContentView: View {
     @Binding var status: ATokenEditStatus
 
     public var body: some View {
-        AKeyButtonWithZoom(cornerRadius: 4) {
+        AKeyButton(cornerRadius: 4, sound: 1155) {
             status.tryDeleteLeft()
         } content: {
             Image(systemName: "delete.left")
         }
 
-        AKeyButtonWithZoom(cornerRadius: 4) {
+        AKeyButton(cornerRadius: 4, sound: 1155) {
             status.tryDeleteRight()
         } content: {
             Image(systemName: "delete.right")
