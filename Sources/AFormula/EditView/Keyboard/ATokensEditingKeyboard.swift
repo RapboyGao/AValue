@@ -6,17 +6,15 @@ public struct ATokensEditingKeyboard: View {
     @Binding private var status: ATokenEditStatus
 
     public var body: some View {
-        ZStack {
-            VStack {
-                KeyBoardSpaceAroundStack(columns: 11, rowSpace: 5, columnSpace: 5) {
-                    ATokenNumberInputKeyboardContent(status: $status)
-                    ATokenKeyboardOperatorsContentView { newToken in
-                        status.insert(newToken)
-                    }
-                    ATokenManipulationContentView(status: $status)
-                    AValueTypesKeyboardContentView(canInsertLiteral: status.canInsertOtherLiterals) { newToken in
-                        status.insert(newToken)
-                    }
+        AKeyboardBackgroundView {
+            KeyBoardSpaceAroundStack(columns: 11, rowSpace: 5, columnSpace: 5) {
+                ATokenNumberInputKeyboardContent(status: $status)
+                ATokenKeyboardOperatorsContentView { newToken in
+                    status.insert(newToken)
+                }
+                ATokenManipulationContentView(status: $status)
+                AValueTypesKeyboardContentView(canInsertLiteral: status.canInsertOtherLiterals) { newToken in
+                    status.insert(newToken)
                 }
             }
         }

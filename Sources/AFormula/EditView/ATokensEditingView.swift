@@ -10,7 +10,6 @@ public struct ATokensEditingView: View {
             ATokensInteractiveTextFieldView($status)
                 .padding()
             Spacer()
-            Divider()
             ATokensEditingKeyboard($status)
                 .frame(height: 200)
         }
