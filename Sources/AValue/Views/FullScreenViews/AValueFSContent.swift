@@ -52,7 +52,9 @@ private struct Example: View {
     @State private var aValue: AValue? = .location(latitude: 40.16415, longitude: 116.44354)
 
     var body: some View {
-        ASheetButton(type: .fullScreenCover, .button) {
+        ASheetButton {
+            .init(.fullScreenCover, .button, return: .done)
+        } label: {
             Text(aValue?.description ?? "nil")
         } cover: {
             AValueFSContent(value: $aValue, type: aValue?.type ?? .number, allowInput: true, name: "Hello", unit: .constant(.knots))

@@ -9,7 +9,9 @@ public struct ASpecificValueTypeButtonView: View {
     var handle: (AToken.Content) -> Void
 
     public var body: some View {
-        ASheetButton(type: .fullScreenCover, .button) {
+        ASheetButton {
+            .init(.fullScreenCover, .button, return: value == nil ? .cancel : .done)
+        } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 4)
                     .foregroundColor(valueType.colorForLightTheme())
