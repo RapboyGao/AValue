@@ -6,7 +6,7 @@ public struct ATokensEditingKeyboard: View {
     @Binding private var status: ATokenEditStatus
 
     public var body: some View {
-        AKeyboardBackgroundView {
+        AKeyboardBackgroundView { _ in
             KeyBoardSpaceAroundStack(columns: 11, rowSpace: 5, columnSpace: 5) {
                 ATokenNumberInputKeyboardContent(status: $status)
                 ATokenKeyboardOperatorsContentView { newToken in
