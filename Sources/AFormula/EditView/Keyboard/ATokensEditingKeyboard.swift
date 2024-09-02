@@ -6,7 +6,7 @@ public struct ATokensEditingKeyboard: View {
     @Binding private var status: ATokenEditStatus
 
     public var body: some View {
-        AKeyboardBackgroundView { _ in
+        AKeyboardBackgroundView { width in
             KeyBoardSpaceAroundStack(columns: 11, rowSpace: 5, columnSpace: 5) {
                 ATokenNumberInputKeyboardContent(status: $status)
                 ATokenKeyboardOperatorsContentView { newToken in
@@ -17,6 +17,7 @@ public struct ATokensEditingKeyboard: View {
                     status.insert(newToken)
                 }
             }
+            .frame(width: width)
         }
     }
 

@@ -4,14 +4,39 @@ import SwiftUI
 @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
 public struct ATokensEditingView: View {
     @Binding private var status: ATokenEditStatus
+    @FocusState private var isTextfieldFocused: Bool
+
+    private func renderToken(_ bindToken: Binding<AToken>) -> some View {
+        ATokenMenu(bindToken) {
+            status.delete(bindToken.wrappedValue)
+        } cursorToLeft: {
+            status.setCursor(toBefore: bindToken.wrappedValue)
+        } cursorToRight: {
+            status.setCursor(toAfter: bindToken.wrappedValue)
+        }
+    }
 
     public var body: some View {
-        VStack {
-            ATokensInteractiveTextFieldView($status)
-                .padding()
-            Spacer()
-            ATokensEditingKeyboard($status)
-                .frame(height: 200)
+        AWrappingStack {
+            ForEach($status.tokensBeforeCursor) { bindToken in
+                renderToken(bindToken)
+            }
+            Text(status.numberInputString)
+
+            TextField("", text: .constant(""))
+                .aKeyboardView { _ in
+                    ATokensEditingKeyboard($status)
+                        .frame(height: 200)
+                }
+                .focused($isTextfieldFocused)
+                .frame(width: 2)
+            ForEach($status.tokensAfterCursor) { bindToken in
+                renderToken(bindToken)
+            }
+        }
+        .font(.system(size: 24))
+        .onAppear {
+            isTextfieldFocused = true
         }
     }
 
