@@ -38,6 +38,9 @@ public struct ATokensEditingView: View {
         .onAppear {
             isTextfieldFocused = true
         }
+        .onTapGesture {
+            isTextfieldFocused = true
+        }
     }
 
     public init(_ status: Binding<ATokenEditStatus>) {
