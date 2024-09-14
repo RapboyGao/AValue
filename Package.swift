@@ -10,16 +10,12 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "AValue",
-            targets: ["AValue"]),
-        .library(
-            name: "AFunction",
-            targets: ["AFunction"]),
-        .library(
-            name: "AFormula",
-            targets: ["AFormula"]),
+            targets: ["AValue"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/RapboyGao/AUnit.git", branch: "main"),
+        .package(url: "https://github.com/RapboyGao/AUnits.git", branch: "main"),
         .package(url: "https://github.com/RapboyGao/AViewUI.git", branch: "main"),
     ],
     targets: [
@@ -30,22 +26,12 @@ let package = Package(
             dependencies: [
                 .product(name: "AViewUI", package: "AViewUI"),
                 .product(name: "AUnit", package: "AUnit"),
-            ]),
-        .target(
-            name: "AFunction",
-            dependencies: [
-                "AValue",
-                .product(name: "AUnit", package: "AUnit"),
-            ]),
-        .target(
-            name: "AFormula",
-            dependencies: [
-                "AValue",
-                "AFunction",
-                .product(name: "AViewUI", package: "AViewUI"),
-                .product(name: "AUnit", package: "AUnit"),
-            ]),
+                .product(name: "AUnits", package: "AUnits"),
+            ]
+        ),
         .testTarget(
             name: "AValueTests",
-            dependencies: ["AValue"]),
-    ])
+            dependencies: ["AValue"]
+        ),
+    ]
+)
