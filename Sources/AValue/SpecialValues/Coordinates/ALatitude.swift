@@ -80,7 +80,7 @@ public enum ALatitude: Codable, Sendable, Hashable, CustomStringConvertible {
                 self = .degreesMinutesSeconds(isNorth: isNorth, degrees: degrees, minutes: minutes, seconds: seconds)
                 return
             }
-        } else if numericPart.range(of: #"^(\d{2})\.(\d+)$"#, options: .regularExpression) != nil {
+        } else if numericPart.range(of: #"^(\d{2})(\.(\d+))?$"#, options: .regularExpression) != nil {
             // 格式: S39.26165 -> S39.26165°
             if let degrees = Double(numericPart) {
                 self = .degrees(isNorth: isNorth, degrees: degrees)
@@ -98,10 +98,13 @@ public enum ALatitude: Codable, Sendable, Hashable, CustomStringConvertible {
         case .degrees(let isNorth, let degrees):
             return isNorth ? degrees : -degrees
         case .degreesMinutes(let isNorth, let degrees, let minutes):
-            return isNorth ? Double(degrees) + minutes / 60.0 : -Double(degrees) - minutes / 60.0
+            return isNorth ?
+                Double(degrees) + minutes / 60.0
+                : -Double(degrees) - minutes / 60.0
         case .degreesMinutesSeconds(let isNorth, let degrees, let minutes, let seconds):
-            return isNorth ? Double(degrees) + Double(minutes) / 60.0 + seconds / 3600.0 :
-                -Double(degrees) - Double(minutes) / 60.0 - seconds / 3600.0
+            return isNorth ?
+                Double(degrees) + Double(minutes) / 60.0 + seconds / 3600.0
+                : -Double(degrees) - Double(minutes) / 60.0 - seconds / 3600.0
         }
     }
 

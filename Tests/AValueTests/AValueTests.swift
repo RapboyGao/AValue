@@ -50,8 +50,6 @@ final class AValueTests: XCTestCase {
         XCTAssertEqual(AHourMinuteValue(string: "130+1d"), .days24HM(day: 1, hour: 1, minute: 30))
         XCTAssertEqual(AHourMinuteValue(string: "-124+2d"), .days24HM(day: 1, hour: 22, minute: 36))
         XCTAssertEqual(AHourMinuteValue(string: "+1d"), .days24HM(day: 1, hour: 0, minute: 0))
-
-        print(AHourMinuteValue.days24HM(day: 0, hour: 2, minute: 31))
     }
 
     func testALatitudeInitialization() {
