@@ -17,6 +17,82 @@ public enum ALatitude: Codable, Sendable, Hashable, CustomStringConvertible {
     }
 
     @Sendable
+    public init?(_ string: String?) {
+        // 检查输入字符串是否为空或仅包含空格
+        guard let string = string?.trimmingCharacters(in: .whitespacesAndNewlines), !string.isEmpty else {
+            return nil
+        }
+
+        // 判断方向，确保第一个字符是 'N' 或 'S'
+        let isNorth: Bool
+        if string.first == "N" {
+            isNorth = true
+        } else if string.first == "S" {
+            isNorth = false
+        } else {
+            return nil
+        }
+
+        // 获取方向后面的数字部分
+        let numericPart = string.dropFirst()
+
+        // 使用正则表达式捕获不同格式的数据
+        if let match = numericPart.range(of: #"^(\d{2})(\d{3})$"#, options: .regularExpression) {
+            // 格式: N39165 -> N39°16.5'
+            let degreesStr = numericPart[match.lowerBound..<numericPart.index(match.lowerBound, offsetBy: 2)]
+            let minutesStr = numericPart[numericPart.index(match.lowerBound, offsetBy: 2)...]
+            if let degrees = Int(degreesStr), let minutes = Double(minutesStr) {
+                self = .degreesMinutes(isNorth: isNorth, degrees: degrees, minutes: minutes / 10.0)
+                return
+            }
+        } else if let match = numericPart.range(of: #"^(\d{2})(\d{2})\.(\d+)$"#, options: .regularExpression) {
+            // 格式: S3916.55 -> S39°16.55'
+            let degreesStr = numericPart[match.lowerBound..<numericPart.index(match.lowerBound, offsetBy: 2)]
+            let minutesStr = numericPart[numericPart.index(match.lowerBound, offsetBy: 2)...]
+            if let degrees = Int(degreesStr), let minutes = Double(minutesStr) {
+                self = .degreesMinutes(isNorth: isNorth, degrees: degrees, minutes: minutes)
+                return
+            }
+        } else if let match = numericPart.range(of: #"^(\d{2})(\d{2})(\d{2})$"#, options: .regularExpression) {
+            // 格式: S381653 -> S38°16'53"
+            let degreesStr = numericPart[match.lowerBound..<numericPart.index(match.lowerBound, offsetBy: 2)]
+            let minutesStr = numericPart[numericPart.index(match.lowerBound, offsetBy: 2)..<numericPart.index(match.lowerBound, offsetBy: 4)]
+            let secondsStr = numericPart[numericPart.index(match.lowerBound, offsetBy: 4)...]
+            if let degrees = Int(degreesStr), let minutes = Int(minutesStr), let seconds = Double(secondsStr) {
+                self = .degreesMinutesSeconds(isNorth: isNorth, degrees: degrees, minutes: minutes, seconds: seconds)
+                return
+            }
+        } else if let match = numericPart.range(of: #"^(\d{2})(\d{2})(\d{3})$"#, options: .regularExpression) {
+            // 格式: S3816533 -> S38°16'53.3"
+            let degreesStr = numericPart[match.lowerBound..<numericPart.index(match.lowerBound, offsetBy: 2)]
+            let minutesStr = numericPart[numericPart.index(match.lowerBound, offsetBy: 2)..<numericPart.index(match.lowerBound, offsetBy: 4)]
+            let secondsStr = numericPart[numericPart.index(match.lowerBound, offsetBy: 4)...]
+            if let degrees = Int(degreesStr), let minutes = Int(minutesStr), let seconds = Double(secondsStr) {
+                self = .degreesMinutesSeconds(isNorth: isNorth, degrees: degrees, minutes: minutes, seconds: seconds / 10.0)
+                return
+            }
+        } else if let match = numericPart.range(of: #"^(\d{2})(\d{2})(\d{2})\.(\d+)$"#, options: .regularExpression) {
+            // 格式: S381653.3 -> S38°16'53.33"
+            let degreesStr = numericPart[match.lowerBound..<numericPart.index(match.lowerBound, offsetBy: 2)]
+            let minutesStr = numericPart[numericPart.index(match.lowerBound, offsetBy: 2)..<numericPart.index(match.lowerBound, offsetBy: 4)]
+            let secondsStr = numericPart[numericPart.index(match.lowerBound, offsetBy: 4)...]
+            if let degrees = Int(degreesStr), let minutes = Int(minutesStr), let seconds = Double(secondsStr) {
+                self = .degreesMinutesSeconds(isNorth: isNorth, degrees: degrees, minutes: minutes, seconds: seconds)
+                return
+            }
+        } else if let match = numericPart.range(of: #"^(\d{2})\.(\d+)$"#, options: .regularExpression) {
+            // 格式: S39.26165 -> S39.26165°
+            if let degrees = Double(numericPart) {
+                self = .degrees(isNorth: isNorth, degrees: degrees)
+                return
+            }
+        }
+
+        // 如果无法匹配任何已知格式，返回nil
+        return nil
+    }
+
+    @Sendable
     public func toNumber() -> Double {
         switch self {
         case .degrees(let isNorth, let degrees):

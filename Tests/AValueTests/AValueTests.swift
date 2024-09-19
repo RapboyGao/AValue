@@ -50,6 +50,121 @@ final class AValueTests: XCTestCase {
         XCTAssertEqual(AHourMinuteValue(string: "130+1d"), .days24HM(day: 1, hour: 1, minute: 30))
         XCTAssertEqual(AHourMinuteValue(string: "-124+2d"), .days24HM(day: 1, hour: 22, minute: 36))
         XCTAssertEqual(AHourMinuteValue(string: "+1d"), .days24HM(day: 1, hour: 0, minute: 0))
+
+        print(AHourMinuteValue.days24HM(day: 0, hour: 2, minute: 31))
+    }
+
+    func testALatitudeInitialization() {
+        // 测试格式: N39165 -> N39°16.5'
+        if case let .degreesMinutes(isNorth, degrees, minutes) = ALatitude("N39165") {
+            XCTAssertTrue(isNorth)
+            XCTAssertEqual(degrees, 39)
+            XCTAssertEqual(minutes, 16.5, accuracy: 0.1)
+        } else {
+            XCTFail("Failed to initialize ALatitude with format N39165")
+        }
+
+        if case let .degreesMinutes(isNorth, degrees, minutes) = ALatitude("S39165") {
+            XCTAssertFalse(isNorth)
+            XCTAssertEqual(degrees, 39)
+            XCTAssertEqual(minutes, 16.5, accuracy: 0.1)
+        } else {
+            XCTFail("Failed to initialize ALatitude with format S39165")
+        }
+
+        // 测试格式: N3916.55 -> N39°16.55'
+        if case let .degreesMinutes(isNorth, degrees, minutes) = ALatitude("N3916.55") {
+            XCTAssertTrue(isNorth)
+            XCTAssertEqual(degrees, 39)
+            XCTAssertEqual(minutes, 16.55, accuracy: 0.01)
+        } else {
+            XCTFail("Failed to initialize ALatitude with format N3916.55")
+        }
+
+        if case let .degreesMinutes(isNorth, degrees, minutes) = ALatitude("S3916.55") {
+            XCTAssertFalse(isNorth)
+            XCTAssertEqual(degrees, 39)
+            XCTAssertEqual(minutes, 16.55, accuracy: 0.01)
+        } else {
+            XCTFail("Failed to initialize ALatitude with format S3916.55")
+        }
+
+        // 测试格式: N381653 -> N38°16'53"
+        if case let .degreesMinutesSeconds(isNorth, degrees, minutes, seconds) = ALatitude("N381653") {
+            XCTAssertTrue(isNorth)
+            XCTAssertEqual(degrees, 38)
+            XCTAssertEqual(minutes, 16)
+            XCTAssertEqual(seconds, 53)
+        } else {
+            XCTFail("Failed to initialize ALatitude with format N381653")
+        }
+
+        if case let .degreesMinutesSeconds(isNorth, degrees, minutes, seconds) = ALatitude("S381653") {
+            XCTAssertFalse(isNorth)
+            XCTAssertEqual(degrees, 38)
+            XCTAssertEqual(minutes, 16)
+            XCTAssertEqual(seconds, 53)
+        } else {
+            XCTFail("Failed to initialize ALatitude with format S381653")
+        }
+
+        // 测试格式: N3816533 -> N38°16'53.3"
+        if case let .degreesMinutesSeconds(isNorth, degrees, minutes, seconds) = ALatitude("N3816533") {
+            XCTAssertTrue(isNorth)
+            XCTAssertEqual(degrees, 38)
+            XCTAssertEqual(minutes, 16)
+            XCTAssertEqual(seconds, 53.3, accuracy: 0.1)
+        } else {
+            XCTFail("Failed to initialize ALatitude with format N3816533")
+        }
+
+        if case let .degreesMinutesSeconds(isNorth, degrees, minutes, seconds) = ALatitude("S3816533") {
+            XCTAssertFalse(isNorth)
+            XCTAssertEqual(degrees, 38)
+            XCTAssertEqual(minutes, 16)
+            XCTAssertEqual(seconds, 53.3, accuracy: 0.1)
+        } else {
+            XCTFail("Failed to initialize ALatitude with format S3816533")
+        }
+
+        // 测试格式: N381653.3 -> N38°16'53.3"
+        if case let .degreesMinutesSeconds(isNorth, degrees, minutes, seconds) = ALatitude("N381653.3") {
+            XCTAssertTrue(isNorth)
+            XCTAssertEqual(degrees, 38)
+            XCTAssertEqual(minutes, 16)
+            XCTAssertEqual(seconds, 53.3, accuracy: 0.01)
+        } else {
+            XCTFail("Failed to initialize ALatitude with format N381653.3")
+        }
+
+        if case let .degreesMinutesSeconds(isNorth, degrees, minutes, seconds) = ALatitude("S381653.3") {
+            XCTAssertFalse(isNorth)
+            XCTAssertEqual(degrees, 38)
+            XCTAssertEqual(minutes, 16)
+            XCTAssertEqual(seconds, 53.3, accuracy: 0.01)
+        } else {
+            XCTFail("Failed to initialize ALatitude with format S381653.3")
+        }
+
+        // 测试格式: N39.26165 -> N39.26165°
+        if case let .degrees(isNorth, degrees) = ALatitude("N39.26165") {
+            XCTAssertTrue(isNorth)
+            XCTAssertEqual(degrees, 39.26165, accuracy: 0.00001)
+        } else {
+            XCTFail("Failed to initialize ALatitude with format N39.26165")
+        }
+
+        if case let .degrees(isNorth, degrees) = ALatitude("S39.26165") {
+            XCTAssertFalse(isNorth)
+            XCTAssertEqual(degrees, 39.26165, accuracy: 0.00001)
+        } else {
+            XCTFail("Failed to initialize ALatitude with format S39.26165")
+        }
+
+        // 测试无效格式
+        if let _ = ALatitude("InvalidFormat") {
+            XCTFail("Initialization should have failed for invalid format")
+        }
     }
 
     func testCoordinate60AutoIncrement() throws {

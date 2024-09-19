@@ -36,7 +36,7 @@ public extension AHourMinuteValue {
         let isNegative = input.hasPrefix("-")
 
         // 检查是否包含天数 (例如: "+1d", "-124+2d")
-        if let dayRange = input.range(of: #"[+\-](\d+)d"#, options: .regularExpression) { // 天数必须要包含正负号
+        if let dayRange = input.range(of: #"[+\-](\d+)d$"#, options: .regularExpression) { // 天数必须要包含正负号
             let dayString = input[dayRange]
             let days = Int(dayString.dropLast()) ?? 0
 
