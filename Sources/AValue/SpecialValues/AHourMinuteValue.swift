@@ -1,14 +1,98 @@
+import Foundation
+
 public enum AHourMinuteValue: Codable, Sendable, Hashable, CustomStringConvertible {
     case hourMinute(isNegative: Bool, hour: Int, minute: Int)
     case totalHours(isNegative: Bool, hour: Double)
     case totalMinutes(isNegative: Bool, totalMinutes: Int)
-    /// days可以是负值
     case days24HM(day: Int, hour: Int, minute: Int)
 }
 
 public extension AHourMinuteValue {
     init(minutes: Int) {
         self = .totalMinutes(isNegative: minutes < 0, totalMinutes: abs(minutes))
+    }
+}
+
+public extension AHourMinuteValue {
+    /// - 130 或 0130 1:30 判断为 1小时30分钟
+    /// - 321:23 或 32123 判断为 321小时30分钟
+    /// - 3 判断为3分钟
+    /// - 3: 判断为3小时
+    /// - 12 判断为12分钟
+    /// - 1:2 判断为1小时2分钟
+    /// - :2 判断为2分钟
+    /// - 以上内容如果前面有负号则判断为负，如果有加号或者没有则判断为正
+    /// - 130+1d 判断为1小时30分钟+1天
+    /// - -124+2d 判断为22:36+1天
+    /// - +1d 判断为0小时0分钟+1天
+    /// - 12+1d 判断为0小时12分钟+1天
+    init?(string: String?) {
+        // 检查输入字符串是否为空或仅包含空白字符
+        guard let input = string?.trimmingCharacters(in: .whitespacesAndNewlines), !input.isEmpty else {
+            return nil
+        }
+
+        // 检查是否为负数
+        let isNegative = input.hasPrefix("-")
+
+        // 检查是否包含天数 (例如: "+1d", "-124+2d")
+        if let dayRange = input.range(of: #"[+\-](\d+)d"#, options: .regularExpression) { // 天数必须要包含正负号
+            let dayString = input[dayRange]
+            let days = Int(dayString.dropLast()) ?? 0
+
+            // 移除天数部分以解析剩余的小时和分钟
+            let remainingInput = input.replacingOccurrences(of: dayString, with: "")
+            let result = AHourMinuteValue(string: remainingInput) ?? .hourMinute(isNegative: false, hour: 0, minute: 0)
+            let totalNumber = result.toNumber() + days * 1440
+            self = .init(minutes: totalNumber).toDHM()
+            return
+        }
+
+        let cleanInput = input.replacingOccurrences(of: "+", with: "").replacingOccurrences(of: "-", with: "")
+
+        // 解析 "HH:mm" 或 "HHmm" 格式
+        let timeComponents = cleanInput.split(separator: ":")
+        if timeComponents.count == 2 {
+            if let hour = Int(timeComponents[0]), let minute = Int(timeComponents[1]) {
+                self = .hourMinute(isNegative: isNegative, hour: hour, minute: minute)
+                return
+            }
+        }
+
+        // 解析 "HHmm" 格式
+        if let intInput = Int(cleanInput) {
+            if cleanInput.count > 2 {
+                let hour = intInput / 100
+                let minute = intInput % 100
+                self = .hourMinute(isNegative: isNegative, hour: hour, minute: minute)
+                return
+            } else {
+                // 输入为单个数字，视为分钟
+                self = .totalMinutes(isNegative: isNegative, totalMinutes: intInput)
+                return
+            }
+        }
+
+        // 处理类似 "3:" 或 "12:" 格式
+        if cleanInput.hasSuffix(":") {
+            let hourString = cleanInput.dropLast()
+            if let hour = Int(hourString) {
+                self = .hourMinute(isNegative: isNegative, hour: hour, minute: 0)
+                return
+            }
+        }
+
+        // 处理类似 ":minutes" (例如: ":2")
+        if cleanInput.hasPrefix(":") {
+            let minuteString = cleanInput.dropFirst()
+            if let minute = Int(minuteString) {
+                self = .hourMinute(isNegative: isNegative, hour: 0, minute: minute)
+                return
+            }
+        }
+
+        // 如果输入格式无效，返回 nil
+        return nil
     }
 }
 
@@ -41,7 +125,7 @@ public extension AHourMinuteValue {
             guard day != 0 else {
                 return hourMinutePart
             }
-            let dayPart = "" + String(format: "%+1d", day) + "d"
+            let dayPart = String(format: "%+1d", day) + "d"
             return hourMinutePart + dayPart
         }
     }
