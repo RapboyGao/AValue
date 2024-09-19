@@ -2,7 +2,7 @@ import AUnit
 import AViewUI
 import SwiftUI
 
-@available(iOS 15.0, macOS 12.0, *)
+@available(iOS 16, macOS 12.0, *)
 public struct AValueFSContent: View {
     @Binding var value: AValue?
     var type: AValueType
@@ -48,7 +48,6 @@ public struct AValueFSContent: View {
 
 @available(iOS 16.0, macOS 13.0, *)
 private struct Example: View {
-    @State private var showFSContent = false
     @State private var aValue: AValue? = .location(latitude: 40.16415, longitude: 116.44354)
 
     var body: some View {
@@ -57,7 +56,7 @@ private struct Example: View {
         } label: {
             Text(aValue?.description ?? "nil")
         } cover: {
-            AValueFSContent(value: $aValue, type: aValue?.type ?? .number, allowInput: true, name: "Hello", unit: .constant(.knots))
+            AValueFSContent(value: $aValue, type: aValue?.type ?? .number, allowInput: true, name: "", unit: .constant(.knots))
         }
     }
 }

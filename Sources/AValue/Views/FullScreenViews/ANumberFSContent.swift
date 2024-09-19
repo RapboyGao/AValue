@@ -1,7 +1,7 @@
 import AViewUI
 import SwiftUI
 
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+@available(iOS 16, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 public struct ANumberFSContent: View {
     @Binding var value: Double?
     var name: String
@@ -13,10 +13,14 @@ public struct ANumberFSContent: View {
     public var body: some View {
         Group {
             if allowSet {
-                TextField(name, value: $value, format: .number.precision(.significantDigits(0 ... 10)))
+                TextField(name, value: $value, format: AMathFormatStyle.fractionLength(20))
+                #if os(iOS)
+                    .aKeyboardView { uiTextField in
+                        AMathExpressionKeyboard(uiTextField, AMathFormatStyle.fractionLength(20))
+                    }
+                #endif
                     .font(.largeTitle)
                     .focused($isFocused)
-                    .modifier(ANumberKeyboardModifier(value: $value, digits: 10))
                     .submitLabel(.done)
                     .onSubmit {
                         dismiss()
@@ -49,7 +53,16 @@ public struct ANumberFSContent: View {
     }
 }
 
-@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+@available(iOS 16, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+private struct Example: View {
+    @State private var aValue: AValue? = 45
+
+    var body: some View {
+        ANumberFSContent(aValue: $aValue, name: "hello", allowSet: true)
+    }
+}
+
+@available(iOS 16, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 #Preview {
-    ANumberFSContent(.constant(-50), name: "hello", allowSet: true)
+    Example()
 }
