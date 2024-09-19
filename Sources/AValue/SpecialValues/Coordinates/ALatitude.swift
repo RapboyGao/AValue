@@ -80,7 +80,7 @@ public enum ALatitude: Codable, Sendable, Hashable, CustomStringConvertible {
                 self = .degreesMinutesSeconds(isNorth: isNorth, degrees: degrees, minutes: minutes, seconds: seconds)
                 return
             }
-        } else if let match = numericPart.range(of: #"^(\d{2})\.(\d+)$"#, options: .regularExpression) {
+        } else if numericPart.range(of: #"^(\d{2})\.(\d+)$"#, options: .regularExpression) != nil {
             // 格式: S39.26165 -> S39.26165°
             if let degrees = Double(numericPart) {
                 self = .degrees(isNorth: isNorth, degrees: degrees)
