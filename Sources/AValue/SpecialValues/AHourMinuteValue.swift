@@ -41,7 +41,7 @@ public extension AHourMinuteValue {
             guard day != 0 else {
                 return hourMinutePart
             }
-            let dayPart = "(" + String(format: "%1d", day) + "d)"
+            let dayPart = "" + String(format: "%+1d", day) + "d"
             return hourMinutePart + dayPart
         }
     }

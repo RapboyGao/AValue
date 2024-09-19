@@ -65,7 +65,7 @@ public extension AValue {
         case let .boolean(value):
             return value ? "✓" : "x"
         case let .string(value):
-            return "`\(value)`"
+            return "`\(value)`".replacingOccurrences(of: "\n", with: "↵")
         case let .groundWind(limit):
             return "\(limit)"
         case let .minutes(value):

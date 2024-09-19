@@ -12,6 +12,24 @@ public struct AValueFSContent: View {
     @Binding var unit: AUnit?
     var originalUnit: AUnit?
 
+    private var bindBoolean: Binding<Bool> {
+        Binding {
+            value == true
+        } set: { newValue in
+            value = .boolean(newValue)
+        }
+    }
+
+    private var bindString: Binding<String> {
+        Binding {
+            guard case let .string(string) = value
+            else { return "" }
+            return string
+        } set: { newValue in
+            value = .string(newValue)
+        }
+    }
+
     public var body: some View {
         switch type {
         case .number:
@@ -22,9 +40,11 @@ public struct AValueFSContent: View {
             AMapPointSelector($value, name: name, other: [])
                 .ignoresSafeArea()
         case .boolean:
-            ProgressView()
+            Toggle(name, isOn: bindBoolean)
+                .padding()
         case .string:
-            ProgressView()
+            TextEditor(text: bindString)
+                .padding()
         case .groundWind:
             ProgressView()
         case .minutes:
@@ -48,7 +68,7 @@ public struct AValueFSContent: View {
 
 @available(iOS 16.0, macOS 13.0, *)
 private struct Example: View {
-    @State private var aValue: AValue? = .location(latitude: 40.16415, longitude: 116.44354)
+    @State private var aValue: AValue? = "true"
 
     var body: some View {
         ASheetButton {
