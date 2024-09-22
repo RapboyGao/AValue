@@ -206,3 +206,45 @@ public extension AHourMinuteValue {
         return AHourMinuteValue(minutes: totalMinute)
     }
 }
+
+public extension Array where Element == AHourMinuteValue {
+    /// 解析公式
+    /// - 例如 "3+3:30-:20+3:+5d-23" 解析为 [ +00:03, +03:30,  -00:20, +3:00, +00:00+5d, -00:23]
+    init?(_ expression: String?) {
+        guard let expression = expression
+        else {
+            return nil
+        }
+
+        var result: [AHourMinuteValue] = []
+        var currentIndex = expression.startIndex
+
+        while currentIndex < expression.endIndex {
+            let sign: String
+            if expression[currentIndex] == "+" || expression[currentIndex] == "-" {
+                sign = String(expression[currentIndex])
+                currentIndex = expression.index(after: currentIndex)
+            } else {
+                sign = "+"
+            }
+
+            var nextIndex = currentIndex
+            while nextIndex < expression.endIndex && expression[nextIndex] != "+" && expression[nextIndex] != "-" {
+                nextIndex = expression.index(after: nextIndex)
+            }
+
+            let subExpression = String(expression[currentIndex ..< nextIndex])
+            let signedExpression = sign + subExpression
+
+            if let hourMinuteValue = AHourMinuteValue(string: signedExpression) {
+                result.append(hourMinuteValue)
+            } else {
+                return nil
+            }
+
+            currentIndex = nextIndex
+        }
+
+        self = result
+    }
+}

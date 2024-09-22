@@ -107,7 +107,7 @@ public enum ALongitude: Codable, Sendable, Hashable, CustomStringConvertible {
         }
 
         // 格式解析：W122°30'45" -> 度、分和秒
-        if numericPart.range(of: #"^(\d{3})°(\d{2})'(\d{2})"$"#, options: .regularExpression) != nil {
+        if numericPart.range(of: #"^(\d{3})°(\d{2})'(\d{2}(\.\d+)?)"$"#, options: .regularExpression) != nil {
             let degreesStr = numericPart.prefix(3)
             let minutesStr = numericPart.dropFirst(4).prefix(2)
             let secondsStr = numericPart.dropFirst(7).dropLast()

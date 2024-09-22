@@ -21,12 +21,16 @@ final class AValueTests: XCTestCase {
         XCTAssert(longitude.toDMS().toString(digits: 1) == "W002°03'04.0\"")
     }
 
-
-
     func testHMDescription() throws {
         for timeValue in [1552, -1552, 35, -20] {
             let time = AHourMinuteValue(minutes: timeValue)
             print(time.toHM(), time.toDHM(), time.toTotalHours(), time.toTotalMinutes())
         }
+    }
+
+    func testParseAHourMinuteExpression() throws {
+        let expression = "3+3:21-:20+3:+5d-23"
+        let AHourMinuteValues: [AHourMinuteValue]? = .init(expression)
+        print(AHourMinuteValues)
     }
 }
