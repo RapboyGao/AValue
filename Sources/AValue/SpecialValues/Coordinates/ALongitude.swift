@@ -16,6 +16,111 @@ public enum ALongitude: Codable, Sendable, Hashable, CustomStringConvertible {
         self = someValue.toFormat(format)
     }
 
+    public init?(_ string: String?) {
+        // 检查输入字符串是否为 nil 或仅包含空格
+        guard let string = string?.trimmingCharacters(in: .whitespacesAndNewlines), !string.isEmpty else {
+            return nil
+        }
+
+        // 根据第一个字符确定方向（东或西）
+        let isEast: Bool
+        if string.first == "E" {
+            isEast = true
+        } else if string.first == "W" {
+            isEast = false
+        } else {
+            return nil
+        }
+
+        // 去掉方向字符并处理后面的数字部分
+        let numericPart = string.dropFirst()
+
+        // 格式解析：E122453 -> E122°45.3'
+        if numericPart.range(of: #"^(\d{3})(\d{3})$"#, options: .regularExpression) != nil {
+            let degreesStr = numericPart.prefix(3)
+            let minutesStr = numericPart.suffix(3)
+            if let degrees = Int(degreesStr), let minutes = Double(minutesStr) {
+                self = .degreesMinutes(isEast: isEast, degrees: degrees, minutes: minutes / 10.0)
+                return
+            }
+        }
+
+        // 格式解析：W12230.5 -> W122°30.5'
+        if numericPart.range(of: #"^(\d{3})(\d{2})\.(\d+)$"#, options: .regularExpression) != nil {
+            let degreesStr = numericPart.prefix(3)
+            let minutesStr = numericPart.dropFirst(3)
+            if let degrees = Int(degreesStr), let minutes = Double(minutesStr) {
+                self = .degreesMinutes(isEast: isEast, degrees: degrees, minutes: minutes)
+                return
+            }
+        }
+
+        // 格式解析：E1223045 -> E122°30'45"
+        if numericPart.range(of: #"^(\d{3})(\d{2})(\d{2})$"#, options: .regularExpression) != nil {
+            let degreesStr = numericPart.prefix(3)
+            let minutesStr = numericPart.dropFirst(3).prefix(2)
+            let secondsStr = numericPart.suffix(2)
+            if let degrees = Int(degreesStr), let minutes = Int(minutesStr), let seconds = Double(secondsStr) {
+                self = .degreesMinutesSeconds(isEast: isEast, degrees: degrees, minutes: minutes, seconds: seconds)
+                return
+            }
+        }
+
+        // 格式解析：E12230453 -> E122°30'45.3"
+        if numericPart.range(of: #"^(\d{3})(\d{2})(\d{3})$"#, options: .regularExpression) != nil {
+            let degreesStr = numericPart.prefix(3)
+            let minutesStr = numericPart.dropFirst(3).prefix(2)
+            let secondsStr = numericPart.suffix(3)
+            if let degrees = Int(degreesStr), let minutes = Int(minutesStr), let seconds = Double(secondsStr) {
+                self = .degreesMinutesSeconds(isEast: isEast, degrees: degrees, minutes: minutes, seconds: seconds / 10.0)
+                return
+            }
+        }
+
+        // 格式解析：E1223045.3 -> E122°30'45.3"
+        if numericPart.range(of: #"^(\d{3})(\d{2})(\d{2})\.(\d+)$"#, options: .regularExpression) != nil {
+            let degreesStr = numericPart.prefix(3)
+            let minutesStr = numericPart.dropFirst(3).prefix(2)
+            let secondsStr = numericPart.dropFirst(5)
+            if let degrees = Int(degreesStr), let minutes = Int(minutesStr), let seconds = Double(secondsStr) {
+                self = .degreesMinutesSeconds(isEast: isEast, degrees: degrees, minutes: minutes, seconds: seconds)
+                return
+            }
+        }
+
+        // 格式解析：W122.456 -> W122.456°
+        if numericPart.range(of: #"^(\d{3})(\.(\d+))?$"#, options: .regularExpression) != nil {
+            if let degrees = Double(numericPart) {
+                self = .degrees(isEast: isEast, degrees: degrees)
+                return
+            }
+        }
+
+        // 格式解析：E122°30.5' -> 仅度和分
+        if numericPart.range(of: #"^(\d{3})°(\d{1,2})\.(\d+)'$"#, options: .regularExpression) != nil {
+            let degreesStr = numericPart.prefix(3)
+            let minutesStr = numericPart.dropFirst(4).dropLast()
+            if let degrees = Int(degreesStr), let minutes = Double(minutesStr) {
+                self = .degreesMinutes(isEast: isEast, degrees: degrees, minutes: minutes)
+                return
+            }
+        }
+
+        // 格式解析：W122°30'45" -> 度、分和秒
+        if numericPart.range(of: #"^(\d{3})°(\d{2})'(\d{2})"$"#, options: .regularExpression) != nil {
+            let degreesStr = numericPart.prefix(3)
+            let minutesStr = numericPart.dropFirst(4).prefix(2)
+            let secondsStr = numericPart.dropFirst(7).dropLast()
+            if let degrees = Int(degreesStr), let minutes = Int(minutesStr), let seconds = Double(secondsStr) {
+                self = .degreesMinutesSeconds(isEast: isEast, degrees: degrees, minutes: minutes, seconds: seconds)
+                return
+            }
+        }
+
+        // 如果没有匹配到任何已知格式，返回 nil
+        return nil
+    }
+
     @Sendable
     public func toNumber() -> Double {
         switch self {
