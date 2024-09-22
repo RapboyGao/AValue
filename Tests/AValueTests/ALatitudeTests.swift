@@ -2,6 +2,18 @@
 import XCTest
 
 class ALatitudeTests: XCTestCase {
+    func testCoordinate60AutoIncrement() throws {
+        let latitude = ALatitude.degrees(isNorth: true, degrees: 2 + 59 / 60 + 59.96 / 3600)
+        XCTAssert(latitude.toDMS().toString(digits: 1) == "N03°00'00.0\"")
+    }
+
+    func testToString() {
+        let latitude = ALatitude.degrees(isNorth: true, degrees: 2 + 3 / 60 + 4 / 3600)
+        XCTAssertEqual(latitude.toD().toString(digits: 5), "N02.05111°")
+        XCTAssertEqual(latitude.toDM().toString(digits: 1), "N02°03.1'")
+        XCTAssertEqual(latitude.toDMS().toString(digits: 1), "N02°03'04.0\"")
+    }
+
     func testDegreesFormat() {
         // 测试 degrees 格式，如 N39.26165°
         let latitude1 = ALatitude("N39.26165°")
