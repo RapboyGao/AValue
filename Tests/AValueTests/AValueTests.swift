@@ -29,8 +29,8 @@ final class AValueTests: XCTestCase {
     }
 
     func testParseAHourMinuteExpression() throws {
-        let expression = "3+3:21-:20+3:+5d-23"
-        let AHourMinuteValues: [AHourMinuteValue]? = .init(expression)
-        print(AHourMinuteValues)
+        let expression = "1235-150"
+        let value: [AHourMinuteValue]? = .init(expression)
+        print(value?.sum(format: .hourMinute))
     }
 }

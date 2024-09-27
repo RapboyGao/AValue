@@ -208,6 +208,13 @@ public extension AHourMinuteValue {
 }
 
 public extension Array where Element == AHourMinuteValue {
+    func sum(format: AHourMinuteValue.Format) -> AHourMinuteValue {
+        let totalNumber = reduce(0) { partialResult, nextValue in
+            partialResult + nextValue.toNumber()
+        }
+        return AHourMinuteValue(minutes: totalNumber).toFormat(format)
+    }
+
     /// 解析公式
     /// - 例如 "3+3:30-:20+3:+5d-23" 解析为 [ +00:03, +03:30,  -00:20, +3:00, +00:00+5d, -00:23]
     init?(_ expression: String?) {
