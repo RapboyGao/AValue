@@ -46,7 +46,7 @@ public struct AValueFSContent: View {
             TextEditor(text: bindString)
                 .padding()
         case .groundWind:
-            ProgressView()
+            AWindLimitFSContent($value, unit: $unit, originalUnit: originalUnit, allowSet: allowInput, precision: .significantDigits(1 ... 2))
         case .minutes:
             ProgressView()
         case .calendar:

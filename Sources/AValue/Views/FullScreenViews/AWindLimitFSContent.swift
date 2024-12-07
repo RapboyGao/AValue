@@ -1,42 +1,50 @@
+import AUnit
 import AViewUI
 import SwiftUI
 
 @available(iOS 16, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 public struct AWindLimitFSContent: View {
-    @Binding var value: AWindLimit?
+    @Binding var windLimitValue: AWindLimit?
+    @Binding var unit: AUnit?
+    var originalUnit: AUnit?
     var allowSet: Bool
-
-    @FocusState private var isFocused
-    @Environment(\.dismiss) private var dismiss
+    var precision: FloatingPointFormatStyle<Double>.Configuration.Precision
 
     public var body: some View {
         List {
-            HStack {
-                Text("Headwind")
-                Spacer()
-                TextField("Headwind", value: .constant(1.0 as Double?), format: .number)
-                    .multilineTextAlignment(.trailing)
+            Section("Wind") {
+                AWindLimitEditFSContent($windLimitValue, unit: $unit, originalUnit: originalUnit, allowSet: allowSet, precision: precision)
+            }
+            Section(I18n.maxWindInAllDirections) {
+                AWindLimitAllDirectionContent(windLimitValue, unit: $unit, originalUnit: originalUnit)
             }
         }
     }
 
-    public init(_ valueBinding: Binding<AWindLimit?>, allowSet: Bool) {
-        self._value = valueBinding
+    public init(_ windLimitValue: Binding<AWindLimit?>, unit: Binding<AUnit?>, originalUnit: AUnit?, allowSet: Bool, precision: FloatingPointFormatStyle<Double>.Configuration.Precision) {
+        self._windLimitValue = windLimitValue
+        self._unit = unit
+        self.originalUnit = originalUnit
         self.allowSet = allowSet
+        self.precision = precision
     }
 
-    public init(aValue valueBinding: Binding<AValue?>, allowSet: Bool) {
-        self._value = valueBinding.windLimit()
+    public init(_ aValue: Binding<AValue?>, unit: Binding<AUnit?>, originalUnit: AUnit?, allowSet: Bool, precision: FloatingPointFormatStyle<Double>.Configuration.Precision) {
+        self._windLimitValue = aValue.windLimit()
+        self._unit = unit
+        self.originalUnit = originalUnit
         self.allowSet = allowSet
+        self.precision = precision
     }
 }
 
 @available(iOS 16, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 private struct Example: View {
     @State private var aValue: AValue? = 45
+    @State private var unit: AUnit?
 
     var body: some View {
-        AWindLimitFSContent(aValue: $aValue, allowSet: true)
+        AWindLimitFSContent($aValue, unit: $unit, originalUnit: .knots, allowSet: true, precision: .fractionLength(0 ... 1))
     }
 }
 

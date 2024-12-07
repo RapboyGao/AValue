@@ -38,7 +38,9 @@ public struct AWindLimitStatusHStack: View {
     }
 
     private var selectedUnit: AUnit? {
-        unit ?? originalUnitIfSpeed
+        guard originalUnitIfSpeed != nil
+        else { return nil } // 如果指定原Unit则现在的Unit也无效
+        return unit ?? originalUnitIfSpeed
     }
 
     private var bindSelectedUnit: Binding<AUnit?> {
@@ -59,7 +61,7 @@ public struct AWindLimitStatusHStack: View {
     }
 
     private var labelOfHeadwind: some View {
-        var text = Text(displayedHeadOrTailwind, format: .number.precision(.fractionLength(1 ... 5)).rounded(rule: .awayFromZero))
+        var text = Text(displayedHeadOrTailwind, format: .number.precision(.fractionLength(1 ... 5)).rounded(rule: .towardZero))
         if let selectedUnit = selectedUnit {
             text = text + Text(" " + selectedUnit.symbol)
         }
@@ -87,17 +89,18 @@ public struct AWindLimitStatusHStack: View {
             windDirectionText + windRelativeDirectionText
                 .font(.caption2)
                 .foregroundColor(.gray)
-            if status.runway < .degrees(180) {
-                Image(systemName: "location.north")
-                    .rotationEffect(status.runway.toAngle())
-                Image(systemName: "line.diagonal.arrow")
-                    .rotationEffect(status.windDir.toAngle())
-            } else {
-                Image(systemName: "line.diagonal.arrow")
-                    .rotationEffect(status.windDir.toAngle())
-                Image(systemName: "location.north")
-                    .rotationEffect(status.runway.toAngle())
-            }
+
+//            if status.runway < .degrees(180) {
+//                Image(systemName: "location.north")
+//                    .rotationEffect(status.runway.toAngle())
+//            }
+//            Image(systemName: "line.diagonal.arrow")
+//                .rotationEffect(status.windDir.toAngle())
+//                .rotationEffect(.degrees(-45))
+//            if status.runway >= .degrees(180) {
+//                Image(systemName: "location.north")
+//                    .rotationEffect(status.runway.toAngle())
+//            }
 
             Spacer()
             Menu {

@@ -8,7 +8,7 @@ import AViewUI
 public struct AWindLimitEditFSContent: View {
     @Binding var windLimitValue: AWindLimit?
     @Binding var unit: AUnit?
-    var originalUnit: AUnit
+    var originalUnit: AUnit?
     var allowSet: Bool
     var precision: FloatingPointFormatStyle<Double>.Configuration.Precision
 
@@ -148,7 +148,7 @@ public struct AWindLimitEditFSContent: View {
         }
     }
 
-    public init(_ windLimitValue: Binding<AWindLimit?>, unit: Binding<AUnit?>, originalUnit: AUnit, allowSet: Bool, precision: FloatingPointFormatStyle<Double>.Configuration.Precision) {
+    public init(_ windLimitValue: Binding<AWindLimit?>, unit: Binding<AUnit?>, originalUnit: AUnit?, allowSet: Bool, precision: FloatingPointFormatStyle<Double>.Configuration.Precision) {
         self._windLimitValue = windLimitValue
         self._unit = unit
         self.originalUnit = originalUnit
@@ -156,7 +156,7 @@ public struct AWindLimitEditFSContent: View {
         self.precision = precision
     }
 
-    public init(_ aValue: Binding<AValue?>, unit: Binding<AUnit?>, originalUnit: AUnit, allowSet: Bool, precision: FloatingPointFormatStyle<Double>.Configuration.Precision) {
+    public init(_ aValue: Binding<AValue?>, unit: Binding<AUnit?>, originalUnit: AUnit?, allowSet: Bool, precision: FloatingPointFormatStyle<Double>.Configuration.Precision) {
         self._windLimitValue = aValue.windLimit()
         self._unit = unit
         self.originalUnit = originalUnit
