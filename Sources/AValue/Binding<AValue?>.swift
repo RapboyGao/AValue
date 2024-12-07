@@ -76,7 +76,7 @@ extension Binding<AValue?> {
     }
 
     /// Create a binding for a ground wind limit
-    func groundWindValue() -> Binding<AWindLimit?> {
+    func windLimit() -> Binding<AWindLimit?> {
         Binding<AWindLimit?>(
             get: {
                 self.wrappedValue?.getGroundWindLimit()

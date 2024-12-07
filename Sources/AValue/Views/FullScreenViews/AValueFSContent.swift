@@ -66,17 +66,34 @@ public struct AValueFSContent: View {
     }
 }
 
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+private extension Binding {
+    func optional() -> Binding<Value?> {
+        Binding<Value?> {
+            wrappedValue
+        } set: { newValue in
+            if let newVal = newValue {
+                wrappedValue = newVal
+            }
+        }
+    }
+}
+
 @available(iOS 16.0, macOS 13.0, *)
 private struct Example: View {
-    @State private var aValue: AValue? = "true"
+    @State private var values: [AValue] = AValueType.allCases.map { $0.baseValue() }
 
     var body: some View {
-        ASheetButton {
-            .init(.fullScreenCover, .button, return: .done)
-        } label: {
-            Text(aValue?.description ?? "nil")
-        } cover: {
-            AValueFSContent(value: $aValue, type: aValue?.type ?? .number, allowInput: true, name: "", unit: .constant(.knots))
+        List {
+            ForEach($values, id: \.type) { thisValue in
+                ASheetButton {
+                    .init(.fullScreenCover, .button, return: .done)
+                } label: {
+                    Label(thisValue.wrappedValue.description, systemImage: thisValue.wrappedValue.type.symbolName)
+                } cover: {
+                    AValueFSContent(value: thisValue.optional(), type: thisValue.wrappedValue.type, allowInput: true, name: "Hello", unit: .constant(.meters))
+                }
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ public struct AWindLimitStatus: Hashable, Sendable, Codable, Identifiable {
 }
 
 // 风限结构体，封装了与风限相关的数据和方法
-public struct AWindLimit: Hashable, Sendable, Codable {
+public struct AWindLimit: Hashable, Sendable, Codable, CustomStringConvertible {
     private var headWindWrapped: Double // 顶风包裹值
     private var tailWindWrapped: Double // 顺风包裹值
     private var crossWindWrapped: Double // 侧风包裹值
@@ -66,7 +66,7 @@ public struct AWindLimit: Hashable, Sendable, Codable {
     // 跑道方向属性，确保值在 [0, 360) 的范围内
     public var runwayHeadingInDegrees: Double {
         get { runwayHeadingWrapped.converted(to: .degrees).value }
-        set { runwayHeadingWrapped = .degrees(newValue) }
+        set { runwayHeadingWrapped = .degrees(newValue).in360() }
     }
 
     // 返回风速中的最大值
@@ -101,6 +101,23 @@ public struct AWindLimit: Hashable, Sendable, Codable {
 
     // 定义一个静态常量，表示B737的风限
     public static var b737 = AWindLimit(headWind: 50, tailWind: 10, crossWind: 30)
+
+    public var runwayName: String {
+        let result = String(format: "%02d", runwayHeadingInDegrees / 10)
+        switch result {
+        case "00":
+            return "36"
+        default:
+            return result
+        }
+    }
+
+    public var description: String {
+        func windString(_ num: Double) -> String {
+            String(format: "%.0f", num)
+        }
+        return "↓\(windString(headWind)) →\(windString(crossWind)) ↑\(windString(tailWind)) ◎\(windString(totalWind)) R\(String(format: "%02d", runwayHeadingInDegrees / 10))"
+    }
 }
 
 // 扩展AWindLimit，增加功能性方法

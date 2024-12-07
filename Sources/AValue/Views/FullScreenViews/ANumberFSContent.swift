@@ -27,7 +27,7 @@ public struct ANumberFSContent: View {
                     }
 
             } else if let value = value {
-                Text(value, format: .number.precision(.significantDigits(0 ... 10)))
+                Text(value, format: .number.precision(.significantDigits(0 ... 20)))
                     .font(.largeTitle)
             } else {
                 Text("-")
@@ -58,7 +58,10 @@ private struct Example: View {
     @State private var aValue: AValue? = 45
 
     var body: some View {
-        ANumberFSContent(aValue: $aValue, name: "hello", allowSet: true)
+        List {
+            ANumberFSContent(aValue: $aValue, name: "hello", allowSet: true)
+            ANumberFSContent(aValue: $aValue, name: "hello", allowSet: false)
+        }
     }
 }
 

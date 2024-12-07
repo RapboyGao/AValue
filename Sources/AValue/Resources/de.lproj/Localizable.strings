@@ -1,0 +1,11 @@
+/* The text shown on the 'Edit' button */
+"edit.button.short" = "Bearbeiten";
+
+/* The text shown on the 'View' button */
+"view.button.short" = "Ansehen";
+
+/* The text shown on the 'Done' button */
+"done.button.short" = "Fertig";
+
+/* The text shown on the 'Cancel' button */
+"cancel.button.short" = "Abbrechen";

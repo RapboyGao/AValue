@@ -15,6 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/RapboyGao/AUnit.git", branch: "main"),
+        .package(url: "https://github.com/RapboyGao/AUnitViews.git", branch: "main"),
         .package(url: "https://github.com/RapboyGao/AUnits.git", branch: "main"),
         .package(url: "https://github.com/RapboyGao/AViewUI.git", branch: "main"),
     ],
@@ -27,7 +28,9 @@ let package = Package(
                 .product(name: "AViewUI", package: "AViewUI"),
                 .product(name: "AUnit", package: "AUnit"),
                 .product(name: "AUnits", package: "AUnits"),
-            ]
+                .product(name: "AUnitViews", package: "AUnitViews"),
+            ],
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "AValueTests",
