@@ -9,6 +9,21 @@ public enum AWindLimitType: Int, RawRepresentable, Hashable, Sendable, Codable {
     case tailWind // 顺风
     case crossWind // 侧风
     case totalWind // 总风速
+
+    public var name: String {
+        switch self {
+        case .withinLimit:
+            return I18n.withinLimit
+        case .headWind:
+            return I18n.headwind
+        case .tailWind:
+            return I18n.tailwind
+        case .crossWind:
+            return I18n.crosswind
+        case .totalWind:
+            return I18n.totalWind
+        }
+    }
 }
 
 // 风限状态结构体，包含风限类型、最大风速限制、风向和跑道方向
@@ -117,6 +132,12 @@ public struct AWindLimit: Hashable, Sendable, Codable, CustomStringConvertible {
             String(format: "%.0f", num)
         }
         return "↓\(windString(headWind)) →\(windString(crossWind)) ↑\(windString(tailWind)) ◎\(windString(totalWind)) R\(String(format: "%02d", runwayHeadingInDegrees / 10))"
+    }
+
+    public func with(rHDG runwayHeading: AAngle) -> AWindLimit {
+        var newSelf = self
+        newSelf.runwayHeading = runwayHeading
+        return newSelf
     }
 }
 

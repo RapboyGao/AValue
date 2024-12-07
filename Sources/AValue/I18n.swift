@@ -7,6 +7,8 @@ enum I18n {
     static let crosswind = NSLocalizedString("Crosswind", bundle: .module, comment: "The aviation commonly used word 'Crosswind'")
     static let tailwind = NSLocalizedString("Tailwind", bundle: .module, comment: "The aviation commonly used word 'Tailwind'")
     static let totalWind = NSLocalizedString("Total Wind", bundle: .module, comment: "The aviation commonly used phrase 'Total Wind'. The phrase is used to describe the amount of total wind limit of an aircraft")
+    static let limitFactor = NSLocalizedString("Limit Factor", bundle: .module, comment: "Which one of 'Headwind', 'Crosswind', 'Tailwind', 'Total Wind' limits the max wind. The phrase is used to describe the reason where the max wind comes from.")
+    static let withinLimit = NSLocalizedString("Within Limit", bundle: .module, comment: "The wind is within the given ground wind limit.")
     static let rwyHDG = NSLocalizedString("Runway HDG", bundle: .module, comment: "The aviation commonly used word 'runway heading'")
     static let windSpeedLimit = NSLocalizedString("Wind speed limit", bundle: .module, comment: "The aviation commonly used phrase 'Wind speed limit'")
     static let maxWindInAllDirections = NSLocalizedString("Max wind in all directions", bundle: .module, comment: "The aviation commonly used phrase 'Max Wind in All Directions'")
