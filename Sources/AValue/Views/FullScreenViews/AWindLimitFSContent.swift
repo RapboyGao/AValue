@@ -12,11 +12,11 @@ public struct AWindLimitFSContent: View {
 
     public var body: some View {
         List {
-            Section("Wind") {
+            Section(I18n.windSpeedLimit) {
                 AWindLimitEditFSContent($windLimitValue, unit: $unit, originalUnit: originalUnit, allowSet: allowSet, precision: precision)
             }
             Section(I18n.maxWindInAllDirections) {
-                AWindLimitAllDirectionContent(windLimitValue, unit: $unit, originalUnit: originalUnit)
+                AWindLimitAllDirectionContent(windLimitValue, unit: $unit, originalUnit: originalUnit, precision: precision)
             }
         }
     }
@@ -44,7 +44,7 @@ private struct Example: View {
     @State private var unit: AUnit?
 
     var body: some View {
-        AWindLimitFSContent($aValue, unit: $unit, originalUnit: .knots, allowSet: true, precision: .fractionLength(0 ... 1))
+        AWindLimitFSContent($aValue, unit: $unit, originalUnit: .knots, allowSet: true, precision: .fractionLength(0 ... 2))
     }
 }
 

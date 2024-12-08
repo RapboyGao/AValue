@@ -69,7 +69,8 @@ public struct AMapPointSelector: UIViewRepresentable {
         }
     }
 }
-#else
+
+#elseif os(macOS)
 
 // MARK: - MacOS
 
@@ -135,6 +136,8 @@ public struct AMapPointSelector: NSViewRepresentable {
     }
 }
 #endif
+
+#if os(iOS) || os(macOS)
 
 // MARK: - Shared MapView Functions
 
@@ -237,7 +240,7 @@ public extension AMapPointSelector {
 @available(iOS 14.0, macOS 11.0, *)
 private struct Example: View {
     @State private var selectedCoordinate: CLLocationCoordinate2D? = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194) // Example initial location (San Francisco)
-    private let locationName = "My Selected Location" // Define a location name
+    private let locationName = "Location" // Define a location name
 
     var body: some View {
         AMapPointSelector($selectedCoordinate, name: locationName, other: .examples)
@@ -249,3 +252,5 @@ private struct Example: View {
 #Preview {
     Example()
 }
+
+#endif

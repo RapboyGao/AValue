@@ -9,6 +9,7 @@ public struct AWindLimitAllDirectionContent: View {
     var windLimitValue: AWindLimit?
     @Binding var unit: AUnit?
     var originalUnit: AUnit?
+    var precision: FloatingPointFormatStyle<Double>.Configuration.Precision
 
     private var allDirectionContent: [AWindLimitStatus] {
         windLimitValue?.usefulData() ?? []
@@ -16,20 +17,22 @@ public struct AWindLimitAllDirectionContent: View {
 
     public var body: some View {
         ForEach(allDirectionContent) { windData in
-            AWindLimitStatusHStack(unit: $unit, status: windData, originalUnit: originalUnit)
+            AWindLimitStatusHStack(unit: $unit, status: windData, originalUnit: originalUnit, precision: precision)
         }
     }
 
-    public init(_ windLimitValue: AWindLimit?, unit: Binding<AUnit?>, originalUnit: AUnit?) {
+    public init(_ windLimitValue: AWindLimit?, unit: Binding<AUnit?>, originalUnit: AUnit?, precision: FloatingPointFormatStyle<Double>.Configuration.Precision) {
         self.windLimitValue = windLimitValue
         self._unit = unit
         self.originalUnit = originalUnit
+        self.precision = precision
     }
 
-    public init(_ aValue: AValue?, unit: Binding<AUnit?>, originalUnit: AUnit?) {
+    public init(_ aValue: AValue?, unit: Binding<AUnit?>, originalUnit: AUnit?, precision: FloatingPointFormatStyle<Double>.Configuration.Precision) {
         self.windLimitValue = aValue?.getGroundWindLimit()
         self._unit = unit
         self.originalUnit = originalUnit
+        self.precision = precision
     }
 }
 
@@ -40,7 +43,7 @@ private struct Example: View {
 
     var body: some View {
         List {
-            AWindLimitAllDirectionContent(aValue, unit: $unit, originalUnit: .knots)
+            AWindLimitAllDirectionContent(aValue, unit: $unit, originalUnit: .knots, precision: .fractionLength(0 ... 2))
         }
     }
 }

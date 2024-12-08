@@ -143,8 +143,7 @@ public struct AWindLimitEditFSContent: View {
                 Spacer()
                 Text("-")
             }
-            Text(AUnit.degrees.symbol)
-                .foregroundStyle(.tint)
+            Menu(AUnit.degrees.symbol) {}
         }
     }
 

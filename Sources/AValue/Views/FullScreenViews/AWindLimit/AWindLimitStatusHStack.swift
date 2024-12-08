@@ -10,8 +10,13 @@ public struct AWindLimitStatusHStack: View {
     @Binding var unit: AUnit?
     var status: AWindLimitStatus
     var originalUnit: AUnit?
+    var precision: FloatingPointFormatStyle<Double>.Configuration.Precision
 
     private let dirFormat: FloatingPointFormatStyle<Double> = .number.precision(.integerLength(3))
+
+    private var windSpeedFormat: FloatingPointFormatStyle<Double> {
+        .number.precision(precision).rounded(rule: .towardZero)
+    }
 
     private var originalUnitIfSpeed: AUnit? {
         guard originalUnit?.unitType == .speed
@@ -25,8 +30,7 @@ public struct AWindLimitStatusHStack: View {
     }
 
     private var textSpeed: Text {
-        Text("≤") +
-            Text(displayedSpeed, format: .number.precision(.fractionLength(1)).rounded(rule: .towardZero))
+        Text("≤") + Text(displayedSpeed, format: windSpeedFormat)
     }
 
     private var displayedHeadOrTailwind: Double {
@@ -61,7 +65,7 @@ public struct AWindLimitStatusHStack: View {
     }
 
     private var labelOfHeadwind: some View {
-        var text = Text(displayedHeadOrTailwind, format: .number.precision(.fractionLength(1 ... 5)).rounded(rule: .towardZero))
+        var text = Text(displayedHeadOrTailwind, format: windSpeedFormat)
         if let selectedUnit = selectedUnit {
             text = text + Text(" " + selectedUnit.symbol)
         }
@@ -73,7 +77,7 @@ public struct AWindLimitStatusHStack: View {
     }
 
     private var labelOfCross: some View {
-        var text = Text(displayedCrosswind, format: .number.precision(.fractionLength(1 ... 5)).rounded(rule: .awayFromZero))
+        var text = Text(displayedCrosswind, format: windSpeedFormat)
         if let selectedUnit = selectedUnit {
             text = text + Text(" " + selectedUnit.symbol)
         }
@@ -90,18 +94,6 @@ public struct AWindLimitStatusHStack: View {
                 .font(.caption2)
                 .foregroundColor(.gray)
 
-//            if status.runway < .degrees(180) {
-//                Image(systemName: "location.north")
-//                    .rotationEffect(status.runway.toAngle())
-//            }
-//            Image(systemName: "line.diagonal.arrow")
-//                .rotationEffect(status.windDir.toAngle())
-//                .rotationEffect(.degrees(-45))
-//            if status.runway >= .degrees(180) {
-//                Image(systemName: "location.north")
-//                    .rotationEffect(status.runway.toAngle())
-//            }
-
             Spacer()
             Menu {
                 labelOfHeadwind
@@ -115,10 +107,11 @@ public struct AWindLimitStatusHStack: View {
         }
     }
 
-    public init(unit: Binding<AUnit?>, status: AWindLimitStatus, originalUnit: AUnit?) {
+    public init(unit: Binding<AUnit?>, status: AWindLimitStatus, originalUnit: AUnit?, precision: FloatingPointFormatStyle<Double>.Configuration.Precision) {
         self._unit = unit
         self.status = status
         self.originalUnit = originalUnit
+        self.precision = precision
     }
 }
 
@@ -129,7 +122,7 @@ private struct Example: View {
 
     var body: some View {
         List {
-            AWindLimitStatusHStack(unit: $unit, status: status, originalUnit: .knots)
+            AWindLimitStatusHStack(unit: $unit, status: status, originalUnit: .knots, precision: .significantDigits(0 ... 1))
         }
     }
 }
