@@ -1,3 +1,4 @@
+/// 用于在地图中显示辅助地点和名称
 public struct ALocation: Codable, Sendable, Hashable {
     var longitude: Double
     var latitude: Double
