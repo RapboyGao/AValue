@@ -24,112 +24,6 @@ public enum ALongitude: Codable, Sendable, Hashable, CustomStringConvertible {
         self = someValue.toFormat(format)
     }
 
-    // 修改后的 throws 初始化器
-    public init(_ string: String?) throws {
-        // 检查输入字符串是否为空或仅包含空格
-        guard let string = string?.trimmingCharacters(in: .whitespacesAndNewlines), !string.isEmpty else {
-            throw ALongitudeError.invalidFormat
-        }
-
-        // 判断方向，确保第一个字符是 'E' 或 'W'
-        let isEast: Bool
-        if string.first == "E" {
-            isEast = true
-        } else if string.first == "W" {
-            isEast = false
-        } else {
-            throw ALongitudeError.invalidDirection
-        }
-
-        // 获取方向后面的数字部分
-        let numericPart = string.dropFirst()
-
-        // 格式解析：E122453 -> E122°45.3'
-        if numericPart.range(of: #"^(\d{3})(\d{3})$"#, options: .regularExpression) != nil {
-            let degreesStr = numericPart.prefix(3)
-            let minutesStr = numericPart.suffix(3)
-            if let degrees = Int(degreesStr), let minutes = Double(minutesStr) {
-                self = .degreesMinutes(isEast: isEast, degrees: degrees, minutes: minutes / 10.0)
-                return
-            }
-        }
-
-        // 格式解析：W12230.5 -> W122°30.5'
-        if numericPart.range(of: #"^(\d{3})(\d{2})\.(\d+)$"#, options: .regularExpression) != nil {
-            let degreesStr = numericPart.prefix(3)
-            let minutesStr = numericPart.dropFirst(3)
-            if let degrees = Int(degreesStr), let minutes = Double(minutesStr) {
-                self = .degreesMinutes(isEast: isEast, degrees: degrees, minutes: minutes)
-                return
-            }
-        }
-
-        // 格式解析：E1223045 -> E122°30'45"
-        if numericPart.range(of: #"^(\d{3})(\d{2})(\d{2})$"#, options: .regularExpression) != nil {
-            let degreesStr = numericPart.prefix(3)
-            let minutesStr = numericPart.dropFirst(3).prefix(2)
-            let secondsStr = numericPart.suffix(2)
-            if let degrees = Int(degreesStr), let minutes = Int(minutesStr), let seconds = Double(secondsStr) {
-                self = .degreesMinutesSeconds(isEast: isEast, degrees: degrees, minutes: minutes, seconds: seconds)
-                return
-            }
-        }
-
-        // 格式解析：E12230453 -> E122°30'45.3"
-        if numericPart.range(of: #"^(\d{3})(\d{2})(\d{3})$"#, options: .regularExpression) != nil {
-            let degreesStr = numericPart.prefix(3)
-            let minutesStr = numericPart.dropFirst(3).prefix(2)
-            let secondsStr = numericPart.suffix(3)
-            if let degrees = Int(degreesStr), let minutes = Int(minutesStr), let seconds = Double(secondsStr) {
-                self = .degreesMinutesSeconds(isEast: isEast, degrees: degrees, minutes: minutes, seconds: seconds / 10.0)
-                return
-            }
-        }
-
-        // 格式解析：E1223045.3 -> E122°30'45.3"
-        if numericPart.range(of: #"^(\d{3})(\d{2})(\d{2})\.(\d+)$"#, options: .regularExpression) != nil {
-            let degreesStr = numericPart.prefix(3)
-            let minutesStr = numericPart.dropFirst(3).prefix(2)
-            let secondsStr = numericPart.dropFirst(5)
-            if let degrees = Int(degreesStr), let minutes = Int(minutesStr), let seconds = Double(secondsStr) {
-                self = .degreesMinutesSeconds(isEast: isEast, degrees: degrees, minutes: minutes, seconds: seconds)
-                return
-            }
-        }
-
-        // 格式解析：W122.456 -> W122.456°
-        if numericPart.range(of: #"^(\d{3})(\.(\d+))?$"#, options: .regularExpression) != nil {
-            if let degrees = Double(numericPart) {
-                self = .degrees(isEast: isEast, degrees: degrees)
-                return
-            }
-        }
-
-        // 格式解析：E122°30.5' -> 仅度和分
-        if numericPart.range(of: #"^(\d{3})°(\d{1,2})\.(\d+)'$"#, options: .regularExpression) != nil {
-            let degreesStr = numericPart.prefix(3)
-            let minutesStr = numericPart.dropFirst(4).dropLast()
-            if let degrees = Int(degreesStr), let minutes = Double(minutesStr) {
-                self = .degreesMinutes(isEast: isEast, degrees: degrees, minutes: minutes)
-                return
-            }
-        }
-
-        // 格式解析：W122°30'45" -> 度、分和秒
-        if numericPart.range(of: #"^(\d{3})°(\d{2})'(\d{2}(\.\d+)?)"$"#, options: .regularExpression) != nil {
-            let degreesStr = numericPart.prefix(3)
-            let minutesStr = numericPart.dropFirst(4).prefix(2)
-            let secondsStr = numericPart.dropFirst(7).dropLast()
-            if let degrees = Int(degreesStr), let minutes = Int(minutesStr), let seconds = Double(secondsStr) {
-                self = .degreesMinutesSeconds(isEast: isEast, degrees: degrees, minutes: minutes, seconds: seconds)
-                return
-            }
-        }
-
-        // 如果无法匹配任何已知格式，抛出错误
-        throw ALongitudeError.invalidFormat
-    }
-
     @Sendable
     public func toNumber() -> Double {
         switch self {
@@ -153,6 +47,21 @@ public enum ALongitude: Codable, Sendable, Hashable, CustomStringConvertible {
             return .degreesMinutes(isEast: isEast, degrees: degrees, minutes: minutes)
         case .degreesMinutesSeconds(let isEast, var degrees, var minutes, var seconds):
             seconds = (seconds * scale).rounded() / scale
+            if seconds >= 60 { minutes += 1; seconds -= 60 }
+            if minutes >= 60 { degrees += 1; minutes -= 60 }
+            return .degreesMinutesSeconds(isEast: isEast, degrees: degrees, minutes: minutes, seconds: seconds)
+        default:
+            return self
+        }
+    }
+
+    @Sendable
+    public func normalized() -> Self {
+        switch self {
+        case .degreesMinutes(let isEast, var degrees, var minutes):
+            if minutes >= 60 { degrees += 1; minutes -= 60 }
+            return .degreesMinutes(isEast: isEast, degrees: degrees, minutes: minutes)
+        case .degreesMinutesSeconds(let isEast, var degrees, var minutes, var seconds):
             if seconds >= 60 { minutes += 1; seconds -= 60 }
             if minutes >= 60 { degrees += 1; minutes -= 60 }
             return .degreesMinutesSeconds(isEast: isEast, degrees: degrees, minutes: minutes, seconds: seconds)
@@ -247,5 +156,167 @@ public enum ALongitude: Codable, Sendable, Hashable, CustomStringConvertible {
         default:
             return self
         }
+    }
+}
+
+@available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
+public extension ALongitude {
+    init(raw string: String?) throws {
+        // 检查输入字符串是否为空或仅包含空格
+        guard let string = string?.trimmingCharacters(in: .whitespacesAndNewlines), !string.isEmpty else {
+            throw ALatitudeError.invalidFormat
+        }
+
+        let patternOriginal = #/
+            (?<direction>E|W)
+            \s*
+            ((?<degrees>\d{1,3} (\.\d+)? )°)
+            (
+                (?<minutes>\d{1,2} (\.\d+)? )'
+                ((?<seconds>\d{1,2} (\.\d+)? )")?
+            )?
+        /#
+        if let match = try? patternOriginal.wholeMatch(in: string) {
+            let output = match.output
+            if let minuteStr = output.minutes {
+                if let secondStr = output.seconds { // 度分秒
+                    guard let degrees = Int(output.degrees),
+                          let minutes = Int(minuteStr),
+                          let seconds = Double(secondStr)
+                    else { throw ALatitudeError.errorWhenParsingNumber }
+                    self = .degreesMinutesSeconds(isEast: output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
+
+                } else { // 度分
+                    guard let degrees = Int(output.degrees),
+                          let minutes = Double(minuteStr)
+                    else { throw ALatitudeError.errorWhenParsingNumber }
+                    self = .degreesMinutes(isEast: output.direction == "E", degrees: degrees, minutes: minutes)
+                }
+            } else { // 度
+                guard let degrees = Double(output.degrees)
+                else { throw ALatitudeError.errorWhenParsingNumber }
+                self = .degrees(isEast: output.direction == "E", degrees: degrees)
+            }
+            return
+        }
+
+        let patterBasic = #/
+            (?<direction>E|W)
+            (?<number>\d{1,3}\.\d+)
+            °?
+        /#
+        if let match = try? patterBasic.wholeMatch(in: string) {
+            guard let number = Double(match.output.number)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degrees(isEast: match.output.direction == "E", degrees: number)
+            return
+        }
+
+        let pattern4Digits = #/
+            (?<direction>E|W)
+            (?<degrees>(0\d\d|1[0-8]\d))
+            \s*
+            (?<minutesInt>[0-5]\d)
+        /#
+        if let match = try? pattern4Digits.wholeMatch(in: string) {
+            guard let degrees = Int(match.output.degrees),
+                  let minutes = Double(match.output.minutesInt)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degreesMinutes(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes)
+            return
+        }
+
+        /// - N36135 -> N36 13.5
+        let pattern5Digits = #/
+            (?<direction>E|W)
+        (?<degrees>(0\d\d|1[0-8]\d))
+            \s*
+            (?<minutesInt>[0-5]\d)
+            (?<minuteDigit>\d)
+        /#
+        if let match = try? pattern5Digits.wholeMatch(in: string) {
+            guard let degrees = Int(match.output.degrees),
+                  let minutes = Double(match.output.minutesInt + "." + match.output.minuteDigit)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degreesMinutes(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes)
+            return
+        }
+
+        /// - N361350-> N36 13 15.0
+        let pattern6Digits = #/
+            (?<direction>E|W)
+            (?<degrees>(0\d\d|1[0-8]\d))
+            \s*
+            (?<minutesInt>[0-5]\d)
+            \s*
+            (?<secondsInt>[0-5]\d)
+        /#
+        if let match = try? pattern6Digits.wholeMatch(in: string) {
+            guard let degrees = Int(match.output.degrees),
+                  let minutes = Int(match.output.minutesInt),
+                  let seconds = Double(match.output.secondsInt)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degreesMinutesSeconds(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
+            return
+        }
+
+        /// - N3613502 -> N36 13 50.2
+        let pattern7Digits = #/
+            (?<direction>E|W)
+            (?<degrees>(0\d\d|1[0-8]\d))
+            \s*
+            (?<minutesInt>[0-5]\d)
+            \s*
+            (?<seconds>[0-5]\d\d)
+        /#
+        if let match = try? pattern7Digits.wholeMatch(in: string) {
+            guard let degrees = Int(match.output.degrees),
+                  let minutes = Int(match.output.minutesInt),
+                  let seconds = Double(match.output.seconds)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degreesMinutesSeconds(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds / 10)
+            return
+        }
+
+        /// - N3613.502 -> N36 13.502
+        let pattern4BeforeDot = #/
+            (?<direction>E|W)
+            (?<degrees>(0\d\d|1[0-8]\d))
+            \s*
+            (?<minutes>[0-5]\d\.\d+)
+        /#
+        if let match = try? pattern4BeforeDot.wholeMatch(in: string) {
+            guard let degrees = Int(match.output.degrees),
+                  let minutes = Double(match.output.minutes)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degreesMinutes(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes)
+            return
+        }
+
+        /// - N361350.2 -> N36 1350.2
+        let pattern6BeforeDot = #/
+            (?<direction>E|W)
+            (?<degrees>(0\d\d|1[0-8]\d))
+            \s*
+            (?<minutes>[0-5]\d)
+            \s*
+            (?<seconds>[0-5]\d\.\d+)
+        /#
+        if let match = try? pattern6BeforeDot.wholeMatch(in: string) {
+            guard let degrees = Int(match.output.degrees),
+                  let minutes = Int(match.output.minutes),
+                  let seconds = Double(match.output.seconds)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degreesMinutesSeconds(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
+            return
+        }
+
+        // 如果无法匹配任何已知格式，抛出错误
+        throw ALatitudeError.invalidFormat
+    }
+
+    init(_ string: String?) throws {
+        let someValue = try ALongitude(raw: string)
+        self = someValue.normalized()
     }
 }

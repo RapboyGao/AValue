@@ -62,6 +62,22 @@ public enum ALatitude: Codable, Sendable, Hashable, CustomStringConvertible {
         }
     }
 
+    /// 规范化纬度值
+    @Sendable
+    public func normalized() -> Self {
+        switch self {
+        case .degreesMinutes(let isNorth, var degrees, var minutes):
+            if minutes >= 60 { degrees += 1; minutes -= 60 }
+            return .degreesMinutes(isNorth: isNorth, degrees: degrees, minutes: minutes)
+        case .degreesMinutesSeconds(let isNorth, var degrees, var minutes, var seconds):
+            if seconds >= 60 { minutes += 1; seconds -= 60 }
+            if minutes >= 60 { degrees += 1; minutes -= 60 }
+            return .degreesMinutesSeconds(isNorth: isNorth, degrees: degrees, minutes: minutes, seconds: seconds)
+        default:
+            return self
+        }
+    }
+
     /// 将纬度转换为字符串，指定小数位数
     @Sendable
     public func toString(digits: Int) -> String {
@@ -160,7 +176,7 @@ public enum ALatitude: Codable, Sendable, Hashable, CustomStringConvertible {
 
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public extension ALatitude {
-    init(_ string: String?) throws {
+    private init(raw string: String?) throws {
         // 检查输入字符串是否为空或仅包含空格
         guard let string = string?.trimmingCharacters(in: .whitespacesAndNewlines), !string.isEmpty else {
             throw ALatitudeError.invalidFormat
@@ -315,5 +331,10 @@ public extension ALatitude {
 
         // 如果无法匹配任何已知格式，抛出错误
         throw ALatitudeError.invalidFormat
+    }
+
+    init(_ string: String?) throws {
+        let someValue = try ALatitude(raw: string)
+        self = someValue.normalized()
     }
 }

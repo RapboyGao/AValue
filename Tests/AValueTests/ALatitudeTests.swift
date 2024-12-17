@@ -96,10 +96,19 @@ class ALatitudeTests: XCTestCase {
         XCTAssertNil(try? ALatitude("N39°16.5")) // 格式错误
     }
 
-    func testRegex() throws {
-        let regexPattern = #"^(N|S)(\d{2})\.(\d)+$"#
-        let string = "N39.125"
-        let regex = try NSRegularExpression(pattern: regexPattern, options: .allowCommentsAndWhitespace)
-        let match = regex.firstMatch(in: string, range: NSRange(location: 0, length: string.count))
+    func testNonStandardFormat() throws {
+        XCTAssertNil(try? ALatitude("39°16'53.33\"N")) // 方向符号在末尾
+        XCTAssertNil(try? ALatitude("N39°16'53\".33")) // 错误的小数点位置
+    }
+
+    func testBoundaryValues() throws {
+        let latitude1 = try ALatitude("N90°00'00\"")
+        XCTAssertEqual(latitude1.toNumber(), 90.0)
+
+        let latitude2 = try ALatitude("S90°00'00\"")
+        XCTAssertEqual(latitude2.toNumber(), -90.0)
+
+        let latitude3 = try ALatitude("N00°00'00\"")
+        XCTAssertEqual(latitude3.toNumber(), 0.0)
     }
 }
