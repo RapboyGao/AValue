@@ -295,7 +295,7 @@ public extension ALatitude {
             return
         }
 
-        /// - N3613.502 -> N36 13.502
+        /// - N361350.2 -> N36 1350.2
         let pattern6BeforeDot = #/
             (?<direction>N|S)
             (?<degrees>\d\d)
