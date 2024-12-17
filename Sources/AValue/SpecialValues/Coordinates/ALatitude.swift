@@ -158,7 +158,6 @@ public enum ALatitude: Codable, Sendable, Hashable, CustomStringConvertible {
     }
 }
 
-// - Mark: 解析字符串
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public extension ALatitude {
     init(_ string: String?) throws {
@@ -171,8 +170,10 @@ public extension ALatitude {
             (?<direction>N|S)
             \s*
             ((?<degrees>\d{1,2} (\.\d+)? )°)
-            ((?<minutes>\d{1,2} (\.\d+)? )')?
-            ((?<seconds>\d{1,2} (\.\d+)? )")?
+            (
+                (?<minutes>\d{1,2} (\.\d+)? )'
+                ((?<seconds>\d{1,2} (\.\d+)? )")?
+            )?
         /#
         if let match = try? patternOriginal.wholeMatch(in: string) {
             let output = match.output
