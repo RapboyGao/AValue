@@ -1,5 +1,13 @@
 import Foundation
 
+public enum ALongitudeError: Error {
+    case invalidDirection
+    case invalidFormat
+    case invalidDegree
+    case invalidMinute
+    case invalidSecond
+}
+
 public enum ALongitude: Codable, Sendable, Hashable, CustomStringConvertible {
     case degrees(isEast: Bool, degrees: Double)
     case degreesMinutes(isEast: Bool, degrees: Int, minutes: Double)
@@ -16,23 +24,24 @@ public enum ALongitude: Codable, Sendable, Hashable, CustomStringConvertible {
         self = someValue.toFormat(format)
     }
 
-    public init?(_ string: String?) {
-        // 检查输入字符串是否为 nil 或仅包含空格
+    // 修改后的 throws 初始化器
+    public init(_ string: String?) throws {
+        // 检查输入字符串是否为空或仅包含空格
         guard let string = string?.trimmingCharacters(in: .whitespacesAndNewlines), !string.isEmpty else {
-            return nil
+            throw ALongitudeError.invalidFormat
         }
 
-        // 根据第一个字符确定方向（东或西）
+        // 判断方向，确保第一个字符是 'E' 或 'W'
         let isEast: Bool
         if string.first == "E" {
             isEast = true
         } else if string.first == "W" {
             isEast = false
         } else {
-            return nil
+            throw ALongitudeError.invalidDirection
         }
 
-        // 去掉方向字符并处理后面的数字部分
+        // 获取方向后面的数字部分
         let numericPart = string.dropFirst()
 
         // 格式解析：E122453 -> E122°45.3'
@@ -117,8 +126,8 @@ public enum ALongitude: Codable, Sendable, Hashable, CustomStringConvertible {
             }
         }
 
-        // 如果没有匹配到任何已知格式，返回 nil
-        return nil
+        // 如果无法匹配任何已知格式，抛出错误
+        throw ALongitudeError.invalidFormat
     }
 
     @Sendable
