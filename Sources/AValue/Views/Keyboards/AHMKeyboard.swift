@@ -99,8 +99,13 @@ public struct AHMKeyboard: View {
                 ForEach(7 ..< 10, content: makeNumberButton)
                 makeDayButton()
 
-//                makeTextButton(":")
-                Text("")
+                AKeyButton(connerRadius, colors: .sameAsBackground) {
+                    textfield.insertText(":")
+                } content: { isClicked in
+                    Text(":")
+                        .bold(isClicked)
+                        .font(numbersFont)
+                }
                 makeNumberButton(0)
                 AKeyButton(connerRadius, colors: .sameAsBackground, sound: 1155) {
                     textfield.text = ""
