@@ -89,7 +89,7 @@ public enum ALatitude: Codable, Sendable, Hashable, CustomStringConvertible {
     public var description: String {
         switch self.format {
         case .degrees:
-            return self.toString(digits: 6)
+            return self.toString(digits: 7)
         case .degreesM:
             return self.toString(digits: 1)
         case .degreesMS:
