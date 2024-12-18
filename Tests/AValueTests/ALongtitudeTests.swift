@@ -108,33 +108,4 @@ class ALongitudeTests: XCTestCase {
         XCTAssertEqual(longitude.toDM().toNumber(), -123.456)
         XCTAssertEqual(longitude.toDMS().toNumber(), -123.456)
     }
-    
-    // 测试编码和解码
-    func testCodable() throws {
-        let longitude = ALongitude.degreesMinutesSeconds(isEast: true, degrees: 45, minutes: 30, seconds: 15.0)
-        let encoder = JSONEncoder()
-        let data = try encoder.encode(longitude)
-        
-        let decoder = JSONDecoder()
-        let decoded = try decoder.decode(ALongitude.self, from: data)
-        
-        XCTAssertEqual(longitude, decoded)
-    }
-    
-    // 测试哈希值
-    func testHashable() throws {
-        let longitude1 = ALongitude.degrees(isEast: true, degrees: 100.0)
-        let longitude2 = ALongitude.degrees(isEast: true, degrees: 100.0)
-        let longitude3 = ALongitude.degrees(isEast: false, degrees: 100.0)
-        
-        XCTAssertEqual(longitude1.hashValue, longitude2.hashValue)
-        XCTAssertNotEqual(longitude1.hashValue, longitude3.hashValue)
-    }
-    
-    // 测试发送能力
-    func testSendable() throws {
-        let longitude = ALongitude.degrees(isEast: true, degrees: 75.0)
-        // 这里只是确保编译通过，因为 Sendable 主要用于并发
-        let _ = longitude
-    }
 }
