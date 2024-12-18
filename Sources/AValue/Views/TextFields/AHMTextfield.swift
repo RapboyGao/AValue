@@ -16,8 +16,14 @@ public struct AHMTextfield: View {
             }
     }
 
-    public init(value: Binding<Int?>, allowSet: Bool, placeholder: String) {
+    public init(_ value: Binding<Int?>, allowSet: Bool, placeholder: String) {
         self._value = value
+        self.allowSet = allowSet
+        self.placeholder = placeholder
+    }
+
+    public init(_ value: Binding<AValue?>, allowSet: Bool, placeholder: String) {
+        self._value = value.minutesValue()
         self.allowSet = allowSet
         self.placeholder = placeholder
     }
@@ -28,7 +34,7 @@ public struct AHMTextfield: View {
 private struct Example: View {
     @State var value: Int?
     var body: some View {
-        AHMTextfield(value: $value, allowSet: true, placeholder: "Time")
+        AHMTextfield($value, allowSet: true, placeholder: "Time")
     }
 }
 
