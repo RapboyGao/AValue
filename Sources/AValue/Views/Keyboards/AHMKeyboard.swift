@@ -59,15 +59,27 @@ public struct AHMKeyboard: View {
             let hasDay = hmValues.contains {
                 $0.format == .days24HM
             }
-            format = hasDay ? .days24HM : .hourMinute
             let newHourMinuteValue = hasDay ? hmValues.sum(format: .days24HM) : hmValues.sum(format: .hourMinute)
             let newText = newHourMinuteValue.description
             guard textfield.text == newText
             else {
                 textfield.text = newText
+                format = hasDay ? .days24HM : .hourMinute
                 return
             }
-            textfield.resignFirstResponder()
+            switch newHourMinuteValue.toNumber() {
+            case 0 ..< 1440:
+                textfield.resignFirstResponder()
+            default:
+                switch format {
+                case .hourMinute, .totalHours, .totalMinutes:
+                    format = .days24HM
+                case .days24HM:
+                    format = .hourMinute
+                }
+                textfield.text = newHourMinuteValue.toFormat(format).description
+            }
+
         } content: { isClicked in
             Text("=")
                 .font(numbersFont)
@@ -87,6 +99,9 @@ public struct AHMKeyboard: View {
                 ForEach(7 ..< 10, content: makeNumberButton)
                 makeDayButton()
 
+//                makeTextButton(":")
+                Text("")
+                makeNumberButton(0)
                 AKeyButton(connerRadius, colors: .sameAsBackground, sound: 1155) {
                     textfield.text = ""
                     withAnimation {
@@ -96,16 +111,6 @@ public struct AHMKeyboard: View {
                     Image(systemName: "arrow.counterclockwise")
                         .font(.system(size: 24))
                         .rotationEffect(turnDirection)
-                }
-
-                makeNumberButton(0)
-
-                AKeyButton(connerRadius, colors: .sameAsBackground) {
-                    textfield.insertText(":")
-                } content: { isPressed in
-                    Text(":")
-                        .font(numbersFont)
-                        .bold(isPressed)
                 }
 
                 doneButton()
