@@ -31,6 +31,6 @@ final class AValueTests: XCTestCase {
     func testParseAHourMinuteExpression() throws {
         let expression = "1235-150"
         let value: [AHourMinuteValue]? = .init(expression)
-        print(value?.sum(format: .hourMinute))
+        XCTAssertEqual(value?.sum(format: .hourMinute), .hourMinute(isNegative: false, hour: 10, minute: 45))
     }
 }

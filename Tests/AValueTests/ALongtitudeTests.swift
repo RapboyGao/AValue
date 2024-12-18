@@ -101,6 +101,13 @@ class ALongitudeTests: XCTestCase {
         XCTAssertEqual(longitude3.toNumber(), 0.0)
     }
     
+    // 测试原始纯度数小数格式
+    func testInvalidInput() throws {
+        XCTAssertNil(try? ALongitude("W138165341"))
+        XCTAssertNil(try? ALongitude("W138°13.4\""))
+        XCTAssertNil(try? ALongitude("W138"))
+    }
+    
     // 测试转换方法
     func testConversionMethods() throws {
         let longitude = ALongitude.degrees(isEast: false, degrees: 123.456)
