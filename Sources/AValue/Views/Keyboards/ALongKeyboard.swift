@@ -43,15 +43,18 @@ public struct ALongKeyboard: View {
             }
         } action: {
             guard let text = textfield.text,
-                  let latitude = try? ALongitude(text)
+                  var longitude = try? ALongitude(text)
             else { return }
-            guard textfield.text == latitude.description
+            guard textfield.text == longitude.description
             else {
-                textfield.text = latitude.description
-                format = latitude.format
+                textfield.text = longitude.description
+                format = longitude.format
                 return
             }
-            format = latitude.format
+            // 如果已经一样了
+            format = format.nextFormat
+            longitude = longitude.toFormat(format)
+            textfield.text = longitude.description
             textfield.resignFirstResponder()
         } content: { isClicked in
             Text("=")

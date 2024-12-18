@@ -25,6 +25,17 @@ public struct ALatFormat: ParseableFormatStyle {
         self.preferredFormat = preferredFormat
         self.digits = digits
     }
+
+    public init(_ preferredFormat: ACoordinateFormat) {
+        switch preferredFormat {
+        case .degrees:
+            self = .degrees()
+        case .degreesM:
+            self = .dM()
+        case .degreesMS:
+            self = .dMS()
+        }
+    }
 }
 
 public extension ALatFormat {

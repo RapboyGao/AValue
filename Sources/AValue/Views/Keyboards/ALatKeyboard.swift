@@ -43,7 +43,7 @@ public struct ALatKeyboard: View {
             }
         } action: {
             guard let text = textfield.text,
-                  let latitude = try? ALatitude(text)
+                  var latitude = try? ALatitude(text)
             else { return }
             guard textfield.text == latitude.description
             else {
@@ -51,7 +51,10 @@ public struct ALatKeyboard: View {
                 format = latitude.format
                 return
             }
-            format = latitude.format
+            // 如果已经一样了
+            format = format.nextFormat
+            latitude = latitude.toFormat(format)
+            textfield.text = latitude.description
             textfield.resignFirstResponder()
         } content: { isClicked in
             Text("=")

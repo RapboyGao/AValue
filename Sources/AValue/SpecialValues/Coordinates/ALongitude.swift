@@ -159,7 +159,7 @@ public extension ALongitude {
         guard let trimmedString = string?.trimmingCharacters(in: .whitespacesAndNewlines),
               !trimmedString.isEmpty
         else {
-            throw ACoordinateParsingError.invalidFormat
+            throw ACoordinateParsingError.stringNotProvided
         }
 
         // 定义所有正则表达式模式及其对应的解析逻辑

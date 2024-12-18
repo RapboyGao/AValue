@@ -15,76 +15,85 @@ class ALatitudeTests: XCTestCase {
         XCTAssertEqual(latitude.toDMS().toString(digits: 1), "N02°03'04.0\"")
     }
 
-    func testDegreesFormat() throws {
-        // 测试 degrees 格式，如 N39.26165°
-        let latitude1 = try ALatitude("N39.26165°")
-        XCTAssertEqual(latitude1.toNumber(), 39.26165)
-
-        let latitude2 = try ALatitude("S39.26165°")
-        XCTAssertEqual(latitude2.toNumber(), -39.26165)
+    func testParseOriginalFormat() throws {
+        for _ in 0 ... 10 {
+            let number = Double.random(in: -90 ... 90)
+            for format in ACoordinateFormat.allCases {
+                let value = ALatitude(number, format: format)
+                let parsed = try ALatitude(value.toString(digits: 20))
+                XCTAssertEqual(value.toNumber(), parsed.toNumber())
+            }
+        }
     }
 
-    func testDegreesMinutesFormat() throws {
-        // 测试 degrees 和 minutes 格式，如 N39°16.5'
-        let latitude1 = try ALatitude("N39°16.5'")
-        XCTAssertEqual(latitude1.toNumber(), 39.275)
+    func testDifferentFormat() throws {
+        // 6 + decimal digits
+        var string = "N391315.3"
+        var latitude = try ALatitude(string)
+        XCTAssertEqual(latitude, .degreesMinutesSeconds(isNorth: true, degrees: 39, minutes: 13, seconds: 15.3))
 
-        let latitude2 = try ALatitude("S39°16.5'")
-        XCTAssertEqual(latitude2.toNumber(), -39.275)
+        string = "S391315.3"
+        latitude = try ALatitude(string)
+        XCTAssertEqual(latitude, .degreesMinutesSeconds(isNorth: false, degrees: 39, minutes: 13, seconds: 15.3))
+
+        // 7 digits
+        string = "N3913153"
+        latitude = try ALatitude(string)
+        XCTAssertEqual(latitude, .degreesMinutesSeconds(isNorth: true, degrees: 39, minutes: 13, seconds: 15.3))
+
+        // 6 digits
+        string = "N391315"
+        latitude = try ALatitude(string)
+        XCTAssertEqual(latitude, .degreesMinutesSeconds(isNorth: true, degrees: 39, minutes: 13, seconds: 15))
+
+        // 4 + deicimal digits
+        string = "N3913.2"
+        latitude = try ALatitude(string)
+        XCTAssertEqual(latitude, .degreesMinutes(isNorth: true, degrees: 39, minutes: 13.2))
+
+        // 5 digits
+        string = "N39131"
+        latitude = try ALatitude(string)
+        XCTAssertEqual(latitude, .degreesMinutes(isNorth: true, degrees: 39, minutes: 13.1))
+
+        // 4 digits
+        string = "N3913"
+        latitude = try ALatitude(string)
+        XCTAssertEqual(latitude, .degreesMinutes(isNorth: true, degrees: 39, minutes: 13))
+
+        // 3 digits (Faulty)
+        string = "N391"
+        XCTAssertNil(try? ALatitude(string))
+
+        // 2 digits
+        string = "N39"
+        latitude = try ALatitude(string)
+        XCTAssertEqual(latitude, .degrees(isNorth: true, degrees: 39))
     }
 
-    func testDegreesMinutesSecondsFormat() throws {
-        // 测试 degrees, minutes 和 seconds 格式，如 N39°16'53.33"
-        let latitude1 = try ALatitude("N39°16'53.33\"")
-        XCTAssertEqual(latitude1, .degreesMinutesSeconds(isNorth: true, degrees: 39, minutes: 16, seconds: 53.33))
+    func testDifferentFormatIsSame() throws {
+        // 6 + decimal digits
+        XCTAssertEqual(try ALatitude("N123456.7"), try ALatitude("N12°34'56.7\""))
 
-        let latitude2 = try ALatitude("S39°16'53.33\"")
-        XCTAssertEqual(latitude2, .degreesMinutesSeconds(isNorth: false, degrees: 39, minutes: 16, seconds: 53.33))
-    }
+        // 7 digits
+        XCTAssertEqual(try ALatitude("N1234567"), try ALatitude("N12°34'56.7\""))
 
-    func testOriginalFormatDegreesMinutes() throws {
-        // 测试原始 degrees 和 minutes 格式，如 N39165 -> N39°16.5'
-        let latitude1 = try ALatitude("N39165")
-        XCTAssertEqual(latitude1.toNumber(), 39.275)
+        // 6 digits
+        XCTAssertEqual(try ALatitude("N123456"), try ALatitude("N12°34'56\""))
 
-        let latitude2 = try ALatitude("S39165")
-        XCTAssertEqual(latitude2.toNumber(), -39.275)
-    }
+        // 4 + deicimal digits
+        XCTAssertEqual(try ALatitude("N1234.5"), try ALatitude("N12°34.5'"))
 
-    func testOriginalFormatDegreesMinutesDecimal() throws {
-        // 测试原始 degrees 和小数形式的 minutes 格式，如 S3916.55 -> S39°16.55'
-        let latitude1 = try ALatitude("S3916.55")
-        XCTAssertEqual(latitude1.toNumber(), -39.27583333333333)
+        // 5 digits
+        XCTAssertEqual(try ALatitude("N12345"), try ALatitude("N12°34.5'"))
 
-        let latitude2 = try ALatitude("N3916.55")
-        XCTAssertEqual(latitude2.toNumber(), 39.27583333333333)
-    }
+        // 4 digits
+        XCTAssertEqual(try ALatitude("N1234"), try ALatitude("N12°34.0'"))
 
-    func testOriginalFormatDegreesMinutesSeconds() throws {
-        // 测试原始 degrees, minutes 和 seconds 格式，如 S381653 -> S38°16'53"
-        let latitude1 = try ALatitude("S381653")
-        XCTAssertEqual(latitude1.toNumber(), -38.28138888888889)
+        // 3 digits (Faulty)
 
-        let latitude2 = try ALatitude("N381653")
-        XCTAssertEqual(latitude2.toNumber(), 38.28138888888889)
-    }
-
-    func testOriginalFormatDegreesMinutesSecondsDecimal() throws {
-        // 测试原始 degrees, minutes 和 seconds 带小数点格式，如 S381653.3 -> S38°16'53.3"
-        let latitude1 = try ALatitude("S381653.3")
-        XCTAssertEqual(latitude1.toNumber(), -38.28147222222222)
-
-        let latitude2 = try ALatitude("N381653.3")
-        XCTAssertEqual(latitude2.toNumber(), 38.28147222222222)
-    }
-
-    func testOriginalFormatDegreesWithDecimal() throws {
-        // 测试原始 degrees 带小数点格式，如 S39.26165 -> S39.26165°
-        let latitude1 = try ALatitude("S39.26165")
-        XCTAssertEqual(latitude1.toNumber(), -39.26165)
-
-        let latitude2 = try ALatitude("N39.26165")
-        XCTAssertEqual(latitude2.toNumber(), 39.26165)
+        // 2 digits
+        XCTAssertEqual(try ALatitude("N12"), try ALatitude("N12°"))
     }
 
     func testInvalidInput() throws {
@@ -110,5 +119,8 @@ class ALatitudeTests: XCTestCase {
 
         let latitude3 = try ALatitude("N00°00'00\"")
         XCTAssertEqual(latitude3.toNumber(), 0.0)
+        
+        let latitude4 = try ALatitude("S00°00'00\"")
+        XCTAssertEqual(latitude4.toNumber(), 0.0)
     }
 }

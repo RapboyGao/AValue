@@ -20,7 +20,9 @@ public struct AHMTextfield: View {
                     AHMKeyboard(uiTextfield, format: $format)
                         .frame(height: 250)
                 }
+                .multilineTextAlignment(.trailing)
         } else if let value = value {
+            Spacer()
             switch value {
             case 0 ..< 1440:
                 Text(AHourMinuteValue(minutes: value).toHM().description)
@@ -39,10 +41,10 @@ public struct AHMTextfield: View {
                             Text(value, format: AHMFormat(format: .days24HM))
                         }
                     }
-                    Text("=") + Text(value, format: AHMFormat(format: .totalMinutes))
-                    Text("=") + Text(value, format: AHMFormat(format: .totalHours))
+                    Text("= ") + Text(value, format: AHMFormat(format: .totalMinutes))
+                    Text("= ") + Text(value, format: AHMFormat(format: .totalHours))
                 } label: {
-                    Text(value, format: formatStyle)
+                    Text("= ") + Text(value, format: formatStyle)
                 }
             }
         } else {
@@ -68,8 +70,12 @@ public struct AHMTextfield: View {
 private struct Example: View {
     @State var value: Int?
     var body: some View {
-        AHMTextfield($value, allowSet: true, placeholder: "Time")
-        AHMTextfield($value, allowSet: false, placeholder: "Time")
+        HStack {
+            AHMTextfield($value, allowSet: true, placeholder: "Time")
+        }
+        HStack {
+            AHMTextfield($value, allowSet: false, placeholder: "Time")
+        }
     }
 }
 
