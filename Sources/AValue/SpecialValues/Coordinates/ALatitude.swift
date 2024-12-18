@@ -1,12 +1,5 @@
 import Foundation
 
-// 定义初始化错误的枚举
-public enum ALatitudeError: Error {
-    case invalidDirection
-    case invalidFormat
-    case errorWhenParsingNumber
-}
-
 public enum ALatitude: Codable, Sendable, Hashable, CustomStringConvertible {
     case degrees(isNorth: Bool, degrees: Double)
     case degreesMinutes(isNorth: Bool, degrees: Int, minutes: Double)
@@ -180,7 +173,7 @@ public extension ALatitude {
     private init(raw string: String?) throws {
         // 确保输入字符串不为空并去除首尾空白字符
         guard let trimmedString = string?.trimmingCharacters(in: .whitespacesAndNewlines), !trimmedString.isEmpty else {
-            throw ALatitudeError.invalidFormat
+            throw ACoordinateParsingError.invalidFormat
         }
 
         // 定义所有需要匹配的正则表达式模式及其对应的解析逻辑
@@ -189,13 +182,13 @@ public extension ALatitude {
             (
                 pattern: #"^(N|S)\s*(\d{1,2}(?:\.\d+)?)\s*°?$"#,
                 parse: { result in
-                    guard result.numberOfRanges == 3 else { throw ALatitudeError.invalidFormat }
+                    guard result.numberOfRanges == 3 else { throw ACoordinateParsingError.invalidFormat }
 
                     let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
                     let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
 
                     guard let degrees = Double(degreesString) else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
 
                     return .degrees(isNorth: direction == "N", degrees: degrees)
@@ -205,7 +198,7 @@ public extension ALatitude {
             (
                 pattern: #"^(N|S)\s*(\d{1,2})\s*°\s*(\d{1,2}(?:\.\d+)?)\s*'$"#,
                 parse: { result in
-                    guard result.numberOfRanges == 4 else { throw ALatitudeError.invalidFormat }
+                    guard result.numberOfRanges == 4 else { throw ACoordinateParsingError.invalidFormat }
 
                     let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
                     let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
@@ -214,7 +207,7 @@ public extension ALatitude {
                     guard let degrees = Int(degreesString),
                           let minutes = Double(minutesString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
 
                     return .degreesMinutes(isNorth: direction == "N", degrees: degrees, minutes: minutes)
@@ -224,7 +217,7 @@ public extension ALatitude {
             (
                 pattern: #"^(N|S)\s*(\d{1,2})\s*°\s*(\d{1,2})\s*'\s*(\d{1,2}(?:\.\d+)?)\s*"$"#,
                 parse: { result in
-                    guard result.numberOfRanges == 5 else { throw ALatitudeError.invalidFormat }
+                    guard result.numberOfRanges == 5 else { throw ACoordinateParsingError.invalidFormat }
 
                     let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
                     let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
@@ -235,7 +228,7 @@ public extension ALatitude {
                           let minutes = Int(minutesString),
                           let seconds = Double(secondsString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
 
                     return .degreesMinutesSeconds(isNorth: direction == "N", degrees: degrees, minutes: minutes, seconds: seconds)
@@ -245,13 +238,13 @@ public extension ALatitude {
             (
                 pattern: #"^(N|S)(\d{1,2}\.\d+)\s*°?$"#,
                 parse: { result in
-                    guard result.numberOfRanges == 3 else { throw ALatitudeError.invalidFormat }
+                    guard result.numberOfRanges == 3 else { throw ACoordinateParsingError.invalidFormat }
 
                     let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
                     let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
 
                     guard let degrees = Double(degreesString) else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
 
                     return .degrees(isNorth: direction == "N", degrees: degrees)
@@ -261,7 +254,7 @@ public extension ALatitude {
             (
                 pattern: #"^(N|S)(\d{2})([0-5]\d)$"#,
                 parse: { result in
-                    guard result.numberOfRanges == 4 else { throw ALatitudeError.invalidFormat }
+                    guard result.numberOfRanges == 4 else { throw ACoordinateParsingError.invalidFormat }
 
                     let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
                     let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
@@ -270,7 +263,7 @@ public extension ALatitude {
                     guard let degrees = Int(degreesString),
                           let minutes = Double(minutesIntString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
 
                     return .degreesMinutes(isNorth: direction == "N", degrees: degrees, minutes: minutes)
@@ -280,7 +273,7 @@ public extension ALatitude {
             (
                 pattern: #"^(N|S)(\d{2})([0-5]\d)(\d)$"#,
                 parse: { result in
-                    guard result.numberOfRanges == 5 else { throw ALatitudeError.invalidFormat }
+                    guard result.numberOfRanges == 5 else { throw ACoordinateParsingError.invalidFormat }
 
                     let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
                     let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
@@ -290,7 +283,7 @@ public extension ALatitude {
                     guard let degrees = Int(degreesString),
                           let minutes = Double("\(minutesIntString).\(minuteDigitString)")
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
 
                     return .degreesMinutes(isNorth: direction == "N", degrees: degrees, minutes: minutes)
@@ -300,7 +293,7 @@ public extension ALatitude {
             (
                 pattern: #"^(N|S)(\d{2})([0-5]\d)([0-5]\d)$"#,
                 parse: { result in
-                    guard result.numberOfRanges == 5 else { throw ALatitudeError.invalidFormat }
+                    guard result.numberOfRanges == 5 else { throw ACoordinateParsingError.invalidFormat }
 
                     let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
                     let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
@@ -311,7 +304,7 @@ public extension ALatitude {
                           let minutes = Int(minutesString),
                           let seconds = Double(secondsIntString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
 
                     return .degreesMinutesSeconds(isNorth: direction == "N", degrees: degrees, minutes: minutes, seconds: Double(seconds))
@@ -321,7 +314,7 @@ public extension ALatitude {
             (
                 pattern: #"^(N|S)(\d{2})([0-5]\d)(\d{2})$"#,
                 parse: { result in
-                    guard result.numberOfRanges == 5 else { throw ALatitudeError.invalidFormat }
+                    guard result.numberOfRanges == 5 else { throw ACoordinateParsingError.invalidFormat }
 
                     let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
                     let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
@@ -332,7 +325,7 @@ public extension ALatitude {
                           let minutes = Int(minutesIntString),
                           let seconds = Double(secondsString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
 
                     return .degreesMinutesSeconds(isNorth: direction == "N", degrees: degrees, minutes: minutes, seconds: seconds / 10.0)
@@ -342,7 +335,7 @@ public extension ALatitude {
             (
                 pattern: #"^(N|S)(\d{2})([0-5]\d\.\d+)$"#,
                 parse: { result in
-                    guard result.numberOfRanges == 4 else { throw ALatitudeError.invalidFormat }
+                    guard result.numberOfRanges == 4 else { throw ACoordinateParsingError.invalidFormat }
 
                     let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
                     let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
@@ -351,7 +344,7 @@ public extension ALatitude {
                     guard let degrees = Int(degreesString),
                           let minutes = Double(minutesString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
 
                     return .degreesMinutes(isNorth: direction == "N", degrees: degrees, minutes: minutes)
@@ -361,7 +354,7 @@ public extension ALatitude {
             (
                 pattern: #"^(N|S)(\d{2})([0-5]\d)([0-5]\d\.\d+)$"#,
                 parse: { result in
-                    guard result.numberOfRanges == 5 else { throw ALatitudeError.invalidFormat }
+                    guard result.numberOfRanges == 5 else { throw ACoordinateParsingError.invalidFormat }
 
                     let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
                     let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
@@ -372,7 +365,7 @@ public extension ALatitude {
                           let minutes = Int(minutesString),
                           let seconds = Double(secondsString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
 
                     return .degreesMinutesSeconds(isNorth: direction == "N", degrees: degrees, minutes: minutes, seconds: seconds)
@@ -393,7 +386,7 @@ public extension ALatitude {
         }
 
         // 如果所有模式都不匹配，则抛出格式错误
-        throw ALatitudeError.invalidFormat
+        throw ACoordinateParsingError.invalidFormat
     }
 
     init(_ string: String?) throws {
@@ -409,7 +402,7 @@ public extension ALatitude {
     private init(raw2 string: String?) throws {
         // 检查输入字符串是否为空或仅包含空格
         guard let string = string?.trimmingCharacters(in: .whitespacesAndNewlines), !string.isEmpty else {
-            throw ALatitudeError.invalidFormat
+            throw ACoordinateParsingError.invalidFormat
         }
 
         let patternOriginalD = #/
@@ -421,7 +414,7 @@ public extension ALatitude {
         if let match = try? patternOriginalD.wholeMatch(in: string) {
             let output = match.output
             guard let degrees = Double(output.degrees)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degrees(isNorth: output.direction == "N", degrees: degrees)
             return
         }
@@ -438,7 +431,7 @@ public extension ALatitude {
             let output = match.output
             guard let degrees = Int(output.degrees),
                   let minutes = Double(output.minutes)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutes(isNorth: output.direction == "N", degrees: degrees, minutes: minutes)
             return
         }
@@ -458,7 +451,7 @@ public extension ALatitude {
             guard let degrees = Int(output.degrees),
                   let minutes = Int(output.minutes),
                   let seconds = Double(output.seconds)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutesSeconds(isNorth: output.direction == "N", degrees: degrees, minutes: minutes, seconds: seconds)
             return
         }
@@ -472,7 +465,7 @@ public extension ALatitude {
         /#
         if let match = try? patterBasic.wholeMatch(in: string) {
             guard let number = Double(match.output.number)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degrees(isNorth: match.output.direction == "N", degrees: number)
             return
         }
@@ -487,7 +480,7 @@ public extension ALatitude {
         if let match = try? pattern4Digits.wholeMatch(in: string) {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Double(match.output.minutesInt)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutes(isNorth: match.output.direction == "N", degrees: degrees, minutes: minutes)
             return
         }
@@ -503,7 +496,7 @@ public extension ALatitude {
         if let match = try? pattern5Digits.wholeMatch(in: string) {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Double(match.output.minutesInt + "." + match.output.minuteDigit)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutes(isNorth: match.output.direction == "N", degrees: degrees, minutes: minutes)
             return
         }
@@ -521,7 +514,7 @@ public extension ALatitude {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Int(match.output.minutesInt),
                   let seconds = Double(match.output.secondsInt)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutesSeconds(isNorth: match.output.direction == "N", degrees: degrees, minutes: minutes, seconds: seconds)
             return
         }
@@ -539,7 +532,7 @@ public extension ALatitude {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Int(match.output.minutesInt),
                   let seconds = Double(match.output.seconds)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutesSeconds(isNorth: match.output.direction == "N", degrees: degrees, minutes: minutes, seconds: seconds / 10)
             return
         }
@@ -554,7 +547,7 @@ public extension ALatitude {
         if let match = try? pattern4BeforeDot.wholeMatch(in: string) {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Double(match.output.minutes)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutes(isNorth: match.output.direction == "N", degrees: degrees, minutes: minutes)
             return
         }
@@ -572,13 +565,13 @@ public extension ALatitude {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Int(match.output.minutes),
                   let seconds = Double(match.output.seconds)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutesSeconds(isNorth: match.output.direction == "N", degrees: degrees, minutes: minutes, seconds: seconds)
             return
         }
 
         // 如果无法匹配任何已知格式，抛出错误
-        throw ALatitudeError.invalidFormat
+        throw ACoordinateParsingError.invalidFormat
     }
 
     init(original string: String?) throws {

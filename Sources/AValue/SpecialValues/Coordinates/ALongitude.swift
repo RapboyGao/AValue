@@ -1,13 +1,5 @@
 import Foundation
 
-public enum ALongitudeError: Error {
-    case invalidDirection
-    case invalidFormat
-    case invalidDegree
-    case invalidMinute
-    case invalidSecond
-}
-
 public enum ALongitude: Codable, Sendable, Hashable, CustomStringConvertible {
     case degrees(isEast: Bool, degrees: Double)
     case degreesMinutes(isEast: Bool, degrees: Int, minutes: Double)
@@ -167,7 +159,7 @@ public extension ALongitude {
         guard let trimmedString = string?.trimmingCharacters(in: .whitespacesAndNewlines),
               !trimmedString.isEmpty
         else {
-            throw ALatitudeError.invalidFormat
+            throw ACoordinateParsingError.invalidFormat
         }
 
         // 定义所有正则表达式模式及其对应的解析逻辑
@@ -179,7 +171,7 @@ public extension ALongitude {
                     let direction = (trimmedString as NSString).substring(with: match.range(at: 1))
                     let degreesString = (trimmedString as NSString).substring(with: match.range(at: 2))
                     guard let degrees = Double(degreesString) else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
                     return .degrees(isEast: direction == "E", degrees: degrees)
                 }
@@ -194,7 +186,7 @@ public extension ALongitude {
                     guard let degrees = Int(degreesString),
                           let minutes = Double(minutesString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
                     return .degreesMinutes(isEast: direction == "E", degrees: degrees, minutes: minutes)
                 }
@@ -211,7 +203,7 @@ public extension ALongitude {
                           let minutes = Int(minutesString),
                           let seconds = Double(secondsString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
                     return .degreesMinutesSeconds(isEast: direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
                 }
@@ -223,7 +215,7 @@ public extension ALongitude {
                     let direction = (trimmedString as NSString).substring(with: match.range(at: 1))
                     let numberString = (trimmedString as NSString).substring(with: match.range(at: 2))
                     guard let number = Double(numberString) else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
                     return .degrees(isEast: direction == "E", degrees: number)
                 }
@@ -238,7 +230,7 @@ public extension ALongitude {
                     guard let degrees = Int(degreesString),
                           let minutes = Double(minutesIntString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
                     return .degreesMinutes(isEast: direction == "E", degrees: degrees, minutes: minutes)
                 }
@@ -254,7 +246,7 @@ public extension ALongitude {
                     guard let degrees = Int(degreesString),
                           let minutes = Double("\(minutesIntString).\(minuteDigitString)")
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
                     return .degreesMinutes(isEast: direction == "E", degrees: degrees, minutes: minutes)
                 }
@@ -271,7 +263,7 @@ public extension ALongitude {
                           let minutes = Int(minutesIntString),
                           let seconds = Double(secondsIntString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
                     return .degreesMinutesSeconds(isEast: direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
                 }
@@ -288,7 +280,7 @@ public extension ALongitude {
                           let minutes = Int(minutesIntString),
                           let seconds = Double(secondsString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
                     return .degreesMinutesSeconds(isEast: direction == "E", degrees: degrees, minutes: minutes, seconds: seconds / 10)
                 }
@@ -303,7 +295,7 @@ public extension ALongitude {
                     guard let degrees = Int(degreesString),
                           let minutes = Double(minutesString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
                     return .degreesMinutes(isEast: direction == "E", degrees: degrees, minutes: minutes)
                 }
@@ -320,7 +312,7 @@ public extension ALongitude {
                           let minutes = Int(minutesString),
                           let seconds = Double(secondsString)
                     else {
-                        throw ALatitudeError.errorWhenParsingNumber
+                        throw ACoordinateParsingError.errorWhenParsingNumber
                     }
                     return .degreesMinutesSeconds(isEast: direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
                 }
@@ -344,7 +336,7 @@ public extension ALongitude {
         }
 
         // 如果所有模式都未匹配，抛出格式错误
-        throw ALatitudeError.invalidFormat
+        throw ACoordinateParsingError.invalidFormat
     }
 
     init(_ string: String?) throws {
@@ -360,7 +352,7 @@ public extension ALongitude {
     init(raw2 string: String?) throws {
         // 检查输入字符串是否为空或仅包含空格
         guard let string = string?.trimmingCharacters(in: .whitespacesAndNewlines), !string.isEmpty else {
-            throw ALatitudeError.invalidFormat
+            throw ACoordinateParsingError.invalidFormat
         }
 
         let patternOriginalD = #/
@@ -372,7 +364,7 @@ public extension ALongitude {
         if let match = try? patternOriginalD.wholeMatch(in: string) {
             let output = match.output
             guard let degrees = Double(output.degrees)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degrees(isEast: output.direction == "E", degrees: degrees)
             return
         }
@@ -389,7 +381,7 @@ public extension ALongitude {
             let output = match.output
             guard let degrees = Int(output.degrees),
                   let minutes = Double(output.minutes)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutes(isEast: output.direction == "E", degrees: degrees, minutes: minutes)
             return
         }
@@ -409,7 +401,7 @@ public extension ALongitude {
             guard let degrees = Int(output.degrees),
                   let minutes = Int(output.minutes),
                   let seconds = Double(output.seconds)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutesSeconds(isEast: output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
             return
         }
@@ -421,7 +413,7 @@ public extension ALongitude {
         /#
         if let match = try? patterBasic.wholeMatch(in: string) {
             guard let number = Double(match.output.number)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degrees(isEast: match.output.direction == "E", degrees: number)
             return
         }
@@ -435,7 +427,7 @@ public extension ALongitude {
         if let match = try? pattern4Digits.wholeMatch(in: string) {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Double(match.output.minutesInt)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutes(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes)
             return
         }
@@ -451,7 +443,7 @@ public extension ALongitude {
         if let match = try? pattern5Digits.wholeMatch(in: string) {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Double(match.output.minutesInt + "." + match.output.minuteDigit)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutes(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes)
             return
         }
@@ -469,7 +461,7 @@ public extension ALongitude {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Int(match.output.minutesInt),
                   let seconds = Double(match.output.secondsInt)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutesSeconds(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
             return
         }
@@ -487,7 +479,7 @@ public extension ALongitude {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Int(match.output.minutesInt),
                   let seconds = Double(match.output.seconds)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutesSeconds(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds / 10)
             return
         }
@@ -502,7 +494,7 @@ public extension ALongitude {
         if let match = try? pattern4BeforeDot.wholeMatch(in: string) {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Double(match.output.minutes)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutes(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes)
             return
         }
@@ -520,13 +512,13 @@ public extension ALongitude {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Int(match.output.minutes),
                   let seconds = Double(match.output.seconds)
-            else { throw ALatitudeError.errorWhenParsingNumber }
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutesSeconds(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
             return
         }
 
         // 如果无法匹配任何已知格式，抛出错误
-        throw ALatitudeError.invalidFormat
+        throw ACoordinateParsingError.invalidFormat
     }
 
     init(original string: String?) throws {
