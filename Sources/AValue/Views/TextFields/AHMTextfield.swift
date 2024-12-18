@@ -13,6 +13,7 @@ public struct AHMTextfield: View {
         TextField(placeholder, value: $value, format: AHMFormat(format: format))
             .aKeyboardView { uiTextfield in
                 AHMKeyboard(uiTextfield, format: $format)
+                    .frame(height: 250)
             }
     }
 
