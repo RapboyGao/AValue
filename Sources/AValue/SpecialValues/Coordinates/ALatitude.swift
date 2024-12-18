@@ -174,6 +174,8 @@ public enum ALatitude: Codable, Sendable, Hashable, CustomStringConvertible {
     }
 }
 
+// MARK: - The Regex method
+
 @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public extension ALatitude {
     private init(raw string: String?) throws {
@@ -182,36 +184,54 @@ public extension ALatitude {
             throw ALatitudeError.invalidFormat
         }
 
-        let patternOriginal = #/
+        let patternOriginalD = #/
             (?<direction>N|S)
             \s*
-            ((?<degrees>\d{1,2} (\.\d+)? )°)
-            (
-                (?<minutes>\d{1,2} (\.\d+)? )'
-                ((?<seconds>\d{1,2} (\.\d+)? )")?
-            )?
+            (?<degrees>\d{1,2} (\.\d+)? )
+            \s*°
         /#
-        if let match = try? patternOriginal.wholeMatch(in: string) {
+        if let match = try? patternOriginalD.wholeMatch(in: string) {
             let output = match.output
-            if let minuteStr = output.minutes {
-                if let secondStr = output.seconds { // 度分秒
-                    guard let degrees = Int(output.degrees),
-                          let minutes = Int(minuteStr),
-                          let seconds = Double(secondStr)
-                    else { throw ALatitudeError.errorWhenParsingNumber }
-                    self = .degreesMinutesSeconds(isNorth: output.direction == "N", degrees: degrees, minutes: minutes, seconds: seconds)
+            guard let degrees = Double(output.degrees)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degrees(isNorth: output.direction == "N", degrees: degrees)
+            return
+        }
 
-                } else { // 度分
-                    guard let degrees = Int(output.degrees),
-                          let minutes = Double(minuteStr)
-                    else { throw ALatitudeError.errorWhenParsingNumber }
-                    self = .degreesMinutes(isNorth: output.direction == "N", degrees: degrees, minutes: minutes)
-                }
-            } else { // 度
-                guard let degrees = Double(output.degrees)
-                else { throw ALatitudeError.errorWhenParsingNumber }
-                self = .degrees(isNorth: output.direction == "N", degrees: degrees)
-            }
+        let patternOriginalDM = #/
+            (?<direction>N|S)
+            \s*
+            (?<degrees>\d{1,2})\s*°
+            \s*
+            (?<minutes>\d{1,2}(\.\d+)?)\s*'
+        /#
+
+        if let match = try? patternOriginalDM.wholeMatch(in: string) {
+            let output = match.output
+            guard let degrees = Int(output.degrees),
+                  let minutes = Double(output.minutes)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degreesMinutes(isNorth: output.direction == "N", degrees: degrees, minutes: minutes)
+            return
+        }
+        
+        let patternOriginalDMS = #/
+            (?<direction>N|S)
+            \s*
+            ((?<degrees>\d{1,2})\s*°)
+            \s*
+            (?<minutes>\d{1,2})\s*'
+            \s*
+            (?<seconds>\d{1,2}(\.\d+)?)\s*"
+        /#
+
+        if let match = try? patternOriginalDMS.wholeMatch(in: string) {
+            let output = match.output
+            guard let degrees = Int(output.degrees),
+                  let minutes = Int(output.minutes),
+                  let seconds = Double(output.seconds)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degreesMinutesSeconds(isNorth: output.direction == "N", degrees: degrees, minutes: minutes, seconds: seconds)
             return
         }
 
@@ -260,7 +280,7 @@ public extension ALatitude {
             return
         }
 
-        /// - N361350-> N36 13 15.0
+        /// - N361350 -> N36 13 15.0
         let pattern6Digits = #/
             (?<direction>N|S)
             (?<degrees>\d\d)

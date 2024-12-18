@@ -167,36 +167,54 @@ public extension ALongitude {
             throw ALatitudeError.invalidFormat
         }
 
-        let patternOriginal = #/
+        let patternOriginalD = #/
             (?<direction>E|W)
             \s*
-            ((?<degrees>\d{1,3} (\.\d+)? )°)
-            (
-                (?<minutes>\d{1,2} (\.\d+)? )'
-                ((?<seconds>\d{1,2} (\.\d+)? )")?
-            )?
+            (?<degrees>\d{1,3} (\.\d+)? )
+            \s*°
         /#
-        if let match = try? patternOriginal.wholeMatch(in: string) {
+        if let match = try? patternOriginalD.wholeMatch(in: string) {
             let output = match.output
-            if let minuteStr = output.minutes {
-                if let secondStr = output.seconds { // 度分秒
-                    guard let degrees = Int(output.degrees),
-                          let minutes = Int(minuteStr),
-                          let seconds = Double(secondStr)
-                    else { throw ALatitudeError.errorWhenParsingNumber }
-                    self = .degreesMinutesSeconds(isEast: output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
+            guard let degrees = Double(output.degrees)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degrees(isEast: output.direction == "E", degrees: degrees)
+            return
+        }
 
-                } else { // 度分
-                    guard let degrees = Int(output.degrees),
-                          let minutes = Double(minuteStr)
-                    else { throw ALatitudeError.errorWhenParsingNumber }
-                    self = .degreesMinutes(isEast: output.direction == "E", degrees: degrees, minutes: minutes)
-                }
-            } else { // 度
-                guard let degrees = Double(output.degrees)
-                else { throw ALatitudeError.errorWhenParsingNumber }
-                self = .degrees(isEast: output.direction == "E", degrees: degrees)
-            }
+        let patternOriginalDM = #/
+            (?<direction>E|W)
+            \s*
+            (?<degrees>\d{1,3})\s*°
+            \s*
+            (?<minutes>\d{1,2}(\.\d+)?)\s*'
+        /#
+
+        if let match = try? patternOriginalDM.wholeMatch(in: string) {
+            let output = match.output
+            guard let degrees = Int(output.degrees),
+                  let minutes = Double(output.minutes)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degreesMinutes(isEast: output.direction == "E", degrees: degrees, minutes: minutes)
+            return
+        }
+
+        let patternOriginalDMS = #/
+            (?<direction>E|W)
+            \s*
+            ((?<degrees>\d{1,3})\s*°)
+            \s*
+            (?<minutes>\d{1,2})\s*'
+            \s*
+            (?<seconds>\d{1,2}(\.\d+)?)\s*"
+        /#
+
+        if let match = try? patternOriginalDMS.wholeMatch(in: string) {
+            let output = match.output
+            guard let degrees = Int(output.degrees),
+                  let minutes = Int(output.minutes),
+                  let seconds = Double(output.seconds)
+            else { throw ALatitudeError.errorWhenParsingNumber }
+            self = .degreesMinutesSeconds(isEast: output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
             return
         }
 
