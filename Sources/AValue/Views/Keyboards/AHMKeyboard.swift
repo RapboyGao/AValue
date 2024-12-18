@@ -122,6 +122,11 @@ public struct AHMKeyboard: View {
             }
             .frame(width: screenWidth)
         }
+        .onAppear {
+            if textfield.text == "00:00" {
+                textfield.text = ""
+            }
+        }
     }
 
     public init(_ textfield: UITextField) {

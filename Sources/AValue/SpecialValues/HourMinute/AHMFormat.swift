@@ -9,7 +9,8 @@ public struct AHMFormat: ParseableFormatStyle {
     public var parseStrategy: Strategy
 
     public func format(_ value: Int) -> String {
-        AHourMinuteValue(minutes: value).toFormat(format).description
+        guard value != 0 else { return "" }
+        return AHourMinuteValue(minutes: value).toFormat(format).description
     }
 
     public struct Strategy: ParseStrategy {
