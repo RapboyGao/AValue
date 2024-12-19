@@ -1,4 +1,4 @@
-import SwiftUI
+import AViewUI
 
 #if os(iOS)
 
@@ -15,12 +15,14 @@ public struct ALongitudeTextfield: View {
 
     public var body: some View {
         if allowSet {
-            TextField(placeholder, value: $value, format: formatStyle)
-                .aKeyboardView { uiTextfield in
-                    ALongitudeKeyboard(uiTextfield, format: $format)
-                        .frame(height: 250)
-                }
-                .multilineTextAlignment(.trailing)
+            AFormatOptionalTextfield(placeholder, value: $value, format: formatStyle) { textfield in
+                textfield
+                    .aKeyboardView { uiTextfield in
+                        ALongitudeKeyboard(uiTextfield, format: $format)
+                            .frame(height: 250)
+                    }
+                    .multilineTextAlignment(.trailing)
+            }
         } else if let value = value {
             Spacer()
             Menu {
