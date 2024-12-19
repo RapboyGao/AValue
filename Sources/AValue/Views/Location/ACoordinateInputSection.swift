@@ -17,11 +17,12 @@ public struct ACoordinateInputSection: View {
 
     private var bindLatitude: Binding<Double?> {
         Binding {
-            if focusOnLatitude {
-                return thisLatitude
-            } else {
-                return value?.latitude ?? thisLatitude
-            }
+            return thisLatitude
+//            if focusOnLatitude {
+//                return thisLatitude
+//            } else {
+//                return value?.latitude ?? thisLatitude
+//            }
         } set: { newValue in
             thisLatitude = newValue
             guard let thisLongitude = thisLongitude // 如果也有经度
@@ -36,11 +37,12 @@ public struct ACoordinateInputSection: View {
 
     private var bindLongitude: Binding<Double?> {
         Binding {
-            if focusOnLongitude {
-                return thisLongitude
-            } else {
-                return value?.longitude
-            }
+            return thisLongitude
+//            if focusOnLongitude {
+//                return thisLongitude
+//            } else {
+//                return value?.longitude
+//            }
         } set: { newValue in
             thisLongitude = newValue
             guard let thisLatitude = thisLatitude // 如果也有纬度
