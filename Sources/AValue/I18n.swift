@@ -12,4 +12,8 @@ enum I18n {
     static let rwyHDG = NSLocalizedString("Runway HDG", bundle: .module, comment: "The aviation commonly used word 'runway heading'")
     static let windSpeedLimit = NSLocalizedString("Wind speed limit", bundle: .module, comment: "The aviation commonly used phrase 'Wind speed limit'")
     static let maxWindInAllDirections = NSLocalizedString("Max wind in all directions", bundle: .module, comment: "The aviation commonly used phrase 'Max Wind in All Directions'")
+    static let coordinates = NSLocalizedString("Coordinates", bundle: .module, comment: "Referring to latitude and longitude of a position.")
+    static let latitude = NSLocalizedString("Latitude", bundle: .module, comment: "Latitude of a position.")
+    static let longitude = NSLocalizedString("Longitude", bundle: .module, comment: "Longitude of a position.")
+    static let map = NSLocalizedString("Map", bundle: .module, comment: "The map that shows geographical locations.")
 }
