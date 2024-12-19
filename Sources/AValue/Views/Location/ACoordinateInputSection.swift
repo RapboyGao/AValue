@@ -46,12 +46,22 @@ public struct ACoordinateInputSection: View {
         Section(I18n.coordinates) {
             HStack {
                 Text(I18n.latitude)
-                ALatitudeTextfield(bindLatitude, allowSet: true, placeholder: I18n.latitude, format: .degreesMS)
+                ALatitudeTextfield(bindLatitude, allowSet: allowSet, placeholder: I18n.latitude, format: .degreesMS)
             }
             HStack {
                 Text(I18n.longitude)
-                ALongitudeTextfield(bindLongitude, allowSet: true, placeholder: I18n.longitude, format: .degreesMS)
+                ALongitudeTextfield(bindLongitude, allowSet: allowSet, placeholder: I18n.longitude, format: .degreesMS)
             }
+        }
+    }
+
+    public init(_ value: Binding<CLLocationCoordinate2D?>, allowSet: Bool, name: String) {
+        self._value = value
+        self.allowSet = allowSet
+        self.name = name
+        if let location = value.wrappedValue {
+            self._thisLatitude = State(initialValue: location.latitude)
+            self._thisLongitude = State(initialValue: location.longitude)
         }
     }
 

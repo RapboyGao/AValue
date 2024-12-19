@@ -37,8 +37,7 @@ public struct AValueFSContent: View {
         case .point:
             ProgressView()
         case .location:
-            AMapPointSelector($value, name: name, other: [])
-                .ignoresSafeArea()
+            ALocationFSContent($value, allowSet: allowInput, name: name, other: .examples)
         case .boolean:
             Toggle(name, isOn: bindBoolean)
                 .padding()

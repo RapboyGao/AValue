@@ -21,7 +21,8 @@ public struct ACoordinatesMenu: View {
                     }
                 }
             } label: {
-                Text(formatCoordinate(location, format: format))
+                Label(formatCoordinate(location, format: format), systemImage: "mappin.and.ellipse")
+                    .labelStyle(.titleAndIcon)
             }
             .background {
                 RoundedRectangle(cornerRadius: 5)
