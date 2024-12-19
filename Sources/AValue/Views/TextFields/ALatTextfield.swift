@@ -54,7 +54,7 @@ public struct ALatTextfield: View {
 @available(iOS 16, *)
 
 private struct Example: View {
-    @State var value: AValue?
+    @State var value: AValue? = 39.12646465
     var body: some View {
         HStack {
             ALatTextfield($value, allowSet: true, placeholder: "Latitude")

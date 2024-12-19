@@ -20,22 +20,6 @@ public struct ALatFormat: ParseableFormatStyle {
     public static func dMS(digits: Int = 1) -> Self {
         .init(preferredFormat: .degreesMS, digits: digits)
     }
-
-    public init(preferredFormat: ACoordinateFormat, digits: Int) {
-        self.preferredFormat = preferredFormat
-        self.digits = digits
-    }
-
-    public init(_ preferredFormat: ACoordinateFormat) {
-        switch preferredFormat {
-        case .degrees:
-            self = .degrees()
-        case .degreesM:
-            self = .dM()
-        case .degreesMS:
-            self = .dMS()
-        }
-    }
 }
 
 public extension ALatFormat {
@@ -48,6 +32,22 @@ public extension ALatFormat {
                 throw ACoordinateParsingError.notWithinRange
             }
             return result.toNumber()
+        }
+    }
+
+    init(preferredFormat: ACoordinateFormat, digits: Int) {
+        self.preferredFormat = preferredFormat
+        self.digits = digits
+    }
+
+    init(_ preferredFormat: ACoordinateFormat) {
+        switch preferredFormat {
+        case .degrees:
+            self = .degrees()
+        case .degreesM:
+            self = .dM()
+        case .degreesMS:
+            self = .dMS()
         }
     }
 }
