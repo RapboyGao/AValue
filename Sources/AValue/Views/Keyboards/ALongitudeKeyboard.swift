@@ -45,16 +45,17 @@ public struct ALongitudeKeyboard: View {
             guard let text = textfield.text,
                   var longitude = try? ALongitude(text)
             else { return }
-            guard textfield.text == longitude.description
-            else {
+            if textfield.text == longitude.description {
+                // 如果已经一样了
+                let nextFormat = format.nextFormat
+                format = nextFormat
+                longitude = longitude.toFormat(nextFormat)
+                textfield.text = longitude.description
+            } else {
                 textfield.text = longitude.description
                 format = longitude.format
-                return
             }
-            // 如果已经一样了
-            format = format.nextFormat
-            longitude = longitude.toFormat(format)
-            textfield.text = longitude.description
+
         } content: { isClicked in
             Text("=")
                 .font(numbersFont)

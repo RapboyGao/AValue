@@ -45,16 +45,17 @@ public struct ALatitudeKeyboard: View {
             guard let text = textfield.text,
                   var latitude = try? ALatitude(text)
             else { return }
-            guard textfield.text == latitude.description
-            else {
+            if text == latitude.description {
+                // 如果已经一样了
+                let nextFormat = format.nextFormat
+                format = nextFormat
+                latitude = latitude.toFormat(nextFormat)
+                textfield.text = latitude.description
+            } else {
                 textfield.text = latitude.description
                 format = latitude.format
-                return
             }
-            // 如果已经一样了
-            format = format.nextFormat
-            latitude = latitude.toFormat(format)
-            textfield.text = latitude.description
+
         } content: { isClicked in
             Text("=")
                 .font(numbersFont)
