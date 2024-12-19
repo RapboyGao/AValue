@@ -47,7 +47,7 @@ public struct ALongitudeKeyboard: View {
             else { return }
             if textfield.text == longitude.description {
                 // 如果已经一样了
-                let nextFormat = format.nextFormat
+                let nextFormat = longitude.format.nextFormat
                 format = nextFormat
                 longitude = longitude.toFormat(nextFormat)
                 textfield.text = longitude.description

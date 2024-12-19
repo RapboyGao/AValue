@@ -47,7 +47,7 @@ public struct ALatitudeKeyboard: View {
             else { return }
             if text == latitude.description {
                 // 如果已经一样了
-                let nextFormat = format.nextFormat
+                let nextFormat = latitude.format.nextFormat
                 format = nextFormat
                 latitude = latitude.toFormat(nextFormat)
                 textfield.text = latitude.description
