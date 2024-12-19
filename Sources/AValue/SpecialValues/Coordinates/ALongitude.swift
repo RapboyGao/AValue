@@ -154,188 +154,229 @@ public enum ALongitude: Codable, Sendable, Hashable, CustomStringConvertible {
 // MARK: - NSRegularExpression
 
 public extension ALongitude {
+    // Helper function to handle regular expressions more efficiently
+    private static func matchPattern(_ pattern: String, in string: String) -> NSTextCheckingResult? {
+        let regex = try? NSRegularExpression(pattern: pattern, options: [])
+        return regex?.firstMatch(in: string, options: [], range: NSRange(string.startIndex..., in: string))
+    }
+
     init(raw string: String?) throws {
-        // 确保输入字符串非空并去除前后空格
-        guard let trimmedString = string?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !trimmedString.isEmpty
-        else {
-            throw ACoordinateParsingError.stringNotProvided
+        // 确保输入字符串不为空并去除首尾空白字符
+        guard let trimmedString = string?.trimmingCharacters(in: .whitespacesAndNewlines), !trimmedString.isEmpty else {
+            throw ACoordinateParsingError.invalidFormat
         }
 
-        // 定义所有正则表达式模式及其对应的解析逻辑
-        let patterns: [(pattern: String, parser: (NSTextCheckingResult) throws -> ALongitude)] = [
-            // Pattern Original D: E/W 后跟度数，可能带小数
-            (
-                pattern: #"^(E|W)\s*(\d{1,3}(?:\.\d+)?)\s*°$"#,
-                parser: { match in
-                    let direction = (trimmedString as NSString).substring(with: match.range(at: 1))
-                    let degreesString = (trimmedString as NSString).substring(with: match.range(at: 2))
-                    guard let degrees = Double(degreesString) else {
-                        throw ACoordinateParsingError.errorWhenParsingNumber
-                    }
-                    return .degrees(isEast: direction == "E", degrees: degrees)
-                }
-            ),
-            // Pattern Original DM: E/W 后跟度数和分数
-            (
-                pattern: #"^(E|W)\s*(\d{1,3})\s*°\s*(\d{1,2}(?:\.\d+)?)\s*'$"#,
-                parser: { match in
-                    let direction = (trimmedString as NSString).substring(with: match.range(at: 1))
-                    let degreesString = (trimmedString as NSString).substring(with: match.range(at: 2))
-                    let minutesString = (trimmedString as NSString).substring(with: match.range(at: 3))
-                    guard let degrees = Int(degreesString),
-                          let minutes = Double(minutesString)
-                    else {
-                        throw ACoordinateParsingError.errorWhenParsingNumber
-                    }
-                    return .degreesMinutes(isEast: direction == "E", degrees: degrees, minutes: minutes)
-                }
-            ),
-            // Pattern Original DMS: E/W 后跟度数、分数和秒数
+        // 定义所有需要匹配的正则表达式模式及其对应的解析逻辑
+        let patterns: [(pattern: String, parse: (NSTextCheckingResult) throws -> ALongitude)] = [
+            // MARK: - Degrees, Minutes, and Seconds (e.g., E036° 13' 15.0")
+
             (
                 pattern: #"^(E|W)\s*(\d{1,3})\s*°\s*(\d{1,2})\s*'\s*(\d{1,2}(?:\.\d+)?)\s*"$"#,
-                parser: { match in
-                    let direction = (trimmedString as NSString).substring(with: match.range(at: 1))
-                    let degreesString = (trimmedString as NSString).substring(with: match.range(at: 2))
-                    let minutesString = (trimmedString as NSString).substring(with: match.range(at: 3))
-                    let secondsString = (trimmedString as NSString).substring(with: match.range(at: 4))
+                parse: { result in
+                    guard result.numberOfRanges == 5 else { throw ACoordinateParsingError.invalidFormat }
+
+                    let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
+                    let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
+                    let minutesString = (trimmedString as NSString).substring(with: result.range(at: 3))
+                    let secondsString = (trimmedString as NSString).substring(with: result.range(at: 4))
+
                     guard let degrees = Int(degreesString),
                           let minutes = Int(minutesString),
                           let seconds = Double(secondsString)
                     else {
                         throw ACoordinateParsingError.errorWhenParsingNumber
                     }
+
                     return .degreesMinutesSeconds(isEast: direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
                 }
             ),
-            // Basic Pattern: E/W 后跟数字，可能带小数和度符号
+
+            // MARK: - 7 Digits Before Decimal (e.g., E0361350.2 -> E036 1350.2)
+
             (
-                pattern: #"^(E|W)(\d{1,3}\.\d+)°?$"#,
-                parser: { match in
-                    let direction = (trimmedString as NSString).substring(with: match.range(at: 1))
-                    let numberString = (trimmedString as NSString).substring(with: match.range(at: 2))
-                    guard let number = Double(numberString) else {
-                        throw ACoordinateParsingError.errorWhenParsingNumber
-                    }
-                    return .degrees(isEast: direction == "E", degrees: number)
-                }
-            ),
-            // Pattern 4 Digits: E/W + 度数 (000-189) + 分数 (00-59)
-            (
-                pattern: #"^(E|W)(0\d\d|1[0-8]\d)\s*([0-5]\d)$"#,
-                parser: { match in
-                    let direction = (trimmedString as NSString).substring(with: match.range(at: 1))
-                    let degreesString = (trimmedString as NSString).substring(with: match.range(at: 2))
-                    let minutesIntString = (trimmedString as NSString).substring(with: match.range(at: 3))
+                pattern: #"^(E|W)(\d{3})([0-5]\d)([0-5]\d\.\d+)$"#,
+                parse: { result in
+                    guard result.numberOfRanges == 5 else { throw ACoordinateParsingError.invalidFormat }
+
+                    let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
+                    let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
+                    let minutesString = (trimmedString as NSString).substring(with: result.range(at: 3))
+                    let secondsString = (trimmedString as NSString).substring(with: result.range(at: 4))
+
                     guard let degrees = Int(degreesString),
-                          let minutes = Double(minutesIntString)
+                          let minutes = Int(minutesString),
+                          let seconds = Double(secondsString)
                     else {
                         throw ACoordinateParsingError.errorWhenParsingNumber
                     }
+
+                    return .degreesMinutesSeconds(isEast: direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
+                }
+            ),
+
+            // MARK: - 8 Digits (e.g., E03613502 -> E036 13 50.2)
+
+            (
+                pattern: #"^(E|W)(\d{3})([0-5]\d)(\d{3})$"#,
+                parse: { result in
+                    guard result.numberOfRanges == 5 else { throw ACoordinateParsingError.invalidFormat }
+
+                    let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
+                    let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
+                    let minutesIntString = (trimmedString as NSString).substring(with: result.range(at: 3))
+                    let secondsString = (trimmedString as NSString).substring(with: result.range(at: 4))
+
+                    guard let degrees = Int(degreesString),
+                          let minutes = Int(minutesIntString),
+                          let seconds = Double(secondsString)
+                    else {
+                        throw ACoordinateParsingError.errorWhenParsingNumber
+                    }
+
+                    return .degreesMinutesSeconds(isEast: direction == "E", degrees: degrees, minutes: minutes, seconds: seconds / 10)
+                }
+            ),
+
+            // MARK: -  7 Digits (e.g., E0361350 -> E036 13 50)
+
+            (
+                pattern: #"^(E|W)(\d{3})([0-5]\d)([0-5]\d)$"#,
+                parse: { result in
+                    guard result.numberOfRanges == 5 else { throw ACoordinateParsingError.invalidFormat }
+
+                    let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
+                    let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
+                    let minutesString = (trimmedString as NSString).substring(with: result.range(at: 3))
+                    let secondsIntString = (trimmedString as NSString).substring(with: result.range(at: 4))
+
+                    guard let degrees = Int(degreesString),
+                          let minutes = Int(minutesString),
+                          let seconds = Double(secondsIntString)
+                    else {
+                        throw ACoordinateParsingError.errorWhenParsingNumber
+                    }
+
+                    return .degreesMinutesSeconds(isEast: direction == "E", degrees: degrees, minutes: minutes, seconds: Double(seconds))
+                }
+            ),
+
+            // MARK: - Degrees and Minutes (e.g., E040° 14')
+
+            (
+                pattern: #"^(E|W)\s*(\d{1,3})\s*°\s*(\d{1,2}(?:\.\d+)?)\s*'$"#,
+                parse: { result in
+                    guard result.numberOfRanges == 4 else { throw ACoordinateParsingError.invalidFormat }
+
+                    let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
+                    let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
+                    let minutesString = (trimmedString as NSString).substring(with: result.range(at: 3))
+
+                    guard let degrees = Int(degreesString),
+                          let minutes = Double(minutesString)
+                    else {
+                        throw ACoordinateParsingError.errorWhenParsingNumber
+                    }
+
                     return .degreesMinutes(isEast: direction == "E", degrees: degrees, minutes: minutes)
                 }
             ),
-            // Pattern 5 Digits: E/W + 度数 + 分数 (带小数)
+
+            // MARK: - 5 Digits Before Decimal (e.g., E03613.502 -> E036 13.502)
+
             (
-                pattern: #"^(E|W)(0\d\d|1[0-8]\d)([0-5]\d)(\d)$"#,
-                parser: { match in
-                    let direction = (trimmedString as NSString).substring(with: match.range(at: 1))
-                    let degreesString = (trimmedString as NSString).substring(with: match.range(at: 2))
-                    let minutesIntString = (trimmedString as NSString).substring(with: match.range(at: 3))
-                    let minuteDigitString = (trimmedString as NSString).substring(with: match.range(at: 4))
+                pattern: #"^(E|W)(\d{3})([0-5]\d\.\d+)$"#,
+                parse: { result in
+                    guard result.numberOfRanges == 4 else { throw ACoordinateParsingError.invalidFormat }
+
+                    let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
+                    let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
+                    let minutesString = (trimmedString as NSString).substring(with: result.range(at: 3))
+
+                    guard let degrees = Int(degreesString),
+                          let minutes = Double(minutesString)
+                    else {
+                        throw ACoordinateParsingError.errorWhenParsingNumber
+                    }
+
+                    return .degreesMinutes(isEast: direction == "E", degrees: degrees, minutes: minutes)
+                }
+            ),
+
+            // MARK: - 6 Digits (e.g., W036135 -> W036 13.5)
+
+            (
+                pattern: #"^(E|W)(\d{3})([0-5]\d)(\d)$"#,
+                parse: { result in
+                    guard result.numberOfRanges == 5 else { throw ACoordinateParsingError.invalidFormat }
+
+                    let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
+                    let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
+                    let minutesIntString = (trimmedString as NSString).substring(with: result.range(at: 3))
+                    let minuteDigitString = (trimmedString as NSString).substring(with: result.range(at: 4))
+
                     guard let degrees = Int(degreesString),
                           let minutes = Double("\(minutesIntString).\(minuteDigitString)")
                     else {
                         throw ACoordinateParsingError.errorWhenParsingNumber
                     }
+
                     return .degreesMinutes(isEast: direction == "E", degrees: degrees, minutes: minutes)
                 }
             ),
-            // Pattern 6 Digits: E/W + 度数 + 分数 + 秒数
+
+            // MARK: - 5 Digits (e.g., W04014 -> W040 14.0)
+
             (
-                pattern: #"^(E|W)(0\d\d|1[0-8]\d)\s*([0-5]\d)\s*([0-5]\d)$"#,
-                parser: { match in
-                    let direction = (trimmedString as NSString).substring(with: match.range(at: 1))
-                    let degreesString = (trimmedString as NSString).substring(with: match.range(at: 2))
-                    let minutesIntString = (trimmedString as NSString).substring(with: match.range(at: 3))
-                    let secondsIntString = (trimmedString as NSString).substring(with: match.range(at: 4))
+                pattern: #"^(E|W)(\d{3})([0-5]\d)$"#,
+                parse: { result in
+                    guard result.numberOfRanges == 4 else { throw ACoordinateParsingError.invalidFormat }
+
+                    let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
+                    let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
+                    let minutesIntString = (trimmedString as NSString).substring(with: result.range(at: 3))
+
                     guard let degrees = Int(degreesString),
-                          let minutes = Int(minutesIntString),
-                          let seconds = Double(secondsIntString)
+                          let minutes = Double(minutesIntString)
                     else {
                         throw ACoordinateParsingError.errorWhenParsingNumber
                     }
-                    return .degreesMinutesSeconds(isEast: direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
-                }
-            ),
-            // Pattern 7 Digits: E/W + 度数 + 分数 + 秒数 (带小数)
-            (
-                pattern: #"^(E|W)(0\d\d|1[0-8]\d)([0-5]\d)([0-5]\d\d)$"#,
-                parser: { match in
-                    let direction = (trimmedString as NSString).substring(with: match.range(at: 1))
-                    let degreesString = (trimmedString as NSString).substring(with: match.range(at: 2))
-                    let minutesIntString = (trimmedString as NSString).substring(with: match.range(at: 3))
-                    let secondsString = (trimmedString as NSString).substring(with: match.range(at: 4))
-                    guard let degrees = Int(degreesString),
-                          let minutes = Int(minutesIntString),
-                          let seconds = Double(secondsString)
-                    else {
-                        throw ACoordinateParsingError.errorWhenParsingNumber
-                    }
-                    return .degreesMinutesSeconds(isEast: direction == "E", degrees: degrees, minutes: minutes, seconds: seconds / 10)
-                }
-            ),
-            // Pattern 4 Before Dot: E/W + 度数 + 分数 (带小数点)
-            (
-                pattern: #"^(E|W)(0\d\d|1[0-8]\d)\s*([0-5]\d\.\d+)$"#,
-                parser: { match in
-                    let direction = (trimmedString as NSString).substring(with: match.range(at: 1))
-                    let degreesString = (trimmedString as NSString).substring(with: match.range(at: 2))
-                    let minutesString = (trimmedString as NSString).substring(with: match.range(at: 3))
-                    guard let degrees = Int(degreesString),
-                          let minutes = Double(minutesString)
-                    else {
-                        throw ACoordinateParsingError.errorWhenParsingNumber
-                    }
+
                     return .degreesMinutes(isEast: direction == "E", degrees: degrees, minutes: minutes)
                 }
             ),
-            // Pattern 6 Before Dot: E/W + 度数 + 分数 + 秒数 (带小数点)
+
+            // MARK: - Degrees (e.g., W2.15, W39.13354)
+
             (
-                pattern: #"^(E|W)(0\d\d|1[0-8]\d)\s*([0-5]\d)\s*([0-5]\d\.\d+)$"#,
-                parser: { match in
-                    let direction = (trimmedString as NSString).substring(with: match.range(at: 1))
-                    let degreesString = (trimmedString as NSString).substring(with: match.range(at: 2))
-                    let minutesString = (trimmedString as NSString).substring(with: match.range(at: 3))
-                    let secondsString = (trimmedString as NSString).substring(with: match.range(at: 4))
-                    guard let degrees = Int(degreesString),
-                          let minutes = Int(minutesString),
-                          let seconds = Double(secondsString)
-                    else {
+                pattern: #"^(E|W)\s*(\d{1,3}(?:\.\d+)?)\s*°?$"#,
+                parse: { result in
+                    guard result.numberOfRanges == 3 else { throw ACoordinateParsingError.invalidFormat }
+
+                    let direction = (trimmedString as NSString).substring(with: result.range(at: 1))
+                    let degreesString = (trimmedString as NSString).substring(with: result.range(at: 2))
+
+                    guard let degrees = Double(degreesString) else {
                         throw ACoordinateParsingError.errorWhenParsingNumber
                     }
-                    return .degreesMinutesSeconds(isEast: direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
+
+                    return .degrees(isEast: direction == "E", degrees: degrees)
                 }
-            )
+            ),
         ]
 
-        // 遍历每个模式，尝试匹配并解析
-        for (pattern, parser) in patterns {
-            do {
-                let regex = try NSRegularExpression(pattern: pattern, options: [])
-                let range = NSRange(location: 0, length: trimmedString.utf16.count)
-                if let match = regex.firstMatch(in: trimmedString, options: [], range: range) {
-                    let longitude = try parser(match)
-                    self = longitude.normalized()
-                    return
-                }
-            } catch {
-                // 如果正则表达式无效，继续尝试下一个模式
-                continue
+        // 遍历所有模式并尝试匹配
+        for (pattern, parse) in patterns {
+            let regex = try NSRegularExpression(pattern: pattern, options: [])
+            let range = NSRange(location: 0, length: trimmedString.utf16.count)
+            if let match = regex.firstMatch(in: trimmedString, options: [], range: range) {
+                // 尝试解析匹配结果
+                let latitude = try parse(match)
+                self = latitude.normalized()
+                return
             }
         }
 
-        // 如果所有模式都未匹配，抛出格式错误
+        // 如果所有模式都不匹配，则抛出格式错误
         throw ACoordinateParsingError.invalidFormat
     }
 
@@ -352,39 +393,10 @@ public extension ALongitude {
     init(raw2 string: String?) throws {
         // 检查输入字符串是否为空或仅包含空格
         guard let string = string?.trimmingCharacters(in: .whitespacesAndNewlines), !string.isEmpty else {
-            throw ACoordinateParsingError.invalidFormat
+            throw ACoordinateParsingError.stringNotProvided
         }
 
-        let patternOriginalD = #/
-            (?<direction>E|W)
-            \s*
-            (?<degrees>\d{1,3} (\.\d+)? )
-            \s*°
-        /#
-        if let match = try? patternOriginalD.wholeMatch(in: string) {
-            let output = match.output
-            guard let degrees = Double(output.degrees)
-            else { throw ACoordinateParsingError.errorWhenParsingNumber }
-            self = .degrees(isEast: output.direction == "E", degrees: degrees)
-            return
-        }
-
-        let patternOriginalDM = #/
-            (?<direction>E|W)
-            \s*
-            (?<degrees>\d{1,3})\s*°
-            \s*
-            (?<minutes>\d{1,2}(\.\d+)?)\s*'
-        /#
-
-        if let match = try? patternOriginalDM.wholeMatch(in: string) {
-            let output = match.output
-            guard let degrees = Int(output.degrees),
-                  let minutes = Double(output.minutes)
-            else { throw ACoordinateParsingError.errorWhenParsingNumber }
-            self = .degreesMinutes(isEast: output.direction == "E", degrees: degrees, minutes: minutes)
-            return
-        }
+        // MARK: - 完整格式
 
         let patternOriginalDMS = #/
             (?<direction>E|W)
@@ -406,68 +418,30 @@ public extension ALongitude {
             return
         }
 
-        let patterBasic = #/
-            (?<direction>E|W)
-            (?<number>\d{1,3}\.\d+)
-            °?
-        /#
-        if let match = try? patterBasic.wholeMatch(in: string) {
-            guard let number = Double(match.output.number)
-            else { throw ACoordinateParsingError.errorWhenParsingNumber }
-            self = .degrees(isEast: match.output.direction == "E", degrees: number)
-            return
-        }
+        // MARK: - 在小数点前有 7 位数
 
-        let pattern4Digits = #/
+        // - E012 34 56.7
+        let pattern7BeforeDot = #/
             (?<direction>E|W)
             (?<degrees>(0\d\d|1[0-8]\d))
             \s*
-            (?<minutesInt>[0-5]\d)
-        /#
-        if let match = try? pattern4Digits.wholeMatch(in: string) {
-            guard let degrees = Int(match.output.degrees),
-                  let minutes = Double(match.output.minutesInt)
-            else { throw ACoordinateParsingError.errorWhenParsingNumber }
-            self = .degreesMinutes(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes)
-            return
-        }
-
-        /// - N36135 -> N36 13.5
-        let pattern5Digits = #/
-            (?<direction>E|W)
-        (?<degrees>(0\d\d|1[0-8]\d))
+            (?<minutes>[0-5]\d)
             \s*
-            (?<minutesInt>[0-5]\d)
-            (?<minuteDigit>\d)
+            (?<seconds>[0-5]\d\.\d+)
         /#
-        if let match = try? pattern5Digits.wholeMatch(in: string) {
+        if let match = try? pattern7BeforeDot.wholeMatch(in: string) {
             guard let degrees = Int(match.output.degrees),
-                  let minutes = Double(match.output.minutesInt + "." + match.output.minuteDigit)
-            else { throw ACoordinateParsingError.errorWhenParsingNumber }
-            self = .degreesMinutes(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes)
-            return
-        }
-
-        /// - N361350-> N36 13 15.0
-        let pattern6Digits = #/
-            (?<direction>E|W)
-            (?<degrees>(0\d\d|1[0-8]\d))
-            \s*
-            (?<minutesInt>[0-5]\d)
-            \s*
-            (?<secondsInt>[0-5]\d)
-        /#
-        if let match = try? pattern6Digits.wholeMatch(in: string) {
-            guard let degrees = Int(match.output.degrees),
-                  let minutes = Int(match.output.minutesInt),
-                  let seconds = Double(match.output.secondsInt)
+                  let minutes = Int(match.output.minutes),
+                  let seconds = Double(match.output.seconds)
             else { throw ACoordinateParsingError.errorWhenParsingNumber }
             self = .degreesMinutesSeconds(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
             return
         }
 
-        /// - N3613502 -> N36 13 50.2
-        let pattern7Digits = #/
+        // MARK: - 一共 8 位数
+
+        // - E012 34 567
+        let pattern8Digits = #/
             (?<direction>E|W)
             (?<degrees>(0\d\d|1[0-8]\d))
             \s*
@@ -475,7 +449,7 @@ public extension ALongitude {
             \s*
             (?<seconds>[0-5]\d\d)
         /#
-        if let match = try? pattern7Digits.wholeMatch(in: string) {
+        if let match = try? pattern8Digits.wholeMatch(in: string) {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Int(match.output.minutesInt),
                   let seconds = Double(match.output.seconds)
@@ -484,14 +458,55 @@ public extension ALongitude {
             return
         }
 
-        /// - N3613.502 -> N36 13.502
-        let pattern4BeforeDot = #/
+        // MARK: - 一共 7 位数
+
+        // - W012 34 56
+        let pattern7Digits = #/
+            (?<direction>E|W)
+            (?<degrees>(0\d\d|1[0-8]\d))
+            \s*
+            (?<minutesInt>[0-5]\d)
+            \s*
+            (?<secondsInt>[0-5]\d)
+        /#
+        if let match = try? pattern7Digits.wholeMatch(in: string) {
+            guard let degrees = Int(match.output.degrees),
+                  let minutes = Int(match.output.minutesInt),
+                  let seconds = Double(match.output.secondsInt)
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
+            self = .degreesMinutesSeconds(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
+            return
+        }
+
+        // MARK: - 度分
+
+        let patternOriginalDM = #/
+            (?<direction>E|W)
+            \s*
+            (?<degrees>\d{1,3})\s*°
+            \s*
+            (?<minutes>\d{1,2}(\.\d+)?)\s*'
+        /#
+
+        if let match = try? patternOriginalDM.wholeMatch(in: string) {
+            let output = match.output
+            guard let degrees = Int(output.degrees),
+                  let minutes = Double(output.minutes)
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
+            self = .degreesMinutes(isEast: output.direction == "E", degrees: degrees, minutes: minutes)
+            return
+        }
+
+        // MARK: - 在小数点前有 5 位数
+
+        // - W012 34.5
+        let pattern5BeforeDot = #/
             (?<direction>E|W)
             (?<degrees>(0\d\d|1[0-8]\d))
             \s*
             (?<minutes>[0-5]\d\.\d+)
         /#
-        if let match = try? pattern4BeforeDot.wholeMatch(in: string) {
+        if let match = try? pattern5BeforeDot.wholeMatch(in: string) {
             guard let degrees = Int(match.output.degrees),
                   let minutes = Double(match.output.minutes)
             else { throw ACoordinateParsingError.errorWhenParsingNumber }
@@ -499,21 +514,53 @@ public extension ALongitude {
             return
         }
 
-        /// - N361350.2 -> N36 1350.2
-        let pattern6BeforeDot = #/
+        // MARK: - 一共 6 位数
+
+        // - W012 345
+        let pattern6Digits = #/
             (?<direction>E|W)
             (?<degrees>(0\d\d|1[0-8]\d))
             \s*
-            (?<minutes>[0-5]\d)
-            \s*
-            (?<seconds>[0-5]\d\.\d+)
+            (?<minutesInt>[0-5]\d)
+            (?<minuteDigit>\d)
         /#
-        if let match = try? pattern6BeforeDot.wholeMatch(in: string) {
+        if let match = try? pattern6Digits.wholeMatch(in: string) {
             guard let degrees = Int(match.output.degrees),
-                  let minutes = Int(match.output.minutes),
-                  let seconds = Double(match.output.seconds)
+                  let minutes = Double(match.output.minutesInt + "." + match.output.minuteDigit)
             else { throw ACoordinateParsingError.errorWhenParsingNumber }
-            self = .degreesMinutesSeconds(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes, seconds: seconds)
+            self = .degreesMinutes(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes)
+            return
+        }
+
+        // MARK: - 一共 5 位数
+
+        // - W012 34
+        let pattern5Digits = #/
+            (?<direction>E|W)
+            (?<degrees>(0\d\d|1[0-8]\d)) // 三位数023 或者 135
+            \s*
+            (?<minutesInt>[0-5]\d) // 0-59 范围
+        /#
+        if let match = try? pattern5Digits.wholeMatch(in: string) {
+            guard let degrees = Int(match.output.degrees),
+                  let minutes = Double(match.output.minutesInt)
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
+            self = .degreesMinutes(isEast: match.output.direction == "E", degrees: degrees, minutes: minutes)
+            return
+        }
+
+        // MARK: - 度
+
+        let patterBasic = #/
+            (?<direction>E|W)
+            \s*
+            (?<number>\d{1,3}\.\d+)
+            °?
+        /#
+        if let match = try? patterBasic.wholeMatch(in: string) {
+            guard let number = Double(match.output.number)
+            else { throw ACoordinateParsingError.errorWhenParsingNumber }
+            self = .degrees(isEast: match.output.direction == "E", degrees: number)
             return
         }
 
