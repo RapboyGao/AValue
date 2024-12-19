@@ -50,11 +50,10 @@ public struct ALatitudeKeyboard: View {
                 let nextFormat = latitude.format.nextFormat
                 format = nextFormat
                 latitude = latitude.toFormat(nextFormat)
-                textfield.text = latitude.description
             } else {
-                textfield.text = latitude.description
                 format = latitude.format
             }
+            textfield.text = latitude.description
 
         } content: { isClicked in
             Text("=")
