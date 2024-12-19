@@ -53,7 +53,8 @@ public struct ALongitudeKeyboard: View {
             } else {
                 format = longitude.format
             }
-            textfield.text = longitude.description
+            let newContent = longitude.description
+            textfield.text = newContent
 
         } content: { isClicked in
             Text("=")
