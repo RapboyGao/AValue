@@ -83,7 +83,7 @@ private struct Example: View {
     var body: some View {
         List {
             ACoordinateInputSection($value, allowSet: true, name: "Location")
-            Section(I18n.coordinates) {
+            Section(I18n.map) {
                 AMapPointSelector($value, name: "Location", other: .examples)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .frame(minHeight: 400)

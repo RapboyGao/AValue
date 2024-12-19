@@ -84,14 +84,16 @@ private struct Example: View {
     @State private var values: [AValue] = AValueType.allCases.map { $0.baseValue() }
 
     var body: some View {
-        List {
-            ForEach($values, id: \.type) { thisValue in
-                ASheetButton {
-                    .init(.fullScreenCover, .button, return: .done)
-                } label: {
-                    Label(thisValue.wrappedValue.description, systemImage: thisValue.wrappedValue.type.symbolName)
-                } cover: {
-                    AValueFSContent(value: thisValue.optional(), type: thisValue.wrappedValue.type, allowInput: true, name: "Hello", unit: .constant(.meters))
+        NavigationStack {
+            List {
+                ForEach($values, id: \.type) { thisValue in
+                    ASheetButton {
+                        .init(.fullScreenCover, .button, return: .done)
+                    } label: {
+                        Label(thisValue.wrappedValue.description, systemImage: thisValue.wrappedValue.type.symbolName)
+                    } cover: {
+                        AValueFSContent(value: thisValue.optional(), type: thisValue.wrappedValue.type, allowInput: true, name: "Hello", unit: .constant(.meters))
+                    }
                 }
             }
         }
