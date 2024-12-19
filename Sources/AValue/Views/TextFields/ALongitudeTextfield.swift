@@ -17,7 +17,7 @@ public struct ALongitudeTextfield: View {
         if allowSet {
             TextField(placeholder, value: $value, format: formatStyle)
                 .aKeyboardView { uiTextfield in
-                    ALatKeyboard(uiTextfield, format: $format)
+                    ALongitudeKeyboard(uiTextfield, format: $format)
                         .frame(height: 250)
                 }
                 .multilineTextAlignment(.trailing)

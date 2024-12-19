@@ -4,7 +4,7 @@ import SwiftUI
 #if os(iOS)
 
 @available(iOS 16, *)
-public struct ALongKeyboard: View {
+public struct ALongitudeKeyboard: View {
     @Binding private var format: ACoordinateFormat
     private var textfield: UITextField
     private let lettersFont: Font = .system(size: 10)
@@ -121,7 +121,7 @@ public struct ALongKeyboard: View {
 
 @available(iOS 16, *)
 #Preview {
-    ALongKeyboard(.init())
+    ALongitudeKeyboard(.init())
         .frame(height: 240)
 }
 
