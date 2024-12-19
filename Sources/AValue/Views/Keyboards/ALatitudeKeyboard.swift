@@ -6,6 +6,7 @@ import SwiftUI
 @available(iOS 16, *)
 public struct ALatitudeKeyboard: View {
     @Binding private var format: ACoordinateFormat
+    @Binding private var string: String
     private var textfield: UITextField
     private let lettersFont: Font = .system(size: 10)
     private let numbersFont: Font = .system(size: 23)
@@ -54,8 +55,7 @@ public struct ALatitudeKeyboard: View {
                 format = latitude.format
             }
             let newContent = latitude.description
-            textfield.text = newContent
-
+            string = newContent
         } content: { isClicked in
             Text("=")
                 .font(numbersFont)
@@ -106,21 +106,21 @@ public struct ALatitudeKeyboard: View {
         }
     }
 
-    public init(_ textfield: UITextField, format: Binding<ACoordinateFormat>) {
+    public init(_ textfield: UITextField, string bindString: Binding<String>, format: Binding<ACoordinateFormat>) {
         self.textfield = textfield
+        self._string = bindString
         self._format = format
     }
 
-    public init(_ textfield: UITextField) {
-        self.textfield = textfield
+    public init(_ textfield: UITextField, string bindString: Binding<String>) {
         let defaultFormat = State(initialValue: ACoordinateFormat.degreesM)
-        self._format = defaultFormat.projectedValue
+        self.init(textfield, string: bindString, format: defaultFormat.projectedValue)
     }
 }
 
 @available(iOS 16, *)
 #Preview {
-    ALatitudeKeyboard(.init())
+    ALatitudeKeyboard(.init(), string: .constant(""))
         .frame(height: 240)
 }
 

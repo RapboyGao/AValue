@@ -15,10 +15,10 @@ public struct ALongitudeTextfield: View {
 
     public var body: some View {
         if allowSet {
-            AFormatOptionalTextfield(placeholder, value: $value, format: formatStyle) { textfield in
+            AFormatOptionalTextfield(placeholder, value: $value, format: formatStyle) { textfield, bindString in
                 textfield
                     .aKeyboardView { uiTextfield in
-                        ALongitudeKeyboard(uiTextfield, format: $format)
+                        ALongitudeKeyboard(uiTextfield, string: bindString, format: $format)
                             .frame(height: 250)
                     }
                     .multilineTextAlignment(.trailing)
