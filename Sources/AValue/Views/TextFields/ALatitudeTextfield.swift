@@ -3,14 +3,14 @@ import SwiftUI
 #if os(iOS)
 
 @available(iOS 16, *)
-public struct ALatTextfield: View {
+public struct ALatitudeTextfield: View {
     @Binding var value: Double?
-    @State var format: ACoordinateFormat = .degreesM
+    @State var format: ACoordinateFormat
     var allowSet: Bool
     var placeholder: String
 
-    private var formatStyle: ALatFormat {
-        ALatFormat(format)
+    private var formatStyle: ALatitudeFormat {
+        ALatitudeFormat(format)
     }
 
     public var body: some View {
@@ -42,12 +42,28 @@ public struct ALatTextfield: View {
         self._value = value
         self.allowSet = allowSet
         self.placeholder = placeholder
+        self._format = State(initialValue: .degreesM)
     }
 
     public init(_ value: Binding<AValue?>, allowSet: Bool, placeholder: String) {
         self._value = value.doubleValue()
         self.allowSet = allowSet
         self.placeholder = placeholder
+        self._format = State(initialValue: .degreesM)
+    }
+
+    public init(_ value: Binding<AValue?>, allowSet: Bool, placeholder: String, format: ACoordinateFormat) {
+        self._value = value.doubleValue()
+        self.allowSet = allowSet
+        self.placeholder = placeholder
+        self._format = State(initialValue: format)
+    }
+
+    public init(_ value: Binding<Double?>, allowSet: Bool, placeholder: String, format: ACoordinateFormat) {
+        self._value = value
+        self.allowSet = allowSet
+        self.placeholder = placeholder
+        self._format = State(initialValue: format)
     }
 }
 
@@ -57,10 +73,10 @@ private struct Example: View {
     @State var value: AValue? = 39.12646465
     var body: some View {
         HStack {
-            ALatTextfield($value, allowSet: true, placeholder: "Latitude")
+            ALatitudeTextfield($value, allowSet: true, placeholder: "Latitude")
         }
         HStack {
-            ALatTextfield($value, allowSet: false, placeholder: "Latitude")
+            ALatitudeTextfield($value, allowSet: false, placeholder: "Latitude")
         }
     }
 }

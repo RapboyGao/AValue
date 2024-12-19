@@ -1,6 +1,6 @@
 import Foundation
 
-public struct ALatFormat: ParseableFormatStyle {
+public struct ALatitudeFormat: ParseableFormatStyle {
     public var preferredFormat: ACoordinateFormat
     public var digits: Int
     public var parseStrategy = Strategy()
@@ -22,7 +22,7 @@ public struct ALatFormat: ParseableFormatStyle {
     }
 }
 
-public extension ALatFormat {
+public extension ALatitudeFormat {
     struct Strategy: Codable, Hashable, ParseStrategy {
         public func parse(_ value: String) throws -> Double {
             let result = try ALatitude(value)

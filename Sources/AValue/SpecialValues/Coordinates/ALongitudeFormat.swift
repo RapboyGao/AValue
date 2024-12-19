@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct ALongFormat: ParseableFormatStyle {
+public struct ALongitudeFormat: ParseableFormatStyle {
     public var preferredFormat: ACoordinateFormat
     public var digits: Int
     public var parseStrategy = Strategy()
@@ -22,7 +22,7 @@ public struct ALongFormat: ParseableFormatStyle {
     }
 }
 
-public extension ALongFormat {
+public extension ALongitudeFormat {
     struct Strategy: Codable, Hashable, ParseStrategy {
         public func parse(_ value: String) throws -> Double {
             let result = try ALongitude(value)
