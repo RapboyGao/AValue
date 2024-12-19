@@ -55,7 +55,6 @@ public struct ALatitudeKeyboard: View {
             format = format.nextFormat
             latitude = latitude.toFormat(format)
             textfield.text = latitude.description
-            textfield.resignFirstResponder()
         } content: { isClicked in
             Text("=")
                 .font(numbersFont)

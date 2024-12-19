@@ -55,7 +55,6 @@ public struct ALongitudeKeyboard: View {
             format = format.nextFormat
             longitude = longitude.toFormat(format)
             textfield.text = longitude.description
-            textfield.resignFirstResponder()
         } content: { isClicked in
             Text("=")
                 .font(numbersFont)
