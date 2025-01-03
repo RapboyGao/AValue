@@ -2,7 +2,7 @@ import AUnits
 import Foundation
 import simd
 
-public protocol AVectorProtocol: Hashable, Codable, Sendable, AdditiveArithmetic {
+public protocol AVectorProtocol: Hashable, Codable, Sendable {
     var x: Double { get set }
     var y: Double { get set }
     init(x: Double, y: Double)
@@ -102,11 +102,11 @@ public extension AVectorProtocol {
         (self as? T) ?? T(x: x, y: y)
     }
 
-    static func + (left: Self, right: Self) -> Self {
-        .init(x: left.x + right.x, y: left.y + right.y)
-    }
-
-    static func - (left: Self, right: Self) -> Self {
-        .init(x: left.x - right.x, y: left.y - right.y)
-    }
+//    static func + (left: Self, right: Self) -> Self {
+//        .init(x: left.x + right.x, y: left.y + right.y)
+//    }
+//
+//    static func - (left: Self, right: Self) -> Self {
+//        .init(x: left.x - right.x, y: left.y - right.y)
+//    }
 }
