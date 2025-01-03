@@ -17,12 +17,7 @@ public struct ACoordinateInputSection: View {
 
     private var bindLatitude: Binding<Double?> {
         Binding {
-            return thisLatitude
-//            if focusOnLatitude {
-//                return thisLatitude
-//            } else {
-//                return value?.latitude ?? thisLatitude
-//            }
+            value?.latitude ?? thisLatitude
         } set: { newValue in
             thisLatitude = newValue
             guard let thisLongitude = thisLongitude // 如果也有经度
@@ -37,12 +32,7 @@ public struct ACoordinateInputSection: View {
 
     private var bindLongitude: Binding<Double?> {
         Binding {
-            return thisLongitude
-//            if focusOnLongitude {
-//                return thisLongitude
-//            } else {
-//                return value?.longitude
-//            }
+            value?.longitude ?? thisLongitude
         } set: { newValue in
             thisLongitude = newValue
             guard let thisLatitude = thisLatitude // 如果也有纬度
@@ -59,12 +49,12 @@ public struct ACoordinateInputSection: View {
         Section(I18n.coordinates) {
             HStack {
                 Text(I18n.latitude)
-                ALatitudeTextfield(bindLatitude, allowSet: allowSet, placeholder: I18n.latitude, format: .degreesMS)
+                ALatitudeTextfield(bindLatitude, allowSet: allowSet, placeholder: I18n.latitude, format: .degreesM)
                     .focused($focusOnLatitude)
             }
             HStack {
                 Text(I18n.longitude)
-                ALongitudeTextfield(bindLongitude, allowSet: allowSet, placeholder: I18n.longitude, format: .degreesMS)
+                ALongitudeTextfield(bindLongitude, allowSet: allowSet, placeholder: I18n.longitude, format: .degreesM)
                     .focused($focusOnLongitude)
             }
         }

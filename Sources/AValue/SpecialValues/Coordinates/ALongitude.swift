@@ -366,7 +366,7 @@ public extension ALongitude {
 
         // 遍历所有模式并尝试匹配
         for (pattern, parse) in patterns {
-            let regex = try NSRegularExpression(pattern: pattern, options: [])
+            let regex = try NSRegularExpression(pattern: pattern, options: [.allowCommentsAndWhitespace, .caseInsensitive])
             let range = NSRange(location: 0, length: trimmedString.utf16.count)
             if let match = regex.firstMatch(in: trimmedString, options: [], range: range) {
                 // 尝试解析匹配结果

@@ -85,7 +85,7 @@ private struct Example: View {
 
     var body: some View {
         NavigationStack {
-            ALocationFSContent($value, allowSet: true, name: "Location", other: .examples)
+            ALocationFSContent($value, allowSet: false, name: "Location", other: .examples)
         }
     }
 }
