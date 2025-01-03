@@ -50,8 +50,8 @@ public struct AVectorChartView<Vector: AVectorProtocol>: View {
         }
     }
 
-    public init(vector: Vector) {
-        self.vector = vector
+    public init(vector: Vector?) {
+        self.vector = vector ?? .init(x: 0, y: 0)
     }
 
     public init(_ value: AValue?) where Vector == AVector {
