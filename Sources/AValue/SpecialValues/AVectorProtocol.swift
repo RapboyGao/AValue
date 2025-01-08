@@ -101,12 +101,4 @@ public extension AVectorProtocol {
     func toGeneral<T: AVectorProtocol>() -> T {
         (self as? T) ?? T(x: x, y: y)
     }
-
-//    static func + (left: Self, right: Self) -> Self {
-//        .init(x: left.x + right.x, y: left.y + right.y)
-//    }
-//
-//    static func - (left: Self, right: Self) -> Self {
-//        .init(x: left.x - right.x, y: left.y - right.y)
-//    }
 }
