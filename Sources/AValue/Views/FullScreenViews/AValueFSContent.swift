@@ -47,7 +47,9 @@ public struct AValueFSContent: View {
         case .groundWind:
             AWindLimitFSContent($value, unit: $unit, originalUnit: originalUnit, allowSet: allowInput, precision: .fractionLength(0 ... 3))
         case .minutes:
-            ProgressView()
+            AHMTextfield($value, allowSet: allowInput, placeholder: name)
+                .font(.largeTitle)
+                .padding()
         case .calendar:
             ADateFSContent($value, name: name, allowSet: allowInput)
         case .dateDifference:
