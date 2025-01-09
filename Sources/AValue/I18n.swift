@@ -16,4 +16,10 @@ enum I18n {
     static let latitude = NSLocalizedString("Latitude", bundle: .module, comment: "Latitude of a position.")
     static let longitude = NSLocalizedString("Longitude", bundle: .module, comment: "Longitude of a position.")
     static let map = NSLocalizedString("Map", bundle: .module, comment: "The map that shows geographical locations.")
+    
+    static let vectorLength = NSLocalizedString("Length", bundle: .module, comment: "The measurement of a vector")
+    static let angle = NSLocalizedString("Angle", bundle: .module, comment: "The angle between a vector and the X-axis in mathematics")
+    static let azimuth = NSLocalizedString("Azimuth", bundle: .module, comment: "The angle measured clockwise from the north direction in aviation")
+    static let bearing = NSLocalizedString("Bearing", bundle: .module, comment: "The angle measured clockwise from the north direction in aviation")
+    
 }

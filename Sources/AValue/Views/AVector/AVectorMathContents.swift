@@ -166,17 +166,17 @@ public struct AVectorMathContents<Vector: AVectorProtocol>: View {
     @ViewBuilder
     private var lengthView: some View {
         HStack {
-            Text("Length")
-            AUnitTextfieldContent(bindLen, $selectedUnit, original: originalUnit, filter: AUnitType.casesUsedInVector, allowSet: allowSet, mathKeyboard: true, name: "Length", precision: precision)
+            Text(I18n.vectorLength)
+            AUnitTextfieldContent(bindLen, $selectedUnit, original: originalUnit, filter: AUnitType.casesUsedInVector, allowSet: allowSet, mathKeyboard: true, name: I18n.vectorLength, precision: precision)
         }
     }
 
     @ViewBuilder
-    private var atan2View: some View {
+    private var azimuthView: some View {
         VStack {
             HStack {
-                Text("atan2")
-                AUnitTextfieldContent(bindATan2Double2, $angleUnit, original: .radians, filter: [.angle], allowSet: allowSet, mathKeyboard: true, name: "atan2", precision: precision)
+                Text(I18n.angle)
+                AUnitTextfieldContent(bindATan2Double2, $angleUnit, original: .radians, filter: [.angle], allowSet: allowSet, mathKeyboard: true, name: I18n.angle, precision: precision)
             }
             if allowSet {
                 Slider(value: bindATan2Double, in: -pi ... pi)
@@ -188,8 +188,8 @@ public struct AVectorMathContents<Vector: AVectorProtocol>: View {
     private var towardsView: some View {
         VStack {
             HStack {
-                Text("Compass HDG")
-                AUnitTextfieldContent(bindCompassTowardsDouble2, $angleUnit, original: .radians, filter: [.angle], allowSet: allowSet, mathKeyboard: true, name: "Compass HDG", precision: precision)
+                Text(I18n.azimuth)
+                AUnitTextfieldContent(bindCompassTowardsDouble2, $angleUnit, original: .radians, filter: [.angle], allowSet: allowSet, mathKeyboard: true, name: I18n.azimuth, precision: precision)
             }
             if allowSet {
                 Slider(value: bindCompassTowardsDouble, in: 0 ... 2 * pi)
@@ -201,8 +201,8 @@ public struct AVectorMathContents<Vector: AVectorProtocol>: View {
     private var fromView: some View {
         VStack {
             HStack {
-                Text("Compass From")
-                AUnitTextfieldContent(bindCompassFromDouble2, $angleUnit, original: .radians, filter: [.angle], allowSet: allowSet, mathKeyboard: true, name: "Compass From", precision: precision)
+                Text(I18n.bearing)
+                AUnitTextfieldContent(bindCompassFromDouble2, $angleUnit, original: .radians, filter: [.angle], allowSet: allowSet, mathKeyboard: true, name: I18n.bearing, precision: precision)
             }
             if allowSet {
                 Slider(value: bindCompassFromDouble, in: 0 ... 2 * pi)
@@ -227,7 +227,7 @@ public struct AVectorMathContents<Vector: AVectorProtocol>: View {
             fromView
         case .math:
             lengthView
-            atan2View
+            azimuthView
         case .xY:
             xView
             yView

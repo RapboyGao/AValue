@@ -4,7 +4,7 @@ import SwiftUI
 #if os(iOS)
 
 @available(iOS 16.0, *)
-public struct AVetcorEditView<Vector: AVectorProtocol>: View {
+public struct AVectorEditView<Vector: AVectorProtocol>: View {
     @Binding public var vector: Vector?
     @Binding public var selectedUnit: AUnit?
 
@@ -52,7 +52,7 @@ private struct Example: View {
     @State private var unit: AUnit?
 
     var body: some View {
-        AVetcorEditView($value, $unit, originalUnit: .meters, allowSet: true, precision: .fractionLength(0 ... 3))
+        AVectorEditView($value, $unit, originalUnit: .meters, allowSet: true, precision: .fractionLength(0 ... 3))
     }
 }
 

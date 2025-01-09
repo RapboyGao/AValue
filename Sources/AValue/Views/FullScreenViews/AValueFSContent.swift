@@ -35,7 +35,7 @@ public struct AValueFSContent: View {
         case .number:
             ANumberFSContent(aValue: $value, name: name, allowSet: allowInput)
         case .point:
-            ProgressView()
+            AVectorEditView($value, $unit, originalUnit: originalUnit, allowSet: allowInput, precision: .fractionLength(0 ... 3))
         case .location:
             ALocationFSContent($value, allowSet: allowInput, name: name, other: .examples)
         case .boolean:

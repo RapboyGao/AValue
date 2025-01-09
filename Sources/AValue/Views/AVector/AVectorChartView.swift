@@ -25,8 +25,9 @@ public struct AVectorChartView<Vector: AVectorProtocol>: View {
                 }
                 PointMark(x: .value("x", vector.x), y: .value("y", vector.y))
                     .symbol {
-                        Image(systemName: "smallcircle.filled.circle")
+                        Image(systemName: "triangle")
                             .foregroundColor(.orange)
+                            .rotationEffect(vector.compassTowards.toAngle())
                     }
             }
             PointMark(x: .value("x", 0), y: .value("y", 0))
