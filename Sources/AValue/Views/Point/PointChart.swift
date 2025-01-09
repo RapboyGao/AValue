@@ -50,8 +50,8 @@ public struct AVectorChartView<Vector: AVectorProtocol>: View {
         }
     }
 
-    public init(vector: Vector?) {
-        self.vector = vector ?? .init(x: 0, y: 0)
+    public init(vector: Vector) {
+        self.vector = vector
     }
 
     public init(_ value: AValue?) where Vector == AVector {
@@ -68,7 +68,6 @@ public struct AVectorChartView<Vector: AVectorProtocol>: View {
 struct VectorChartView_Previews: PreviewProvider {
     static var previews: some View {
         AVectorChartView(.point(x: 1, y: 2))
-            .frame(width: 500, height: 500)
         AVectorChartView(.minutes(2))
     }
 }
