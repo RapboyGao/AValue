@@ -8,6 +8,8 @@ private let pi = 3.14159265358979323846264338327950288419716939937510
 
 @available(iOS 16.0, *)
 public struct AVectorMathContents<Vector: AVectorProtocol>: View {
+    @State private var mode: AVectorEditMode = .compass
+
     @Binding public var vector: Vector?
     @Binding public var selectedUnit: AUnit?
 
@@ -209,7 +211,27 @@ public struct AVectorMathContents<Vector: AVectorProtocol>: View {
     }
 
     public var body: some View {
-        Section {}
+        Picker(selection: $mode) {
+            ForEach(AVectorEditMode.allCases) { someMode in
+                Image(systemName: someMode.systemImage)
+            }
+        } label: {
+            Image(systemName: mode.systemImage)
+        }
+        .pickerStyle(.segmented)
+
+        switch mode {
+        case .compass:
+            lengthView
+            towardsView
+            fromView
+        case .math:
+            lengthView
+            atan2View
+        case .xY:
+            xView
+            yView
+        }
     }
 
     public init(_ vector: Binding<Vector?>, _ selectedUnit: Binding<AUnit?>, originalUnit: AUnit?, allowSet: Bool, precision: FloatingPointFormatStyle.Configuration.Precision) {

@@ -66,7 +66,9 @@ public struct AVectorChartView<Vector: AVectorProtocol>: View {
 
 @available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
 #Preview {
-    AVectorChartView(.point(x: 1, y: 2))
-        .frame(width: 500, height: 500)
-    AVectorChartView(.minutes(2))
+    VStack {
+        AVectorChartView(.point(x: 1, y: 2))
+            .frame(width: 500, height: 500)
+        AVectorChartView(.minutes(2))
+    }
 }
