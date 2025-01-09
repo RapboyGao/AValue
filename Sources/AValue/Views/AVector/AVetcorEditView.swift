@@ -36,6 +36,14 @@ public struct AVetcorEditView<Vector: AVectorProtocol>: View {
         self.allowSet = allowSet
         self.precision = precision
     }
+
+    public init(_ vector: Binding<AValue?>, _ selectedUnit: Binding<AUnit?>, originalUnit: AUnit?, allowSet: Bool, precision: FloatingPointFormatStyle.Configuration.Precision) where Vector == AVector {
+        self._vector = vector.pointValue()
+        self._selectedUnit = selectedUnit
+        self.originalUnit = originalUnit
+        self.allowSet = allowSet
+        self.precision = precision
+    }
 }
 
 @available(iOS 16.0, *)
