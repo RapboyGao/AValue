@@ -49,7 +49,7 @@ public struct AValueFSContent: View {
         case .minutes:
             ProgressView()
         case .calendar:
-            ADateFSContent(value: $value, name: name, allowSet: allowInput)
+            ADateFSContent($value, name: name, allowSet: allowInput)
         case .dateDifference:
             ProgressView()
         }

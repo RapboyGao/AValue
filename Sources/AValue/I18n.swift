@@ -22,4 +22,5 @@ enum I18n {
     static let azimuth = NSLocalizedString("Azimuth", bundle: .module, comment: "The angle measured clockwise from the north direction in aviation")
     static let bearing = NSLocalizedString("Bearing", bundle: .module, comment: "The angle measured clockwise from the north direction in aviation")
     
+    static let timeZone = NSLocalizedString("Time Zone", bundle: .module, comment: "The time zone of a specific location.")
 }

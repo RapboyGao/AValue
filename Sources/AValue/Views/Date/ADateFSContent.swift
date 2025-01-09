@@ -6,7 +6,7 @@ public struct ADateFSContent: View {
     var name: String
     var allowSet: Bool
 
-    @State private var isUTC: Bool = false
+    @State private var timeZone = TimeZone.current
 
     private var thisBinding: Binding<Date> {
         Binding {
@@ -18,15 +18,14 @@ public struct ADateFSContent: View {
 
     public var body: some View {
         List {
-            if #available(macOS 13, iOS 16, tvOS 16, watchOS 9, *) {
-                DatePicker(name, selection: thisBinding, displayedComponents: [.hourAndMinute, .date])
-                    .datePickerStyle(.graphical)
-                    .environment(\.timeZone, isUTC ? .gmt : .current)
-                Toggle("UTC", isOn: $isUTC)
-            } else {
-                DatePicker(name, selection: thisBinding, displayedComponents: [.hourAndMinute, .date])
-                    .datePickerStyle(.graphical)
+            HStack {
+                Text(I18n.timeZone)
+                Spacer()
+                ATimeZoneSelector($timeZone)
             }
+            DatePicker(name, selection: thisBinding, displayedComponents: [.hourAndMinute, .date])
+                .datePickerStyle(.graphical)
+                .environment(\.timeZone, timeZone)
         }
     }
 
@@ -36,7 +35,7 @@ public struct ADateFSContent: View {
         self.allowSet = allowSet
     }
 
-    public init(value: Binding<AValue?>, name: String, allowSet: Bool) {
+    public init(_ value: Binding<AValue?>, name: String, allowSet: Bool) {
         self._value = value.calendarValue()
         self.name = name
         self.allowSet = allowSet
@@ -44,6 +43,15 @@ public struct ADateFSContent: View {
 }
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+private struct Example: View {
+    @State private var aValue: AValue?
+
+    var body: some View {
+        ADateFSContent($aValue, name: "hello", allowSet: true)
+    }
+}
+
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 #Preview {
-    ADateFSContent(.constant(.now), name: "hello", allowSet: true)
+    Example()
 }
