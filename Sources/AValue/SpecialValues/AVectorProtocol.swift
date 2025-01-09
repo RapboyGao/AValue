@@ -1,3 +1,4 @@
+import AUnit
 import AUnits
 import Foundation
 import simd
@@ -100,5 +101,17 @@ public extension AVectorProtocol {
 
     func toGeneral<T: AVectorProtocol>() -> T {
         (self as? T) ?? T(x: x, y: y)
+    }
+
+    func converted(from someUnit: AUnit?, to newUnit: AUnit?) -> Self {
+        guard let someUnit = someUnit,
+              let newUnit = newUnit,
+              someUnit.unitType.canUseInVector,
+              let newX = someUnit.convert(value: x, to: newUnit),
+              let newY = someUnit.convert(value: y, to: newUnit)
+        else {
+            return self
+        }
+        return Self(x: newX, y: newY)
     }
 }
