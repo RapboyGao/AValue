@@ -13,6 +13,7 @@ public struct AHMKeyboard: View {
     private let connerRadius: CGFloat = 4
 
     @State private var turnDirection: Angle = .zero
+    private let updateText: (String) -> Void
 
     @ViewBuilder
     private func makeTextButton(_ text: String) -> some View {
@@ -63,7 +64,7 @@ public struct AHMKeyboard: View {
             let newText = newHourMinuteValue.description
             guard textfield.text == newText
             else {
-                textfield.text = newText
+                updateText(newText)
                 format = hasDay ? .days24HM : .hourMinute
                 return
             }
@@ -77,7 +78,8 @@ public struct AHMKeyboard: View {
                 case .days24HM:
                     format = .hourMinute
                 }
-                textfield.text = newHourMinuteValue.toFormat(format).description
+                let newText = newHourMinuteValue.toFormat(format).description
+                updateText(newText)
             }
 
         } content: { isClicked in
@@ -108,7 +110,7 @@ public struct AHMKeyboard: View {
                 }
                 makeNumberButton(0)
                 AKeyButton(connerRadius, colors: .sameAsBackground, sound: 1155) {
-                    textfield.text = ""
+                    updateText("")
                     withAnimation {
                         turnDirection -= .degrees(360)
                     }
@@ -124,7 +126,7 @@ public struct AHMKeyboard: View {
         }
         .onAppear {
             if textfield.text == "00:00" {
-                textfield.text = ""
+                updateText("")
             }
         }
     }
@@ -133,11 +135,26 @@ public struct AHMKeyboard: View {
         self.textfield = textfield
         let someState = State(initialValue: AHourMinuteValue.Format.hourMinute)
         self._format = someState.projectedValue
+        self.updateText = { textfield.text = $0 }
     }
 
     public init(_ textfield: UITextField, format: Binding<AHourMinuteValue.Format>) {
         self.textfield = textfield
         self._format = format
+        self.updateText = { textfield.text = $0 }
+    }
+
+    public init(_ textfield: UITextField, _ bindText: Binding<String>) {
+        self.textfield = textfield
+        let someState = State(initialValue: AHourMinuteValue.Format.hourMinute)
+        self._format = someState.projectedValue
+        self.updateText = { bindText.wrappedValue = $0 }
+    }
+
+    public init(_ textfield: UITextField, _ bindText: Binding<String>, format: Binding<AHourMinuteValue.Format>) {
+        self.textfield = textfield
+        self._format = format
+        self.updateText = { bindText.wrappedValue = $0 }
     }
 }
 

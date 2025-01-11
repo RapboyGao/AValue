@@ -57,7 +57,13 @@ public extension AValue {
                 return value.description
             }
         case let .point(x, y):
-            return "(\(x), \(y))"
+            // 保留最0-3位小数
+            let formatter = NumberFormatter()
+            formatter.minimumFractionDigits = 0
+            formatter.maximumFractionDigits = 3
+            let xStr = formatter.string(from: NSNumber(value: x)) ?? ""
+            let yStr = formatter.string(from: NSNumber(value: y)) ?? ""
+            return "(\(xStr),\(yStr))"
         case let .location(latitude, longitude):
             let latitudeStr = ALatitude(latitude).toDM()
             let longitudeStr = ALongitude(longitude).toDM()
