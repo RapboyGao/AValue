@@ -17,6 +17,7 @@ public struct ANumberFSContent: View {
                 #if os(iOS)
                     .aKeyboardView { uiTextField in
                         AMathExpressionKeyboard(uiTextField, AMathFormatStyle.fractionLength(20))
+                            .frame(height: 260)
                     }
                 #endif
                     .font(.largeTitle)
