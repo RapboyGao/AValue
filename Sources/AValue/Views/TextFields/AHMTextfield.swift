@@ -18,6 +18,7 @@ public struct AHMTextfield: View {
             AFormatOptionalTextfield(placeholder, value: $value, format: formatStyle) { textfield, bindString in
                 textfield.aKeyboardView { uiTextfield in
                     AHMKeyboard(uiTextfield, bindString, format: $format)
+                        .frame(height: 250)
                 }
             }
             .multilineTextAlignment(.trailing)
