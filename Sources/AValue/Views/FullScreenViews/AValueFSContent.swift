@@ -56,7 +56,9 @@ public struct AValueFSContent: View {
         case .calendar:
             ADateFSContent($value, name: name, allowSet: allowInput)
         case .dateDifference:
-            ProgressView()
+            List {
+                ADateComponentFSContent($value, allowSet: allowInput)
+            }
         }
     }
 
