@@ -42,14 +42,17 @@ public struct AValueFSContent: View {
             Toggle(name, isOn: bindBoolean)
                 .padding()
         case .string:
-            TextEditor(text: bindString)
-                .padding()
+            List {
+                TextEditor(text: bindString)
+                    .frame(minHeight: 100)
+            }
         case .groundWind:
             AWindLimitFSContent($value, unit: $unit, originalUnit: originalUnit, allowSet: allowInput, precision: .fractionLength(0 ... 3))
         case .minutes:
-            AHMTextfield($value, allowSet: allowInput, placeholder: name)
-                .font(.largeTitle)
-                .padding()
+            List {
+                AHMTextfield($value, allowSet: allowInput, placeholder: name)
+                    .font(.largeTitle)
+            }
         case .calendar:
             ADateFSContent($value, name: name, allowSet: allowInput)
         case .dateDifference:

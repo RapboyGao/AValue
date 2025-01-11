@@ -1,4 +1,4 @@
-import SwiftUI
+import AViewUI
 
 #if os(iOS)
 
@@ -15,12 +15,12 @@ public struct AHMTextfield: View {
 
     public var body: some View {
         if allowSet {
-            TextField(placeholder, value: $value, format: formatStyle)
-                .aKeyboardView { uiTextfield in
-                    AHMKeyboard(uiTextfield, format: $format)
-                        .frame(height: 250)
+            AFormatOptionalTextfield(placeholder, value: $value, format: formatStyle) { textfield, bindString in
+                textfield.aKeyboardView { uiTextfield in
+                    AHMKeyboard(uiTextfield, bindString, format: $format)
                 }
-                .multilineTextAlignment(.trailing)
+            }
+            .multilineTextAlignment(.trailing)
         } else if let value = value {
             Spacer()
             switch value {
