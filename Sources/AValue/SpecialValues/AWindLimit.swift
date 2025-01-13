@@ -131,7 +131,7 @@ public struct AWindLimit: Hashable, Sendable, Codable, CustomStringConvertible {
         func windString(_ num: Double) -> String {
             String(format: "%.0f", num)
         }
-        return "↓\(windString(headWind)) →\(windString(crossWind)) ↑\(windString(tailWind)) ◎\(windString(totalWind)) R\(String(format: "%02d", runwayHeadingInDegrees / 10))"
+        return "↓\(windString(headWind)) →\(windString(crossWind)) ↑\(windString(tailWind)) ◎\(windString(totalWind)) R\(runwayName)"
     }
 
     public func with(rHDG runwayHeading: AAngle) -> AWindLimit {
