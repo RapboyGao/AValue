@@ -64,7 +64,7 @@ public extension [AValue] {
 
     @Sendable func calendar(at index: Int) throws -> Date {
         let value = try self.value(at: index)
-        if case let .calendar(calendar) = value {
+        if case let .calendar(calendar, _) = value {
             return calendar
         } else {
             throw AValueError.typeMismatch(expected: .calendar, actual: value.type)

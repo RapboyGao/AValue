@@ -50,7 +50,7 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
         case .minutes:
             return .minutes(0)
         case .calendar:
-            return .calendar(.init(timeIntervalSinceNow: 0))
+            return .calendar(.init(timeIntervalSinceNow: 0), timeZone: .current)
         case .dateDifference:
             return .dateDifference(.init())
         }

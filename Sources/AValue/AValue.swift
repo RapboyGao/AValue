@@ -26,7 +26,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
     case minutes(Int)
 
     /// 表示一个以日历时间形式的特定日期和时间
-    case calendar(Date)
+    case calendar(Date, timeZone: TimeZone?)
 
     /// 表示两个日期之间的差异
     case dateDifference(DateComponents)
@@ -76,10 +76,11 @@ public extension AValue {
             return "\(limit)"
         case let .minutes(value):
             return AHourMinuteValue(minutes: value).toFormat(.hourMinute).description
-        case let .calendar(date):
+        case let .calendar(date, timeZone):
             let formatter = DateFormatter()
-            formatter.dateStyle = .medium
+            formatter.dateStyle = .long
             formatter.timeStyle = .short
+            formatter.timeZone = timeZone
             return formatter.string(from: date)
         case let .dateDifference(components):
             return "\(components)"
@@ -94,33 +95,33 @@ public extension AValue {
             return .point(x: x1 + x2, y: y1 + y2)
         case let (.minutes(value1), .minutes(value2)):
             return .minutes(value1 + value2)
-        case let (.calendar(value1), .minutes(value2)):
-            return try self.addMinutes(to: value1, minutes: value2)
-        case let (.minutes(value1), .calendar(value2)):
-            return try self.addMinutes(to: value2, minutes: value1)
-        case let (.calendar(value1), .dateDifference(value2)):
-            return try self.addDateDifference(to: value1, difference: value2)
-        case let (.dateDifference(value1), .calendar(value2)):
-            return try self.addDateDifference(to: value2, difference: value1)
+        case let (.calendar(value1, timezone), .minutes(value2)):
+            return try self.addMinutes(to: value1, minutes: value2, timeZone: timezone)
+        case let (.minutes(value1), .calendar(value2, timezone)):
+            return try self.addMinutes(to: value2, minutes: value1, timeZone: timezone)
+        case let (.calendar(value1, timezone), .dateDifference(value2)):
+            return try self.addDateDifference(to: value1, difference: value2, timeZone: timezone)
+        case let (.dateDifference(value1), .calendar(value2, timezone)):
+            return try self.addDateDifference(to: value2, difference: value1, timeZone: timezone)
         default:
             throw AValueError.invalidOperation
         }
     }
 
-    @Sendable private func addMinutes(to calendarValue: Date, minutes: Int) throws -> AValue {
+    @Sendable private func addMinutes(to calendarValue: Date, minutes: Int, timeZone: TimeZone?) throws -> AValue {
         let calendar = Calendar.current
         guard let newDate = calendar.date(byAdding: .minute, value: minutes, to: calendarValue) else {
             throw AValueError.invalidOperation
         }
-        return .calendar(newDate)
+        return .calendar(newDate, timeZone: timeZone)
     }
 
-    @Sendable private func addDateDifference(to calendarValue: Date, difference: DateComponents) throws -> AValue {
+    @Sendable private func addDateDifference(to calendarValue: Date, difference: DateComponents, timeZone: TimeZone?) throws -> AValue {
         let calendar = Calendar.current
         guard let newDate = calendar.date(byAdding: difference, to: calendarValue) else {
             throw AValueError.invalidOperation
         }
-        return .calendar(newDate)
+        return .calendar(newDate, timeZone: timeZone)
     }
 
     @Sendable func subtract(_ value: AValue) throws -> AValue {
@@ -131,26 +132,26 @@ public extension AValue {
             return .point(x: x1 - x2, y: y1 - y2)
         case let (.minutes(value1), .minutes(value2)):
             return .minutes(value1 - value2)
-        case let (.calendar(value1), .minutes(value2)):
-            return try self.subtractMinutes(from: value1, minutes: value2)
-        case let (.calendar(value1), .dateDifference(value2)):
-            return try self.subtractDateDifference(from: value1, difference: value2)
-        case let (.dateDifference(value1), .calendar(value2)):
-            return try self.subtractDateDifference(from: value2, difference: value1)
+        case let (.calendar(value1, timezone), .minutes(value2)):
+            return try self.subtractMinutes(from: value1, minutes: value2, timeZone: timezone)
+        case let (.calendar(value1, timezone), .dateDifference(value2)):
+            return try self.subtractDateDifference(from: value1, difference: value2, timeZone: timezone)
+        case let (.dateDifference(value1), .calendar(value2, timezone)):
+            return try self.subtractDateDifference(from: value2, difference: value1, timeZone: timezone)
         default:
             throw AValueError.invalidOperation
         }
     }
 
-    @Sendable private func subtractMinutes(from calendarValue: Date, minutes: Int) throws -> AValue {
+    @Sendable private func subtractMinutes(from calendarValue: Date, minutes: Int, timeZone: TimeZone?) throws -> AValue {
         let calendar = Calendar.current
         guard let newDate = calendar.date(byAdding: .minute, value: -minutes, to: calendarValue) else {
             throw AValueError.invalidOperation
         }
-        return .calendar(newDate)
+        return .calendar(newDate, timeZone: timeZone)
     }
 
-    @Sendable private func subtractDateDifference(from calendarValue: Date, difference: DateComponents) throws -> AValue {
+    @Sendable private func subtractDateDifference(from calendarValue: Date, difference: DateComponents, timeZone: TimeZone?) throws -> AValue {
         let calendar = Calendar.current
         var negativeComponents = DateComponents()
         negativeComponents.year = -(difference.year ?? 0)
@@ -162,7 +163,7 @@ public extension AValue {
         guard let newDate = calendar.date(byAdding: negativeComponents, to: calendarValue) else {
             throw AValueError.invalidOperation
         }
-        return .calendar(newDate)
+        return .calendar(newDate, timeZone: timeZone)
     }
 
     @Sendable func multiply(by value: AValue) throws -> AValue {
@@ -255,7 +256,7 @@ public extension AValue {
             return value1 > value2
         case let (.minutes(value1), .minutes(value2)):
             return value1 > value2
-        case let (.calendar(value1), .calendar(value2)):
+        case let (.calendar(value1, _), .calendar(value2, _)):
             return value1 > value2
         default:
             throw AValueError.comparisonError
@@ -387,11 +388,11 @@ extension AValue {
     }
 
     /// Extracts the Date value if the AValue is of type `.calendar`
-    func getCalendar() -> Date? {
-        guard case let .calendar(date) = self else {
+    func getCalendar() -> ADateAndTZ? {
+        guard case let .calendar(date, timeZone) = self else {
             return nil
         }
-        return date
+        return ADateAndTZ(date: date, timeZone: timeZone)
     }
 
     /// Extracts the DateComponents value if the AValue is of type `.dateDifference`

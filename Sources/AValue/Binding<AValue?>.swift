@@ -104,14 +104,14 @@ extension Binding<AValue?> {
     }
 
     /// Create a binding for a calendar date
-    func calendarValue() -> Binding<Date?> {
-        Binding<Date?>(
+    func calendarValue() -> Binding<ADateAndTZ?> {
+        Binding<ADateAndTZ?>(
             get: {
                 self.wrappedValue?.getCalendar()
             },
             set: {
                 if let newValue = $0 {
-                    self.wrappedValue = .calendar(newValue)
+                    self.wrappedValue = .calendar(newValue.date, timeZone: newValue.timeZone)
                 }
             }
         )

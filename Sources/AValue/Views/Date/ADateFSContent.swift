@@ -2,17 +2,27 @@ import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 public struct ADateFSContent: View {
-    @Binding var value: Date?
+    @Binding var value: ADateAndTZ?
     var name: String
     var allowSet: Bool
 
-    @State private var timeZone = TimeZone.current
+    var withDefaultTimeZone: TimeZone {
+        value?.timeZone ?? .current
+    }
+
+    var bindingTimeZone: Binding<TimeZone> {
+        Binding {
+            withDefaultTimeZone
+        } set: {
+            value = ADateAndTZ(date: .now, timeZone: $0)
+        }
+    }
 
     private var thisBinding: Binding<Date> {
         Binding {
-            value ?? .now
+            value?.date ?? .now
         } set: { newValue in
-            value = newValue
+            value = ADateAndTZ(date: newValue, timeZone: withDefaultTimeZone)
         }
     }
 
@@ -21,22 +31,30 @@ public struct ADateFSContent: View {
             HStack {
                 Text(I18n.timeZone)
                 Spacer()
-                ATimeZoneSelector($timeZone)
+                ATimeZoneSelector(bindingTimeZone)
             }
             DatePicker(name, selection: thisBinding, displayedComponents: [.hourAndMinute, .date])
                 .datePickerStyle(.graphical)
-                .environment(\.timeZone, timeZone)
+                .environment(\.timeZone, withDefaultTimeZone)
         }
     }
 
-    public init(_ value: Binding<Date?>, name: String, allowSet: Bool) {
+    public init(_ value: Binding<ADateAndTZ?>, name: String, allowSet: Bool) {
         self._value = value
         self.name = name
         self.allowSet = allowSet
     }
 
     public init(_ value: Binding<AValue?>, name: String, allowSet: Bool) {
-        self._value = value.calendarValue()
+        self._value = Binding<ADateAndTZ?> {
+            value.wrappedValue?.getCalendar()
+        } set: { newValue in
+            guard let newValue = newValue else {
+                value.wrappedValue = nil
+                return
+            }
+            value.wrappedValue = .calendar(newValue.date, timeZone: newValue.timeZone)
+        }
         self.name = name
         self.allowSet = allowSet
     }
