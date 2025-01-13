@@ -40,7 +40,6 @@ public struct AValueFSContent: View {
             ALocationFSContent($value, allowSet: allowInput, name: name, other: .examples)
         case .boolean:
             Toggle(name, isOn: bindBoolean)
-                .padding()
         case .string:
             List {
                 TextEditor(text: bindString)
@@ -49,10 +48,9 @@ public struct AValueFSContent: View {
         case .groundWind:
             AWindLimitFSContent($value, unit: $unit, originalUnit: originalUnit, allowSet: allowInput, precision: .fractionLength(0 ... 3))
         case .minutes:
-            List {
-                AHMTextfield($value, allowSet: allowInput, placeholder: name)
-                    .font(.largeTitle)
-            }
+            AHMTextfield($value, allowSet: allowInput, placeholder: name)
+                .font(.largeTitle)
+                .padding()
         case .calendar:
             ADateFSContent($value, name: name, allowSet: allowInput)
         case .dateDifference:

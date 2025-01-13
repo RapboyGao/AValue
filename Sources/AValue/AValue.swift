@@ -77,11 +77,7 @@ public extension AValue {
         case let .minutes(value):
             return AHourMinuteValue(minutes: value).toFormat(.hourMinute).description
         case let .calendar(date, timeZone):
-            let formatter = DateFormatter()
-            formatter.dateStyle = .long
-            formatter.timeStyle = .short
-            formatter.timeZone = timeZone
-            return formatter.string(from: date)
+            return ADateAndTZ(date: date, timeZone: timeZone).description
         case let .dateDifference(components):
             return "\(components)"
         }
