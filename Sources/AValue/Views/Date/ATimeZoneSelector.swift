@@ -1,17 +1,55 @@
 import Algorithms
 import SwiftUI
 
+private let allTimeZone: [TimeZone] = TimeZone.knownTimeZoneIdentifiers
+    .compactMap {
+        TimeZone(identifier: $0)
+    }
+    .uniqued { timeZone in
+        timeZone.localizedName(for: .shortGeneric, locale: nil)
+    }
+
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-struct ATimeZoneSelector: View {
+private struct TimeZones: View {
+    @Environment(\.locale) private var locale
+
+    var offset: Int
+    var action: (TimeZone) -> Void
+
+    private func isSameTimeZone(_ timeZone: TimeZone) -> Bool {
+        timeZone.secondsFromGMT() == offset * 3600
+    }
+
+    private func getName(_ someTimeZone: TimeZone) -> String {
+        someTimeZone.localizedName(for: .shortGeneric, locale: locale) ?? someTimeZone.identifier
+    }
+
+    private var filteredTimeZone: [TimeZone] {
+        allTimeZone
+            .filter { timeZone in
+                isSameTimeZone(timeZone)
+            }
+    }
+
+    var body: some View {
+        ForEach(filteredTimeZone, id: \.identifier) { someTimeZone in
+            Button {
+                action(someTimeZone)
+            } label: {
+                Text(getName(someTimeZone))
+            }
+        }
+    }
+}
+
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+public struct ATimeZoneSelector: View {
     @Binding var timeZone: TimeZone
 
     @Environment(\.locale) private var locale
 
     private var allTimeZones: [TimeZone] {
-        TimeZone.knownTimeZoneIdentifiers
-            .compactMap {
-                TimeZone(identifier: $0)
-            }
+        allTimeZone
             .uniqued {
                 getName($0)
             }
@@ -21,14 +59,16 @@ struct ATimeZoneSelector: View {
         someTimeZone.localizedName(for: .shortGeneric, locale: locale) ?? timeZone.identifier
     }
 
-    var body: some View {
+    private func isSameTimeZone(diff: Int, timeZone: TimeZone) -> Bool {
+        timeZone.secondsFromGMT() == diff * 3600
+    }
+
+    public var body: some View {
         Menu {
-            ForEach(-13 ..< 13) { timeDiff in
+            ForEach(-11 ..< 13) { timeDiff in
                 Menu {
-                    ForEach(allTimeZones.filter { $0.secondsFromGMT() == timeDiff * 3600 }, id: \.identifier) { someTimeZone in
-                        Button(getName(someTimeZone)) {
-                            self.timeZone = someTimeZone
-                        }
+                    TimeZones(offset: timeDiff) { newTimeZone in
+                        timeZone = newTimeZone
                     }
                 } label: {
                     Text("UTC") + Text(timeDiff, format: .number.sign(strategy: .always()))
