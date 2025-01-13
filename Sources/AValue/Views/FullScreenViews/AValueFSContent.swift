@@ -39,18 +39,13 @@ public struct AValueFSContent: View {
         case .location:
             ALocationFSContent($value, allowSet: allowInput, name: name, other: .examples)
         case .boolean:
-            Toggle(name, isOn: bindBoolean)
+            ABoolFSContent($value)
         case .string:
-            List {
-                TextEditor(text: bindString)
-                    .frame(minHeight: 100)
-            }
+            ATextFSContent($value, allowSet: allowInput)
         case .groundWind:
             AWindLimitFSContent($value, unit: $unit, originalUnit: originalUnit, allowSet: allowInput, precision: .fractionLength(0 ... 3))
         case .minutes:
-            AHMTextfield($value, allowSet: allowInput, placeholder: name)
-                .font(.largeTitle)
-                .padding()
+            AHourMinuteFSContent(aValue: $value, name: name, allowSet: allowInput)
         case .calendar:
             ADateFSContent($value, name: name, allowSet: allowInput)
         case .dateDifference:
