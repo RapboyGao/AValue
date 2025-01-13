@@ -1,7 +1,7 @@
 import Algorithms
 import SwiftUI
 
-private let allTimeZone: [TimeZone] = TimeZone.knownTimeZoneIdentifiers
+private let allTimeZones: [TimeZone] = TimeZone.knownTimeZoneIdentifiers
     .compactMap {
         TimeZone(identifier: $0)
     }
@@ -10,7 +10,7 @@ private let allTimeZone: [TimeZone] = TimeZone.knownTimeZoneIdentifiers
     }
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-private struct TimeZones: View {
+private struct TimeZonesView: View {
     @Environment(\.locale) private var locale
 
     var offset: Int
@@ -25,9 +25,12 @@ private struct TimeZones: View {
     }
 
     private var filteredTimeZone: [TimeZone] {
-        allTimeZone
-            .filter { timeZone in
-                isSameTimeZone(timeZone)
+        allTimeZones
+            .filter {
+                isSameTimeZone($0)
+            }
+            .uniqued {
+                getName($0)
             }
     }
 
@@ -48,13 +51,6 @@ public struct ATimeZoneSelector: View {
 
     @Environment(\.locale) private var locale
 
-    private var allTimeZones: [TimeZone] {
-        allTimeZone
-            .uniqued {
-                getName($0)
-            }
-    }
-
     private func getName(_ someTimeZone: TimeZone) -> String {
         someTimeZone.localizedName(for: .shortGeneric, locale: locale) ?? timeZone.identifier
     }
@@ -67,7 +63,7 @@ public struct ATimeZoneSelector: View {
         Menu {
             ForEach(-11 ..< 13) { timeDiff in
                 Menu {
-                    TimeZones(offset: timeDiff) { newTimeZone in
+                    TimeZonesView(offset: timeDiff) { newTimeZone in
                         timeZone = newTimeZone
                     }
                 } label: {

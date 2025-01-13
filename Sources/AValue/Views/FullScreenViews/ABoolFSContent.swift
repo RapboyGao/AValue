@@ -46,8 +46,8 @@ public struct ABoolFSContent: View {
         }
         .toggleStyle(.switch)
         .labelsHidden()
-        .scaleEffect(4)
-        .rotationEffect(.degrees(-90))
+        .font(.largeTitle)
+        .scaleEffect(2)
     }
 
     public init(_ value: Binding<Bool?>) {
