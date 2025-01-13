@@ -1,20 +1,33 @@
+import Algorithms
 import SwiftUI
-
-private let allTimeZones = TimeZone.knownTimeZoneIdentifiers.compactMap {
-    TimeZone(identifier: $0)
-}
 
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 struct ATimeZoneSelector: View {
     @Binding var timeZone: TimeZone
 
+    @Environment(\.locale) private var locale
+
+    private var allTimeZones: [TimeZone] {
+        TimeZone.knownTimeZoneIdentifiers
+            .compactMap {
+                TimeZone(identifier: $0)
+            }
+            .uniqued {
+                getName($0)
+            }
+    }
+
+    private func getName(_ someTimeZone: TimeZone) -> String {
+        someTimeZone.localizedName(for: .shortGeneric, locale: locale) ?? timeZone.identifier
+    }
+
     var body: some View {
         Menu {
             ForEach(-13 ..< 13) { timeDiff in
                 Menu {
-                    ForEach(allTimeZones.filter { $0.secondsFromGMT() == timeDiff * 3600 }, id: \.identifier) { timeZone in
-                        Button(timeZone.description) {
-                            self.timeZone = timeZone
+                    ForEach(allTimeZones.filter { $0.secondsFromGMT() == timeDiff * 3600 }, id: \.identifier) { someTimeZone in
+                        Button(getName(someTimeZone)) {
+                            self.timeZone = someTimeZone
                         }
                     }
                 } label: {
@@ -22,7 +35,7 @@ struct ATimeZoneSelector: View {
                 }
             }
         } label: {
-            Text(timeZone.description) + Text(" (") + Text(timeZone.secondsFromGMT() / 3600, format: .number.sign(strategy: .always())) + Text(")")
+            Text(getName(timeZone)) + Text(" (") + Text(timeZone.secondsFromGMT() / 3600, format: .number.sign(strategy: .always())) + Text(")")
         }
     }
 
