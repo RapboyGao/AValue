@@ -1,4 +1,5 @@
 import AUnitViews
+import AViewUI
 import SwiftUI
 
 #if os(iOS)
@@ -15,7 +16,11 @@ struct ADateComponentFSContent: View {
             Text(name)
             if allowSet {
                 TextField(name, value: bindInt, format: .number)
-
+                    .aKeyboardView { uiTextfield in
+                        AIntKeyboard(uiTextfield)
+                            .frame(height: 250)
+                    }
+                    .multilineTextAlignment(.trailing)
             } else {
                 Spacer()
                 if let number = bindInt.wrappedValue {
@@ -31,8 +36,7 @@ struct ADateComponentFSContent: View {
         Binding {
             value?.year
         } set: { newValue in
-            guard let newValue = newValue
-            else {
+            guard self.value != nil else {
                 value = DateComponents(year: newValue)
                 return
             }
@@ -44,7 +48,7 @@ struct ADateComponentFSContent: View {
         Binding {
             value?.month
         } set: { newValue in
-            guard let newValue = newValue else {
+            guard self.value != nil else {
                 value = DateComponents(month: newValue)
                 return
             }
@@ -56,7 +60,7 @@ struct ADateComponentFSContent: View {
         Binding {
             value?.day
         } set: { newValue in
-            guard let newValue = newValue else {
+            guard self.value != nil else {
                 value = DateComponents(day: newValue)
                 return
             }
@@ -68,7 +72,7 @@ struct ADateComponentFSContent: View {
         Binding {
             value?.hour
         } set: { newValue in
-            guard let newValue = newValue else {
+            guard self.value != nil else {
                 value = DateComponents(hour: newValue)
                 return
             }
@@ -80,7 +84,7 @@ struct ADateComponentFSContent: View {
         Binding {
             value?.minute
         } set: { newValue in
-            guard let newValue = newValue else {
+            guard self.value != nil else {
                 value = DateComponents(minute: newValue)
                 return
             }
@@ -88,17 +92,29 @@ struct ADateComponentFSContent: View {
         }
     }
 
-    private var bindSecond: Binding<Int?> {
-        Binding {
-            value?.second
-        } set: { newValue in
-            guard let newValue = newValue else {
-                value = DateComponents(second: newValue)
-                return
-            }
-            value?.second = newValue
-        }
-    }
+    // private var bindSecond: Binding<Int?> {
+    //     Binding {
+    //         value?.second
+    //     } set: { newValue in
+    //         guard self.value != nil else {
+    //             value = DateComponents(second: newValue)
+    //             return
+    //         }
+    //         value?.second = newValue
+    //     }
+    // }
+
+    // private var bindNanosecond: Binding<Int?> {
+    //     Binding {
+    //         value?.nanosecond
+    //     } set: { newValue in
+    //         guard self.value != nil else {
+    //             value = DateComponents(nanosecond: newValue)
+    //             return
+    //         }
+    //         value?.nanosecond = newValue
+    //     }
+    // }
 
     var body: some View {
         bindInt("Year", bindYear)
@@ -106,16 +122,17 @@ struct ADateComponentFSContent: View {
         bindInt("Day", bindDay)
         bindInt("Hour", bindHour)
         bindInt("Minute", bindMinute)
-        bindInt("Second", bindSecond)
+        // bindInt("Second", bindSecond)
+        // bindInt("Nanosecond", bindNanosecond)
     }
 
     public init(_ value: Binding<DateComponents?>, allowSet: Bool) {
-        self._value = value
+        _value = value
         self.allowSet = allowSet
     }
 
     public init(_ value: Binding<AValue?>, allowSet: Bool) {
-        self._value = value.dateDifferenceValue()
+        _value = value.dateDifferenceValue()
         self.allowSet = allowSet
     }
 }
