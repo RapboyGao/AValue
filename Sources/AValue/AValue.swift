@@ -399,3 +399,22 @@ extension AValue {
         return components
     }
 }
+
+@available(macOS 12.0, iOS 15.0, tvOS 15.0, watchOS 8.0, *)
+extension AValue {
+    func formatted(precision: NumberFormatStyleConfiguration.Precision) -> String {
+        let format: FloatingPointFormatStyle<Double> = .number.precision(precision).grouping(.never)
+        switch self {
+        case let .number(double):
+            return double.formatted(format)
+        case let .point(x, y):
+            return "(\(x.formatted(format)), \(y.formatted(format)))"
+        case let .location(latitude, longitude):
+            return latitude.formatted(ALatitudeFormat.dM(digits: 1)) + longitude.formatted(ALongitudeFormat.dM(digits: 1))
+        case let .boolean(bool):
+            return bool ? "✓" : "x"
+        case .string, .groundWind, .minutes, .calendar, .dateDifference:
+            return self.description
+        }
+    }
+}

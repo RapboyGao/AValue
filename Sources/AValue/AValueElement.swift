@@ -13,6 +13,14 @@ public struct AValueArrayElement: Hashable, Codable, Sendable, Identifiable {
         self.isLast = isLast
         self.isFirst = id == 0
     }
+
+    public init(id: Int, value: AValue, isLast: Bool, unit: AUnit) {
+        self.id = id
+        self.value = value
+        self.isLast = isLast
+        self.isFirst = id == 0
+        self.unit = unit
+    }
 }
 
 public extension [AValueArrayElement] {
