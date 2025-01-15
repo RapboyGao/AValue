@@ -69,17 +69,21 @@ public extension AValue {
             let longitudeStr = ALongitude(longitude).toDM()
             return "\(latitudeStr) \(longitudeStr)"
         case let .boolean(value):
-            return value ? "✓" : "x"
+            return value ? "Yes" : "No"
         case let .string(value):
             return "`\(value)`".replacingOccurrences(of: "\n", with: "↵")
         case let .groundWind(limit):
             return "\(limit)"
         case let .minutes(value):
-            return AHourMinuteValue(minutes: value).toFormat(.hourMinute).description
+            let result = AHourMinuteValue(minutes: value).toFormat(.hourMinute).description
+            guard result != "" else { return "00:00" }
+            return result
         case let .calendar(date, timeZone):
             return ADateAndTZ(date: date, timeZone: timeZone).description
         case let .dateDifference(components):
-            return "\(components)"
+            let result = "\(components)"
+            guard result != "" else { return "No Diff" }
+            return result
         }
     }
 

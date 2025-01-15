@@ -56,6 +56,41 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
         }
     }
 
+    public func randomValue() -> AValue {
+        switch self {
+        case .number:
+            return .number(.random(in: -10000 ... 10000))
+        case .point:
+            return .point(x: .random(in: -10000 ... 10000), y: .random(in: -10000 ... 10000))
+        case .location:
+            return .location(latitude: .random(in: -90 ..< 90), longitude: .random(in: -180 ..< 180))
+        case .boolean:
+            return .boolean(.random())
+        case .string:
+            // create a random string
+            let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+            return .string(String((0 ..< 10).map { _ in letters.randomElement() ?? "a" }))
+        case .groundWind:
+            return .groundWind(limit: .b737)
+        case .minutes:
+            return .minutes(.random(in: -10000 ..< 10000))
+        case .calendar:
+            // create a random date
+            return .calendar(.init(timeIntervalSinceNow: .random(in: -10000 ..< 10000)), timeZone: .current)
+        case .dateDifference:
+            // create a random date component
+            let dateComponent = DateComponents(
+                year: .random(in: -10000 ..< 10000),
+                month: .random(in: -10000 ..< 10000),
+                day: .random(in: -10000 ..< 10000),
+                hour: .random(in: -10000 ..< 10000),
+                minute: .random(in: -10000 ..< 10000),
+                second: .random(in: -10000 ..< 10000)
+            )
+            return .dateDifference(dateComponent)
+        }
+    }
+
     public var symbolName: String {
         switch self {
         case .number:
@@ -124,6 +159,18 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
             return Color(red: 0.588, green: 0.439, blue: 0.294) // Sienna
         case .dateDifference:
             return Color(red: 0.627, green: 0.125, blue: 0.941) // Blue Violet
+        }
+    }
+
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    public func color(for colorScheme: ColorScheme) -> Color {
+        switch colorScheme {
+        case .light:
+            return colorForLightTheme()
+        case .dark:
+            return colorForDarkTheme()
+        @unknown default:
+            return colorForLightTheme()
         }
     }
 }

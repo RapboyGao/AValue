@@ -113,6 +113,9 @@ public extension AHourMinuteValue {
     }
 
     var description: String {
+        guard self.toNumber() != 0 else {
+            return "00:00"
+        }
         switch self {
         case .hourMinute(let isNegative, let hour, let minute):
             return isNegative ? "-" + String(format: #"%02d:%02d"#, hour, minute) : String(format: #"%02d:%02d"#, hour, minute)

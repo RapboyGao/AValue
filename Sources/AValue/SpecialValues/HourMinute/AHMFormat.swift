@@ -7,10 +7,14 @@ public enum AHMParseError: Error {
 public struct AHMFormat: ParseableFormatStyle {
     public var format: AHourMinuteValue.Format
     public var parseStrategy: Strategy
+    public var emptyWhenZero = true
 
     public func format(_ value: Int) -> String {
-        guard value != 0 else { return "" }
-        return AHourMinuteValue(minutes: value).toFormat(format).description
+        if emptyWhenZero && value == 0 {
+            return ""
+        } else {
+            return AHourMinuteValue(minutes: value).toFormat(format).description
+        }
     }
 
     public struct Strategy: ParseStrategy {
@@ -26,5 +30,11 @@ public struct AHMFormat: ParseableFormatStyle {
     public init(format: AHourMinuteValue.Format) {
         self.format = format
         self.parseStrategy = Strategy()
+    }
+
+    public static func notEmpty(_ format: AHourMinuteValue.Format) -> Self {
+        var result = AHMFormat(format: format)
+        result.emptyWhenZero = false
+        return result
     }
 }

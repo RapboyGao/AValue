@@ -1,0 +1,111 @@
+import AUnit
+import AViewUI
+import SwiftUI
+
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+public struct AValueAsArgumentView: View {
+    private var value: AValue
+    private var precision: NumberFormatStyleConfiguration.Precision
+    @State private var selectedUnit: AUnit?
+    private var unit: AUnit?
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var format: FloatingPointFormatStyle<Double> {
+        .number.grouping(.never).precision(precision)
+    }
+
+    private var color: Color {
+        value.type.color(for: colorScheme)
+    }
+
+    public var body: some View {
+        switch value {
+        case .number(let double):
+            if let unit = unit {
+                Menu {
+                    ForEach(unit.unitType.allUnits) { thisUnit in
+                        if let someValue = unit.convert(value: double, to: thisUnit) {
+                            Text("= ") + Text(someValue, format: format) + Text(" ") + Text(thisUnit.symbol)
+                        } else {
+                            Text("- ") + Text(thisUnit.symbol)
+                        }
+                    }
+                } label: {
+                    Group {
+                        Text(double, format: format) + Text(unit.symbol)
+                    }
+                    .foregroundColor(color)
+                }
+            } else {
+                Text(double, format: format)
+                    .foregroundColor(color)
+            }
+        case .point(let x, let y):
+            ASheetButton {
+                .init(.fullScreenCover, .tapGesture, return: .done)
+            } label: {
+                Group {
+                    if let unit = unit {
+                        Text("(") + Text(x, format: format) + Text(",") + Text(y, format: format) + Text(")") + Text(unit.symbol)
+                    } else {
+                        Text("(") + Text(x, format: format) + Text(",") + Text(y, format: format) + Text(")")
+                    }
+                }
+                .foregroundColor(color)
+            } cover: {
+                AValueFSContent(value: .constant(value), type: .point, allowInput: false, name: "", unit: $selectedUnit, originalUnit: unit)
+            } onSheetClosed: {
+                // Do nothing
+            }
+        case .minutes(let minutes):
+            Menu {
+                ForEach(AHourMinuteValue.Format.allCases, id: \.self) {
+                    Text("=") + Text(minutes, format: AHMFormat.notEmpty($0))
+                }
+            } label: {
+                Text(minutes, format: AHMFormat.notEmpty(.hourMinute))
+                    .foregroundColor(color)
+            }
+        case .location, .boolean, .string, .groundWind, .calendar, .dateDifference:
+            ASheetButton {
+                .init(.fullScreenCover, .tapGesture, return: .done)
+            } label: {
+                Text(value.description)
+                    .foregroundColor(color)
+            } cover: {
+                AValueFSContent(value: .constant(value), type: value.type, allowInput: false, name: "Location", unit: $selectedUnit, originalUnit: unit)
+            } onSheetClosed: {
+                // Do nothing
+            }
+        }
+    }
+
+    public init(value: AValue, precision: NumberFormatStyleConfiguration.Precision, unit: AUnit?) {
+        self.value = value
+        self.precision = precision
+        self.unit = unit
+    }
+}
+
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+private struct Example: View {
+    @State private var examples: [AValue] = AValueType.allCases.map { valueType in
+        valueType.baseValue()
+    }
+
+    @State private var examples2: [AValue] = AValueType.allCases.map { valueType in
+        valueType.randomValue()
+    }
+
+    var body: some View {
+        List(examples + examples2, id: \.self) { example in
+            AValueAsArgumentView(value: example, precision: .fractionLength(0 ... 3), unit: .knots)
+        }
+    }
+}
+
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+#Preview {
+    Example()
+}
