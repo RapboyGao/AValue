@@ -18,7 +18,7 @@ let package = Package(
         .package(url: "https://github.com/RapboyGao/AUnitViews.git", branch: "main"),
         .package(url: "https://github.com/RapboyGao/AUnits.git", branch: "main"),
         .package(url: "https://github.com/RapboyGao/AViewUI.git", branch: "main"),
-        .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMinor(from: "0.0.1")),
+        .package(url: "https://github.com/apple/swift-algorithms.git", branch: "main"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
