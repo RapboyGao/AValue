@@ -118,23 +118,23 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
     public func colorForLightTheme() -> Color {
         switch self {
         case .number:
-            return Color(red: 0.255, green: 0.412, blue: 0.882) // Royal Blue
+            return Color(red: 0.0, green: 0.0, blue: 0.5) // Navy Blue
         case .point:
-            return Color(red: 0.678, green: 0.847, blue: 0.902) // Light Blue
+            return Color(red: 0.0, green: 0.5, blue: 0.5) // Teal
         case .location:
-            return Color(red: 0.125, green: 0.698, blue: 0.667) // Teal
+            return Color(red: 0.0, green: 0.5, blue: 0.0) // Dark Green
         case .boolean:
-            return Color(red: 0.0, green: 0.502, blue: 0.0) // Green
+            return Color(red: 0.5, green: 0.0, blue: 0.0) // Maroon
         case .string:
-            return Color(red: 0.8, green: 0.4, blue: 0.0) // Dark Orange
+            return Color(red: 0.5, green: 0.0, blue: 0.5) // Purple
         case .groundWind:
-            return Color(red: 0.545, green: 0.0, blue: 0.0) // Dark Red
+            return Color(red: 0.3, green: 0.3, blue: 0.3) // Dark Gray
         case .minutes:
-            return Color(red: 0.933, green: 0.510, blue: 0.933) // Violet
+            return Color(red: 0.5, green: 0.5, blue: 0.0) // Olive
         case .calendar:
-            return Color(red: 0.870, green: 0.721, blue: 0.529) // Tan
+            return Color(red: 0.5, green: 0.25, blue: 0.0) // Brown
         case .dateDifference:
-            return Color(red: 0.502, green: 0.0, blue: 0.502) // Purple
+            return Color(red: 0.25, green: 0.0, blue: 0.5) // Indigo
         }
     }
 
@@ -142,21 +142,21 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
     public func colorForDarkTheme() -> Color {
         switch self {
         case .number:
-            return Color(red: 0.678, green: 0.847, blue: 0.902) // Light Blue
+            return Color(red: 0.529, green: 0.808, blue: 0.922) // Sky Blue
         case .point:
-            return Color(red: 0.392, green: 0.584, blue: 0.929) // Cornflower Blue
+            return Color(red: 0.678, green: 0.847, blue: 0.902) // Light Blue
         case .location:
-            return Color(red: 0.372, green: 0.619, blue: 0.627) // Cadet Blue
+            return Color(red: 0.498, green: 1.0, blue: 0.831) // Aquamarine
         case .boolean:
-            return Color(red: 0.196, green: 0.804, blue: 0.196) // Lime Green
+            return Color(red: 0.0, green: 1.0, blue: 0.0) // Lime
         case .string:
-            return Color(red: 0.914, green: 0.588, blue: 0.478) // Coral
+            return Color(red: 1.0, green: 0.647, blue: 0.0) // Orange
         case .groundWind:
-            return Color(red: 0.8, green: 0.0, blue: 0.0) // Red
+            return Color(red: 1.0, green: 0.0, blue: 0.0) // Bright Red
         case .minutes:
-            return Color(red: 0.678, green: 0.282, blue: 0.847) // Medium Purple
+            return Color(red: 0.933, green: 0.510, blue: 0.933) // Violet
         case .calendar:
-            return Color(red: 0.588, green: 0.439, blue: 0.294) // Sienna
+            return Color(red: 1.0, green: 0.894, blue: 0.710) // Peach
         case .dateDifference:
             return Color(red: 0.627, green: 0.125, blue: 0.941) // Blue Violet
         }
