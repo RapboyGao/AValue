@@ -150,6 +150,7 @@ extension AMapPointSelector {
     private func centerMap(on coordinate: CLLocationCoordinate2D, mapView: MKMapView, animated: Bool) {
         var region = mapView.region
         region.center = coordinate
+        region.span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         mapView.setRegion(region, animated: animated)
     }
 

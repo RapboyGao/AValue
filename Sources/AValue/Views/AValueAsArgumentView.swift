@@ -6,10 +6,11 @@ import SwiftUI
 public struct AValueAsArgumentView: View {
     private var value: AValue
     private var precision: NumberFormatStyleConfiguration.Precision
-    @State private var selectedUnit: AUnit?
     private var unit: AUnit?
+    private var name: String
 
     @Environment(\.colorScheme) private var colorScheme
+    @State private var selectedUnit: AUnit?
 
     private var format: FloatingPointFormatStyle<Double> {
         .number.grouping(.never).precision(precision)
@@ -54,7 +55,7 @@ public struct AValueAsArgumentView: View {
                 }
                 .foregroundColor(color)
             } cover: {
-                AValueFSContent(value: .constant(value), type: .point, allowInput: false, name: "", unit: $selectedUnit, originalUnit: unit)
+                AValueFSContent(value: .constant(value), type: .point, allowInput: false, name: name, unit: $selectedUnit, originalUnit: unit)
             } onSheetClosed: {
                 // Do nothing
             }
@@ -74,17 +75,18 @@ public struct AValueAsArgumentView: View {
                 Text(value.description)
                     .foregroundColor(color)
             } cover: {
-                AValueFSContent(value: .constant(value), type: value.type, allowInput: false, name: "Location", unit: $selectedUnit, originalUnit: unit)
+                AValueFSContent(value: .constant(value), type: value.type, allowInput: false, name: name, unit: $selectedUnit, originalUnit: unit)
             } onSheetClosed: {
                 // Do nothing
             }
         }
     }
 
-    public init(value: AValue, precision: NumberFormatStyleConfiguration.Precision, unit: AUnit?) {
+    public init(value: AValue, precision: NumberFormatStyleConfiguration.Precision, unit: AUnit?, name: String) {
         self.value = value
         self.precision = precision
         self.unit = unit
+        self.name = name
     }
 }
 
@@ -100,7 +102,7 @@ private struct Example: View {
 
     var body: some View {
         List(examples + examples2, id: \.self) { example in
-            AValueAsArgumentView(value: example, precision: .fractionLength(0 ... 3), unit: .knots)
+            AValueAsArgumentView(value: example, precision: .fractionLength(0 ... 3), unit: .knots, name: "Location")
         }
     }
 }

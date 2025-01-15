@@ -11,6 +11,7 @@ public struct AValueFSContent: View {
 
     @Binding var unit: AUnit?
     var originalUnit: AUnit?
+    var auxPoints: [ALocation]
 
     private var bindBoolean: Binding<Bool> {
         Binding {
@@ -37,7 +38,7 @@ public struct AValueFSContent: View {
         case .point:
             AVectorEditView($value, $unit, originalUnit: originalUnit, allowSet: allowInput, precision: .fractionLength(0 ... 3))
         case .location:
-            ALocationFSContent($value, allowSet: allowInput, name: name, other: .examples)
+            ALocationFSContent($value, allowSet: allowInput, name: name, other: auxPoints)
         case .boolean:
             ABoolFSContent($value)
         case .string:
@@ -55,13 +56,14 @@ public struct AValueFSContent: View {
         }
     }
 
-    public init(value: Binding<AValue?>, type: AValueType, allowInput: Bool, name: String, unit: Binding<AUnit?>, originalUnit: AUnit? = nil) {
+    public init(value: Binding<AValue?>, type: AValueType, allowInput: Bool, name: String, unit: Binding<AUnit?>, originalUnit: AUnit? = nil, auxPoints: [ALocation] = []) {
         self._value = value
         self.type = type
         self.allowInput = allowInput
         self.name = name
         self._unit = unit
         self.originalUnit = originalUnit
+        self.auxPoints = auxPoints
     }
 }
 
