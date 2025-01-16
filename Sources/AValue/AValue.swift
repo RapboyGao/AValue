@@ -328,26 +328,12 @@ public extension AValue {
     @Sendable func colorMultiply(_ value: AValue) throws -> AValue {
         switch (self, value) {
         case let (.color(r1, g1, b1, a1, space1), .color(r2, g2, b2, a2, space2)):
-            // 将颜色值从 gamma 空间转换到线性空间
-            let gamma = 2.2
-            func toLinear(_ c: Double) -> Double { pow(c, gamma) }
-            func toGamma(_ c: Double) -> Double { pow(c, 1.0 / gamma) }
-
-            let lr1 = toLinear(r1), lg1 = toLinear(g1), lb1 = toLinear(b1)
-            let lr2 = toLinear(r2), lg2 = toLinear(g2), lb2 = toLinear(b2)
-
-            // 在线性空间乘法
-            let lr = lr1 * lr2
-            let lg = lg1 * lg2
-            let lb = lb1 * lb2
-            let la = a1 * a2
-
-            // 转回 gamma 空间
+            // 直接对 RGB 相乘，alpha 也可相乘
             return .color(
-                r: toGamma(lr),
-                g: toGamma(lg),
-                b: toGamma(lb),
-                alpha: la,
+                r: r1 * r2,
+                g: g1 * g2,
+                b: b1 * b2,
+                alpha: a1 * a2,
                 colorSpace: space1 == space2 ? space1 : nil
             )
         default:
