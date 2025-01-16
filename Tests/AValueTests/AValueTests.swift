@@ -1,6 +1,8 @@
 @testable import AValue
+import SwiftUI
 import XCTest
 
+@available(iOS 16, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 final class AValueTests: XCTestCase {
     func testExample() throws {
         // XCTest Documentation
@@ -32,5 +34,14 @@ final class AValueTests: XCTestCase {
         let expression = "1235-150"
         let value: [AHourMinuteValue]? = .init(expression)
         XCTAssertEqual(value?.sum(format: .hourMinute), .hourMinute(isNegative: false, hour: 10, minute: 45))
+    }
+
+    func testColorEqual() throws {
+        let color = Color(.sRGB, red: 0.5, green: 0.5, blue: 0.5, opacity: 0.3)
+        let value = AValue(color: color)
+        XCTAssertEqual(color, value?.getColor())
+        if let value = value {
+            print(value)
+        }
     }
 }
