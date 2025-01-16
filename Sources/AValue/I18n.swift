@@ -28,4 +28,6 @@ enum I18n {
     
     static let windDirection = NSLocalizedString("wind_direction", bundle: .module, comment: "The direction from which the wind is blowing.")
     static let windSpeed = NSLocalizedString("wind_speed", bundle: .module, comment: "The speed of the wind.")
+    
+    
 }
