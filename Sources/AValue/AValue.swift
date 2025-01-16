@@ -32,6 +32,7 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
     case dateDifference(DateComponents)
 
     /// 表示一个颜色 (包含 RGB, alpha, 以及可选的 AColorSpace)
+    /// - rgb三个数字都是0-1之间的值
     case color(r: Double, g: Double, b: Double, alpha: Double, colorSpace: AColorSpace?)
 }
 
@@ -184,6 +185,7 @@ public extension AValue {
             return .minutes(Int(Double(value1) * value2))
         case let (.number(value1), .minutes(value2)):
             return .minutes(Int(value1 * Double(value2)))
+        
         default:
             throw AValueError.invalidOperation
         }
@@ -293,6 +295,9 @@ public extension AValue {
             return .point(x: -x, y: -y)
         case let .minutes(value):
             return .minutes(-value)
+        case let .color(r, g, b, alpha, space):
+            // 颜色取反: (1 - r, 1 - g, 1 - b)
+            return .color(r: 1 - r, g: 1 - g, b: 1 - b, alpha: alpha, colorSpace: space)
         default:
             throw AValueError.invalidOperation
         }
@@ -314,6 +319,36 @@ public extension AValue {
             return .point(x: abs(x), y: abs(y))
         case let .minutes(value):
             return .minutes(abs(value))
+        default:
+            throw AValueError.invalidOperation
+        }
+    }
+
+    @Sendable func colorMultiply(_ value: AValue) throws -> AValue {
+        switch (self, value) {
+        case let (.color(r1, g1, b1, a1, space1), .color(r2, g2, b2, a2, space2)):
+            // 将颜色值从 gamma 空间转换到线性空间
+            let gamma = 2.2
+            func toLinear(_ c: Double) -> Double { pow(c, gamma) }
+            func toGamma(_ c: Double) -> Double { pow(c, 1.0 / gamma) }
+
+            let lr1 = toLinear(r1), lg1 = toLinear(g1), lb1 = toLinear(b1)
+            let lr2 = toLinear(r2), lg2 = toLinear(g2), lb2 = toLinear(b2)
+
+            // 在线性空间乘法
+            let lr = lr1 * lr2
+            let lg = lg1 * lg2
+            let lb = lb1 * lb2
+            let la = a1 * a2
+
+            // 转回 gamma 空间
+            return .color(
+                r: toGamma(lr),
+                g: toGamma(lg),
+                b: toGamma(lb),
+                alpha: la,
+                colorSpace: space1 == space2 ? space1 : nil
+            )
         default:
             throw AValueError.invalidOperation
         }
