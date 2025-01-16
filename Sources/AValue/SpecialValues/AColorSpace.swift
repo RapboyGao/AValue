@@ -48,4 +48,17 @@ public extension AColorSpace {
             return .displayP3
         }
     }
+
+    init(_ colorSpace: Color.RGBColorSpace) {
+        switch colorSpace {
+        case .sRGB:
+            self = .sRGB
+        case .sRGBLinear:
+            self = .sRGBLinear
+        case .displayP3:
+            self = .displayP3
+        @unknown default:
+            self = .sRGB
+        }
+    }
 }

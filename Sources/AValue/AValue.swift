@@ -30,6 +30,9 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral, Expr
 
     /// 表示两个日期之间的差异
     case dateDifference(DateComponents)
+
+    /// 表示一个颜色 (包含 RGB, alpha, 以及可选的 AColorSpace)
+    case color(r: Double, g: Double, b: Double, alpha: Double, colorSpace: AColorSpace?)
 }
 
 public extension AValue {
@@ -45,6 +48,7 @@ public extension AValue {
         case .minutes: return .minutes
         case .calendar: return .calendar
         case .dateDifference: return .dateDifference
+        case .color: return .color
         }
     }
 
@@ -84,6 +88,8 @@ public extension AValue {
             let result = "\(components)"
             guard result != "" else { return "No Diff" }
             return result
+        case let .color(r, g, b, alpha, colorSpace):
+            return "Color(r:\(r), g:\(g), b:\(b), alpha:\(alpha), space:\(String(describing: colorSpace)))"
         }
     }
 
@@ -313,6 +319,14 @@ public extension AValue {
         }
     }
 
+    /// 如果是颜色，返回 (r,g,b,alpha,colorSpace)
+    func getColor() -> (r: Double, g: Double, b: Double, alpha: Double, colorSpace: AColorSpace?)? {
+        guard case let .color(r, g, b, alpha, space) = self else {
+            return nil
+        }
+        return (r, g, b, alpha, space)
+    }
+
     init(floatLiteral value: Double) {
         self = .number(value)
     }
@@ -417,7 +431,7 @@ extension AValue {
             return latitude.formatted(ALatitudeFormat.dM(digits: 1)) + longitude.formatted(ALongitudeFormat.dM(digits: 1))
         case let .boolean(bool):
             return bool ? "✓" : "x"
-        case .string, .groundWind, .minutes, .calendar, .dateDifference:
+        case .string, .groundWind, .minutes, .calendar, .dateDifference, .color:
             return self.description
         }
     }

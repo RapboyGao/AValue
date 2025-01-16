@@ -79,4 +79,13 @@ public extension [AValue] {
             throw AValueError.typeMismatch(expected: .dateDifference, actual: value.type)
         }
     }
+
+    @Sendable func color(at index: Int) throws -> (r: Double, g: Double, b: Double, alpha: Double, colorSpace: AColorSpace?) {
+        let value = try self.value(at: index)
+        if case let .color(r, g, b, alpha, space) = value {
+            return (r, g, b, alpha, space)
+        } else {
+            throw AValueError.typeMismatch(expected: .color, actual: value.type)
+        }
+    }
 }

@@ -29,6 +29,9 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
     /// 表示两个日期之间的差异（以时间戳形式）类型
     case dateDifference
 
+    /// 表示一个颜色类型
+    case color
+
     public var id: Self {
         self
     }
@@ -53,6 +56,8 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
             return .calendar(.init(timeIntervalSinceNow: 0), timeZone: .current)
         case .dateDifference:
             return .dateDifference(.init())
+        case .color:
+            return .color(r: 0, g: 0, b: 0, alpha: 1, colorSpace: nil)
         }
     }
 
@@ -88,6 +93,14 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
                 second: .random(in: -10000 ..< 10000)
             )
             return .dateDifference(dateComponent)
+        case .color:
+            return .color(
+                r: .random(in: 0...1),
+                g: .random(in: 0...1),
+                b: .random(in: 0...1),
+                alpha: 1,
+                colorSpace: nil
+            )
         }
     }
 
@@ -111,6 +124,8 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
             return "calendar"
         case .dateDifference:
             return "calendar.badge.minus"
+        case .color:
+            return "paintbrush"
         }
     }
 
@@ -135,6 +150,8 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
             return Color(red: 0.5, green: 0.25, blue: 0.0) // Brown
         case .dateDifference:
             return Color(red: 0.25, green: 0.0, blue: 0.5) // Indigo
+        case .color:
+            return .black
         }
     }
 
@@ -159,6 +176,8 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
             return Color(red: 1.0, green: 0.894, blue: 0.710) // Peach
         case .dateDifference:
             return Color(red: 0.627, green: 0.125, blue: 0.941) // Blue Violet
+        case .color:
+            return .white
         }
     }
 

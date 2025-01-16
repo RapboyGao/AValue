@@ -130,4 +130,18 @@ extension Binding<AValue?> {
             }
         )
     }
+
+    /// Create a binding for a color
+    func colorValue() -> Binding<(r: Double, g: Double, b: Double, alpha: Double, AColorSpace?)?> {
+        Binding<(r: Double, g: Double, b: Double, alpha: Double, AColorSpace?)?>(
+            get: {
+                self.wrappedValue?.getColor()
+            },
+            set: {
+                if let newValue = $0 {
+                    self.wrappedValue = .color(r: newValue.0, g: newValue.1, b: newValue.2, alpha: newValue.3, colorSpace: newValue.4)
+                }
+            }
+        )
+    }
 }
