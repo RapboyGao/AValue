@@ -50,4 +50,15 @@ final class AValueTests: XCTestCase {
         let color2 = Color(red: 0.5, green: 0.3, blue: 0.07)
         print(color1.colorMultiply(color2))
     }
+
+    func testColor3() throws {
+        let color1 = Color(red: 0.3, green: 0.5, blue: 0.07)
+        let color2 = Color(red: 0.5, green: 0.3, blue: 0.07)
+        guard let value1 = AValue(color: color1),
+              let value2 = AValue(color: color2),
+              let value3 = try? value1.multiply(by: value2),
+              let someColor = value3.getColor()
+        else { return }
+        print(someColor)
+    }
 }

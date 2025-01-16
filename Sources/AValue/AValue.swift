@@ -185,7 +185,8 @@ public extension AValue {
             return .minutes(Int(Double(value1) * value2))
         case let (.number(value1), .minutes(value2)):
             return .minutes(Int(value1 * Double(value2)))
-        
+        case (.color, .color):
+            return try colorMultiply(value)
         default:
             throw AValueError.invalidOperation
         }
