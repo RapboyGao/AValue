@@ -429,7 +429,9 @@ extension AValue {
     }
 }
 
-@available(iOS 14.0, macOS 11, tvOS 14.0, watchOS 7.0, *)
+@available(iOS 14.0, macOS 11, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 public extension AValue {
     func getColor() -> Color? {
         guard case let .color(r, g, b, alpha, space) = self else {
@@ -446,27 +448,42 @@ public extension AValue {
         guard let color = color else {
             return nil
         }
-        #if canImport(UIKit)
-        let uiColor = UIColor(color)
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
         var a: CGFloat = 0
-        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
-        self = .color(r: Double(r), g: Double(g), b: Double(b), alpha: Double(a), colorSpace: nil)
+        #if canImport(UIKit)
+            let uiColor = UIColor(color)
+            uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+            for myColorSpace in AColorSpace.allCases {
+                let someColor = Color(myColorSpace.original, red: r, green: g, blue: b, opacity: a)
+                guard someColor == color else {
+                    continue
+                }
+                self = .color(r: r, g: g, b: b, alpha: a, colorSpace: myColorSpace)
+                return
+            }
+            self = .color(r: r, g: g, b: b, alpha: a, colorSpace: nil)
         #elseif canImport(AppKit)
-        let nsColor = NSColor(color)
-        let converted = nsColor.usingColorSpace(.deviceRGB) ?? nsColor
-        self = .color(
-            r: Double(converted.redComponent),
-            g: Double(converted.greenComponent),
-            b: Double(converted.blueComponent),
-            alpha: Double(converted.alphaComponent),
-            colorSpace: nil
-        )
+            let nsColor = NSColor(color)
+            let converted = nsColor.usingColorSpace(.deviceRGB) ?? nsColor
+            let cgColorSpace = converted.cgColor.colorSpace
+            r = converted.redComponent
+            g = converted.greenComponent
+            b = converted.blueComponent
+            a = converted.alphaComponent
+            for myColorSpace in AColorSpace.allCases {
+                let someColor = Color(myColorSpace.original, red: r, green: g, blue: b, opacity: a)
+                guard someColor == color else {
+                    continue
+                }
+                self = .color(r: r, g: g, b: b, alpha: a, colorSpace: myColorSpace)
+                return
+            }
+            self = .color(r: r, g: g, b: b, alpha: a, colorSpace: nil)
         #else
-        // 没有可用的 UIKit 或 AppKit，仅使用默认
-        self = .color(r: 0, g: 0, b: 0, alpha: 1, colorSpace: nil)
+            // 没有可用的 UIKit 或 AppKit，仅使用默认
+            self = .color(r: 0, g: 0, b: 0, alpha: 1, colorSpace: nil)
         #endif
     }
 }

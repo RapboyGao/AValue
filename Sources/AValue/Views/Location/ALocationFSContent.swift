@@ -1,7 +1,12 @@
 import CoreLocation
 import SwiftUI
 
-@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+#if os(iOS)
+
+@available(iOS 16.0, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 public struct ALocationFSContent: View {
     @Binding var selectedCoordinate: CLLocationCoordinate2D?
     var allowSet: Bool
@@ -79,7 +84,10 @@ public struct ALocationFSContent: View {
     }
 }
 
-@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+@available(iOS 16.0, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 private struct Example: View {
     @State var value: AValue? = .location(latitude: 35.12456, longitude: 117.12646)
 
@@ -90,7 +98,12 @@ private struct Example: View {
     }
 }
 
-@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
+@available(iOS 16.0, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 #Preview {
     Example()
 }
+
+#endif

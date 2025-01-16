@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-public enum AColorSpace: Hashable, Sendable, Codable, Identifiable {
+public enum AColorSpace: Hashable, Sendable, Codable, Identifiable, CaseIterable {
     /// The extended red, green, blue (sRGB) color space.
     ///
     /// For information about the sRGB colorimetry and nonlinear

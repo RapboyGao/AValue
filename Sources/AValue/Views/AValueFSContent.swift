@@ -2,7 +2,12 @@ import AUnit
 import AViewUI
 import SwiftUI
 
-@available(iOS 16, macOS 12.0, *)
+#if os(iOS)
+
+@available(iOS 16.0, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 public struct AValueFSContent: View {
     @Binding var value: AValue?
     var type: AValueType
@@ -82,7 +87,10 @@ private extension Binding {
     }
 }
 
-@available(iOS 16.0, macOS 13.0, *)
+@available(iOS 16.0, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 private struct Example: View {
     @State private var values: [AValue] = AValueType.allCases.map { $0.baseValue() }
 
@@ -103,7 +111,12 @@ private struct Example: View {
     }
 }
 
-@available(iOS 16.0, macOS 13.0, *)
+@available(iOS 16.0, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 #Preview {
     Example()
 }
+
+#endif

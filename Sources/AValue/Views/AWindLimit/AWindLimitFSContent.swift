@@ -2,7 +2,12 @@ import AUnit
 import AViewUI
 import SwiftUI
 
-@available(iOS 16, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+#if os(iOS)
+
+@available(iOS 16.0, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 public struct AWindLimitFSContent: View {
     @Binding var windLimitValue: AWindLimit?
     @Binding var unit: AUnit?
@@ -38,7 +43,10 @@ public struct AWindLimitFSContent: View {
     }
 }
 
-@available(iOS 16, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+@available(iOS 16.0, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 private struct Example: View {
     @State private var aValue: AValue? = 45
     @State private var unit: AUnit?
@@ -48,7 +56,12 @@ private struct Example: View {
     }
 }
 
-@available(iOS 16, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+@available(iOS 16.0, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 #Preview {
     Example()
 }
+
+#endif
