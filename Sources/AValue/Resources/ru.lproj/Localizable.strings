@@ -1,1 +1,24 @@
+"Wind Direction" = "Направление ветра";
+"Wind Speed" = "Скорость ветра";
+"headwind" = "Встречный ветер";
+"crosswind" = "Боковой ветер";
+"tailwind" = "Попутный ветер";
+"total_wind" = "Общий ветер";
+"limit_factor" = "Ограничивающий фактор";
+"within_limit" = "В пределах нормы";
+"runway_heading" = "Курс ВПП";
+"wind_speed_limit" = "Ограничение скорости ветра";
+"max_wind_in_all_directions" = "Максимальный ветер во всех направлениях";
+"coordinates" = "Координаты";
+"latitude" = "Широта";
+"longitude" = "Долгота";
+"map" = "Карта";
+"vector_length" = "Длина вектора";
+"angle" = "Угол";
+"azimuth" = "Азимут";
+"bearing" = "Пеленг";
+"time_zone" = "Часовой пояс";
+"months" = "Месяцы";
+"wind_direction" = "Направление ветра";
+"wind_speed" = "Скорость ветра";
 

@@ -1,1 +1,24 @@
+"Wind Direction" = "風向";
+"Wind Speed" = "風速";
+"headwind" = "向かい風";
+"crosswind" = "横風";
+"tailwind" = "追い風";
+"total_wind" = "総風";
+"limit_factor" = "制限要因";
+"within_limit" = "制限内";
+"runway_heading" = "滑走路方向";
+"wind_speed_limit" = "風速制限";
+"max_wind_in_all_directions" = "全方向の最大風";
+"coordinates" = "座標";
+"latitude" = "緯度";
+"longitude" = "経度";
+"map" = "地図";
+"vector_length" = "ベクトルの長さ";
+"angle" = "角度";
+"azimuth" = "方位角";
+"bearing" = "方位";
+"time_zone" = "タイムゾーン";
+"months" = "月";
+"wind_direction" = "風向";
+"wind_speed" = "風速";
 

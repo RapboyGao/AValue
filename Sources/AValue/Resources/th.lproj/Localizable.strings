@@ -1,1 +1,24 @@
+"Wind Direction" = "ทิศทางลม";
+"Wind Speed" = "ความเร็วลม";
+"headwind" = "ลมปะทะ";
+"crosswind" = "ลมขวาง";
+"tailwind" = "ลมตาม";
+"total_wind" = "ลมรวม";
+"limit_factor" = "ปัจจัยจำกัด";
+"within_limit" = "ภายในขีดจำกัด";
+"runway_heading" = "ทิศทางรันเวย์";
+"wind_speed_limit" = "ขีดจำกัดความเร็วลม";
+"max_wind_in_all_directions" = "ลมสูงสุดในทุกทิศทาง";
+"coordinates" = "พิกัด";
+"latitude" = "ละติจูด";
+"longitude" = "ลองจิจูด";
+"map" = "แผนที่";
+"vector_length" = "ความยาวเวกเตอร์";
+"angle" = "มุม";
+"azimuth" = "มุมทิศ";
+"bearing" = "มุมแบร์ริ่ง";
+"time_zone" = "เขตเวลา";
+"months" = "เดือน";
+"wind_direction" = "ทิศทางลม";
+"wind_speed" = "ความเร็วลม";
 

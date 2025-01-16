@@ -1,1 +1,22 @@
+"headwind" = "逆风";
+"crosswind" = "侧风";
+"tailwind" = "顺风";
+"total_wind" = "总风";
+"limit_factor" = "限制因素";
+"within_limit" = "在限制范围内";
+"runway_heading" = "跑道方向";
+"wind_speed_limit" = "风速限制";
+"max_wind_in_all_directions" = "所有方向的最大风";
+"coordinates" = "坐标";
+"latitude" = "纬度";
+"longitude" = "经度";
+"map" = "地图";
+"vector_length" = "向量长度";
+"angle" = "角度";
+"azimuth" = "方位角";
+"bearing" = "方位";
+"time_zone" = "时区";
+"months" = "月份";
+"wind_direction" = "风向";
+"wind_speed" = "风速";
 

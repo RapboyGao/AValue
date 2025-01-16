@@ -1,1 +1,24 @@
+"Wind Direction" = "풍향";
+"Wind Speed" = "풍속";
+"headwind" = "맞바람";
+"crosswind" = "횡풍";
+"tailwind" = "뒷바람";
+"total_wind" = "총풍";
+"limit_factor" = "제한 요소";
+"within_limit" = "제한 내";
+"runway_heading" = "활주로 방향";
+"wind_speed_limit" = "풍속 제한";
+"max_wind_in_all_directions" = "모든 방향에서 최대 풍속";
+"coordinates" = "좌표";
+"latitude" = "위도";
+"longitude" = "경도";
+"map" = "지도";
+"vector_length" = "벡터 길이";
+"angle" = "각도";
+"azimuth" = "방위각";
+"bearing" = "방위";
+"time_zone" = "시간대";
+"months" = "개월";
+"wind_direction" = "풍향";
+"wind_speed" = "풍속";
 

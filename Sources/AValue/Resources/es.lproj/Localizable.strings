@@ -1,1 +1,24 @@
+"Wind Direction" = "Dirección del viento";
+"Wind Speed" = "Velocidad del viento";
+"headwind" = "Viento en contra";
+"crosswind" = "Viento cruzado";
+"tailwind" = "Viento de cola";
+"total_wind" = "Viento total";
+"limit_factor" = "Factor limitante";
+"within_limit" = "Dentro del límite";
+"runway_heading" = "Rumbo de pista";
+"wind_speed_limit" = "Límite de velocidad del viento";
+"max_wind_in_all_directions" = "Viento máximo en todas las direcciones";
+"coordinates" = "Coordenadas";
+"latitude" = "Latitud";
+"longitude" = "Longitud";
+"map" = "Mapa";
+"vector_length" = "Longitud del vector";
+"angle" = "Ángulo";
+"azimuth" = "Azimut";
+"bearing" = "Rumbo";
+"time_zone" = "Zona horaria";
+"months" = "Meses";
+"wind_direction" = "Dirección del viento";
+"wind_speed" = "Velocidad del viento";
 

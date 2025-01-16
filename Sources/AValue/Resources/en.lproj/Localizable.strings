@@ -1,1 +1,24 @@
+"Wind Direction" = "Wind Direction";
+"Wind Speed" = "Wind Speed";
+"headwind" = "Headwind";
+"crosswind" = "Crosswind";
+"tailwind" = "Tailwind";
+"total_wind" = "Total Wind";
+"limit_factor" = "Limit Factor";
+"within_limit" = "Within Limit";
+"runway_heading" = "Runway Heading";
+"wind_speed_limit" = "Wind Speed Limit";
+"max_wind_in_all_directions" = "Max Wind in All Directions";
+"coordinates" = "Coordinates";
+"latitude" = "Latitude";
+"longitude" = "Longitude";
+"map" = "Map";
+"vector_length" = "Vector Length";
+"angle" = "Angle";
+"azimuth" = "Azimuth";
+"bearing" = "Bearing";
+"time_zone" = "Time Zone";
+"months" = "Months";
+"wind_direction" = "Wind Direction";
+"wind_speed" = "Wind Speed";
 
