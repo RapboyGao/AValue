@@ -21,6 +21,9 @@ final class AValueTranslationTest: XCTestCase {
 
             for key in keys {
                 let translation = NSLocalizedString(key, bundle: bundle, comment: "")
+                if key != "en" {
+                    XCTAssertNotEqual(translation, key, "Missing translation for key '\(key)' in language '\(language)'")
+                }
                 XCTAssertFalse(translation.isEmpty, "Missing translation for key '\(key)' in language '\(language)'")
             }
         }

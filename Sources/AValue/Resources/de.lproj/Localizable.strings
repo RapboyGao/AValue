@@ -1,1 +1,24 @@
+"Wind Direction" = "Windrichtung";
+"Wind Speed" = "Windgeschwindigkeit";
+"headwind" = "Gegenwind";
+"crosswind" = "Seitenwind";
+"tailwind" = "Rückenwind";
+"total_wind" = "Gesamtwind";
+"limit_factor" = "Limitierender Faktor";
+"within_limit" = "Innerhalb des Limits";
+"runway_heading" = "Startbahnrichtung";
+"wind_speed_limit" = "Windgeschwindigkeitsbegrenzung";
+"max_wind_in_all_directions" = "Maximaler Wind in allen Richtungen";
+"coordinates" = "Koordinaten";
+"latitude" = "Breitengrad";
+"longitude" = "Längengrad";
+"map" = "Karte";
+"vector_length" = "Vektorlänge";
+"angle" = "Winkel";
+"azimuth" = "Azimut";
+"bearing" = "Peilung";
+"time_zone" = "Zeitzone";
+"months" = "Monate";
+"wind_direction" = "Windrichtung";
+"wind_speed" = "Windgeschwindigkeit";
 
