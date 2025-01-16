@@ -1,11 +1,1 @@
-/* The text shown on the 'Edit' button */
-"edit.button.short" = "편집";
 
-/* The text shown on the 'View' button */
-"view.button.short" = "보기";
-
-/* The text shown on the 'Done' button */
-"done.button.short" = "완료";
-
-/* The text shown on the 'Cancel' button */
-"cancel.button.short" = "취소";

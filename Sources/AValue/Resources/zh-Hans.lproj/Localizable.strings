@@ -1,11 +1,1 @@
-/* The text shown on the 'Edit' button */
-"edit.button.short" = "编辑";
 
-/* The text shown on the 'View' button */
-"view.button.short" = "查看";
-
-/* The text shown on the 'Done' button */
-"done.button.short" = "完成";
-
-/* The text shown on the 'Cancel' button */
-"cancel.button.short" = "取消";

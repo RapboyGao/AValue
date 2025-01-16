@@ -1,11 +1,1 @@
-/* The text shown on the 'Edit' button */
-"edit.button.short" = "編集";
 
-/* The text shown on the 'View' button */
-"view.button.short" = "表示";
-
-/* The text shown on the 'Done' button */
-"done.button.short" = "完了";
-
-/* The text shown on the 'Cancel' button */
-"cancel.button.short" = "キャンセル";
