@@ -4,7 +4,7 @@ import SwiftUI
 @available(iOS 15.0, macOS 12.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
-public struct AColorFSContent: View {
+public struct AValueColorLabel: View {
     @Binding var color: Color
 
     public var body: some View {
@@ -23,16 +23,24 @@ public struct AColorFSContent: View {
             color.wrappedValue = newColor
         }
     }
+
+    public init(_ value: Binding<AValue?>) {
+        self._color = Binding {
+            value.wrappedValue?.getColor() ?? .clear
+        } set: { newColor in
+            value.wrappedValue = .init(color: newColor)
+        }
+    }
 }
 
 @available(iOS 15.0, macOS 12.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 private struct Example: View {
-    @State var color: Color?
+    @State var color: AValue?
     var body: some View {
         List {
-            AColorFSContent($color)
+            AValueColorLabel($color)
         }
     }
 }

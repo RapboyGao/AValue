@@ -102,13 +102,13 @@ public extension AValue {
         case let (.minutes(value1), .minutes(value2)):
             return .minutes(value1 + value2)
         case let (.calendar(value1, timezone), .minutes(value2)):
-            return try self.addMinutes(to: value1, minutes: value2, timeZone: timezone)
+            return try addMinutes(to: value1, minutes: value2, timeZone: timezone)
         case let (.minutes(value1), .calendar(value2, timezone)):
-            return try self.addMinutes(to: value2, minutes: value1, timeZone: timezone)
+            return try addMinutes(to: value2, minutes: value1, timeZone: timezone)
         case let (.calendar(value1, timezone), .dateDifference(value2)):
-            return try self.addDateDifference(to: value1, difference: value2, timeZone: timezone)
+            return try addDateDifference(to: value1, difference: value2, timeZone: timezone)
         case let (.dateDifference(value1), .calendar(value2, timezone)):
-            return try self.addDateDifference(to: value2, difference: value1, timeZone: timezone)
+            return try addDateDifference(to: value2, difference: value1, timeZone: timezone)
         default:
             throw AValueError.invalidOperation
         }
@@ -139,11 +139,11 @@ public extension AValue {
         case let (.minutes(value1), .minutes(value2)):
             return .minutes(value1 - value2)
         case let (.calendar(value1, timezone), .minutes(value2)):
-            return try self.subtractMinutes(from: value1, minutes: value2, timeZone: timezone)
+            return try subtractMinutes(from: value1, minutes: value2, timeZone: timezone)
         case let (.calendar(value1, timezone), .dateDifference(value2)):
-            return try self.subtractDateDifference(from: value1, difference: value2, timeZone: timezone)
+            return try subtractDateDifference(from: value1, difference: value2, timeZone: timezone)
         case let (.dateDifference(value1), .calendar(value2, timezone)):
-            return try self.subtractDateDifference(from: value2, difference: value1, timeZone: timezone)
+            return try subtractDateDifference(from: value2, difference: value1, timeZone: timezone)
         default:
             throw AValueError.invalidOperation
         }
@@ -270,15 +270,15 @@ public extension AValue {
     }
 
     @Sendable func isGreaterOrEqual(to value: AValue) throws -> Bool {
-        try self.isGreater(than: value) || self == value
+        try isGreater(than: value) || self == value
     }
 
     @Sendable func isLess(than value: AValue) throws -> Bool {
-        try !self.isGreaterOrEqual(to: value)
+        try !isGreaterOrEqual(to: value)
     }
 
     @Sendable func isLessThanOrEqual(to value: AValue) throws -> Bool {
-        try !self.isGreater(than: value)
+        try !isGreater(than: value)
     }
 
     /// 为这个 `AValue` 取负值
@@ -302,7 +302,7 @@ public extension AValue {
         if case let .groundWind(limit) = self {
             return limit
         } else {
-            throw AValueError.typeMismatch(expected: .groundWind, actual: self.type)
+            throw AValueError.typeMismatch(expected: .groundWind, actual: type)
         }
     }
 
@@ -317,14 +317,6 @@ public extension AValue {
         default:
             throw AValueError.invalidOperation
         }
-    }
-
-    /// 如果是颜色，返回 (r,g,b,alpha,colorSpace)
-    func getColor() -> (r: Double, g: Double, b: Double, alpha: Double, colorSpace: AColorSpace?)? {
-        guard case let .color(r, g, b, alpha, space) = self else {
-            return nil
-        }
-        return (r, g, b, alpha, space)
     }
 
     init(floatLiteral value: Double) {
@@ -432,7 +424,49 @@ extension AValue {
         case let .boolean(bool):
             return bool ? "✓" : "x"
         case .string, .groundWind, .minutes, .calendar, .dateDifference, .color:
-            return self.description
+            return description
         }
+    }
+}
+
+@available(iOS 14.0, macOS 11, tvOS 14.0, watchOS 7.0, *)
+public extension AValue {
+    func getColor() -> Color? {
+        guard case let .color(r, g, b, alpha, space) = self else {
+            return nil
+        }
+        if let space = space {
+            return Color(space.original, red: r, green: g, blue: b, opacity: alpha)
+        } else {
+            return Color(red: r, green: g, blue: b, opacity: alpha)
+        }
+    }
+
+    init?(color: Color?) {
+        guard let color = color else {
+            return nil
+        }
+        #if canImport(UIKit)
+        let uiColor = UIColor(color)
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+        self = .color(r: Double(r), g: Double(g), b: Double(b), alpha: Double(a), colorSpace: nil)
+        #elseif canImport(AppKit)
+        let nsColor = NSColor(color)
+        let converted = nsColor.usingColorSpace(.deviceRGB) ?? nsColor
+        self = .color(
+            r: Double(converted.redComponent),
+            g: Double(converted.greenComponent),
+            b: Double(converted.blueComponent),
+            alpha: Double(converted.alphaComponent),
+            colorSpace: nil
+        )
+        #else
+        // 没有可用的 UIKit 或 AppKit，仅使用默认
+        self = .color(r: 0, g: 0, b: 0, alpha: 1, colorSpace: nil)
+        #endif
     }
 }

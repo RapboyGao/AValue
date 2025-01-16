@@ -130,17 +130,19 @@ extension Binding<AValue?> {
             }
         )
     }
+}
 
+@available(iOS 14.0, macOS 11, tvOS 14.0, watchOS 7.0, *)
+extension Binding<AValue?> {
     /// Create a binding for a color
-    func colorValue() -> Binding<(r: Double, g: Double, b: Double, alpha: Double, AColorSpace?)?> {
-        Binding<(r: Double, g: Double, b: Double, alpha: Double, AColorSpace?)?>(
+    func colorValue() -> Binding<Color?> {
+        Binding<Color?>(
             get: {
                 self.wrappedValue?.getColor()
             },
             set: {
-                if let newValue = $0 {
-                    self.wrappedValue = .color(r: newValue.0, g: newValue.1, b: newValue.2, alpha: newValue.3, colorSpace: newValue.4)
-                }
+                guard let newValue = $0
+                else { return }
             }
         )
     }

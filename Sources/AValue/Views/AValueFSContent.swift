@@ -54,8 +54,7 @@ public struct AValueFSContent: View {
                 ADateComponentFSContent($value, allowSet: allowInput)
             }
         case .color:
-            ProgressView()
-//            ColorPicker("Color", selection: $value.colorBinding)
+            AValueColorLabel($value)
         }
     }
 

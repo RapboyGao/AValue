@@ -68,7 +68,7 @@ public struct AValueAsArgumentView: View {
                 Text(minutes, format: AHMFormat.notEmpty(.hourMinute))
                     .foregroundColor(color)
             }
-        case .location, .boolean, .string, .groundWind, .calendar, .dateDifference, .color:
+        case .location, .boolean, .string, .groundWind, .calendar, .dateDifference:
             ASheetButton {
                 .init(.fullScreenCover, .tapGesture, return: .done)
             } label: {
@@ -79,6 +79,8 @@ public struct AValueAsArgumentView: View {
             } onSheetClosed: {
                 // Do nothing
             }
+        case .color:
+            AValueColorLabel(.constant(value))
         }
     }
 
