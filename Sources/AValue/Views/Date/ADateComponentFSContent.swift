@@ -117,11 +117,11 @@ struct ADateComponentFSContent: View {
     // }
 
     var body: some View {
-        bindInt("Year", bindYear)
-        bindInt("Month", bindMonth)
-        bindInt("Day", bindDay)
-        bindInt("Hour", bindHour)
-        bindInt("Minute", bindMinute)
+        bindInt(AUnit.years.shortName, bindYear)
+        bindInt(I18n.months, bindMonth)
+        bindInt(AUnit.days.shortName, bindDay)
+        bindInt(AUnit.hours.shortName, bindHour)
+        bindInt(AUnit.minutes.shortName, bindMinute)
         // bindInt("Second", bindSecond)
         // bindInt("Nanosecond", bindNanosecond)
     }

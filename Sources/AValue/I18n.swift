@@ -23,4 +23,6 @@ enum I18n {
     static let bearing = NSLocalizedString("Bearing", bundle: .module, comment: "The angle measured clockwise from the north direction in aviation")
     
     static let timeZone = NSLocalizedString("Time Zone", bundle: .module, comment: "The time zone of a specific location.")
+    
+    static let months = NSLocalizedString("Months", bundle: .module, comment: "The months used to describe a property <DateComponents>.")
 }
