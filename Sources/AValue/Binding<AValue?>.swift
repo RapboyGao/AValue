@@ -141,8 +141,7 @@ extension Binding<AValue?> {
                 self.wrappedValue?.getColor()
             },
             set: {
-                guard let newValue = $0
-                else { return }
+                self.wrappedValue = AValue(color: $0)
             }
         )
     }
