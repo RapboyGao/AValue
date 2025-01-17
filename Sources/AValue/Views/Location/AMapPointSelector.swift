@@ -40,8 +40,10 @@ public struct AMapPointSelector: UIViewRepresentable {
             // 添加选中的坐标的标注
             addAnnotation(at: coordinate, on: mapView, title: name)
         }
-        // 添加辅助点的标注
-        addAuxiliaryPoints(on: mapView)
+        if context.coordinator.currentAuxiliaryPoints != auxiliaryPoints {
+            addAuxiliaryPoints(on: mapView)
+            context.coordinator.currentAuxiliaryPoints = auxiliaryPoints
+        }
     }
 
     /// 配置 MKMapView
@@ -117,8 +119,10 @@ public struct AMapPointSelector: NSViewRepresentable {
             // 添加选中的坐标的标注
             addAnnotation(at: coordinate, on: mapView, title: name)
         }
-        // 添加辅助点的标注
-        addAuxiliaryPoints(on: mapView)
+        if context.coordinator.currentAuxiliaryPoints != auxiliaryPoints {
+            addAuxiliaryPoints(on: mapView)
+            context.coordinator.currentAuxiliaryPoints = auxiliaryPoints
+        }
     }
 
     /// 配置 MKMapView
@@ -201,9 +205,11 @@ public extension AMapPointSelector {
     @available(macOS 11.0, *)
     class Coordinator: NSObject, MKMapViewDelegate {
         public var parent: AMapPointSelector
+        public var currentAuxiliaryPoints: [ALocation]
 
         public init(_ parent: AMapPointSelector) {
             self.parent = parent
+            self.currentAuxiliaryPoints = parent.auxiliaryPoints
         }
 
         #if os(iOS)
