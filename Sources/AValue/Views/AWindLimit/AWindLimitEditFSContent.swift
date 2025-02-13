@@ -127,13 +127,13 @@ public struct AWindLimitEditFSContent: View {
                 allowSet: allowSet,
                 mathKeyboard: false,
                 name: I18n.totalWind,
-                precision: precision)
+                precision: .fractionLength(0...1))
         }
 
         HStack {
             Text(I18n.rwyHDG)
             if allowSet {
-                TextField(I18n.rwyHDG, value: bindRunwayHeading, format: .number.precision(.fractionLength(0 ... 2)))
+                TextField(I18n.rwyHDG, value: bindRunwayHeading, format: .number.precision(.integerAndFractionLength(integerLimits: 3...3, fractionLimits: 0...1)))
                     .multilineTextAlignment(.trailing)
                     .keyboardType(.decimalPad)
             } else if let runwayHeading = windLimitValue?.runwayHeadingInDegrees {
@@ -172,17 +172,16 @@ private struct Example: View {
     var body: some View {
         List {
             Section {
-                AWindLimitEditFSContent($aValue, unit: $unit, originalUnit: .knots, allowSet: true, precision: .fractionLength(0 ... 1))
+                AWindLimitEditFSContent($aValue, unit: $unit, originalUnit: .knots, allowSet: true, precision: .fractionLength(0...1))
             }
             Section {
-                AWindLimitEditFSContent($aValue, unit: $unit, originalUnit: .knots, allowSet: false, precision: .fractionLength(0 ... 1))
+                AWindLimitEditFSContent($aValue, unit: $unit, originalUnit: .knots, allowSet: false, precision: .fractionLength(0...1))
             }
         }
     }
 }
 
-@available(iOS 16, *)
-#Preview {
+@available(iOS 16, *)#Preview{
     Example()
 }
 

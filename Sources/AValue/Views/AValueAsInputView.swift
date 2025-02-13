@@ -163,7 +163,7 @@ public struct AValueAsInputView: View {
         }
     }
 
-    public init(_ bindValue: Binding<AValue?>, _ bindUnit: Binding<AUnit?>, allowInput: Bool, name: String, originalUnit: AUnit? = nil, auxPoints: [ALocation], precision: NumberFormatStyleConfiguration.Precision, designatedType: AValueType? = nil) {
+    public init(_ bindValue: Binding<AValue?>, _ bindUnit: Binding<AUnit?>, allowInput: Bool, name: String, originalUnit: AUnit?, auxPoints: [ALocation], precision: NumberFormatStyleConfiguration.Precision, designatedType: AValueType? = nil) {
         self._value = bindValue
         self._unit = bindUnit
         self.allowInput = allowInput
@@ -187,11 +187,11 @@ private struct Example: View {
         ForEach($values, id: \.wrappedValue?.type) { bindValue in
             HStack {
                 Text("Hello")
-                AValueAsInputView(bindValue, $unit, allowInput: true, name: "Hello", auxPoints: .examples, precision: .fractionLength(0...6))
+                AValueAsInputView(bindValue, $unit, allowInput: true, name: "Hello", originalUnit: originalUnit, auxPoints: .examples, precision: .fractionLength(0...6))
             }
             HStack {
                 Text("Hello")
-                AValueAsInputView(bindValue, $unit, allowInput: false, name: "Hello", auxPoints: .examples, precision: .fractionLength(0...6))
+                AValueAsInputView(bindValue, $unit, allowInput: false, name: "Hello", originalUnit: originalUnit, auxPoints: .examples, precision: .fractionLength(0...6))
             }
         }
     }
@@ -207,8 +207,8 @@ private struct Example: View {
 @available(iOS 16, *)#Preview{
     List {
         Example()
-            .scrollDismissesKeyboard(.immediately)
     }
+    .scrollDismissesKeyboard(.immediately)
 }
 
 #endif
