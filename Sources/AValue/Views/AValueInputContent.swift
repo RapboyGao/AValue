@@ -5,7 +5,7 @@ import AViewUI
 #if os(iOS)
 
 @available(iOS 16, *)
-public struct AValueAsInputView: View {
+public struct AValueInputContent: View {
     @Binding var value: AValue?
     @Binding var unit: AUnit?
 
@@ -187,11 +187,11 @@ private struct Example: View {
         ForEach($values, id: \.wrappedValue?.type) { bindValue in
             HStack {
                 Text("Hello")
-                AValueAsInputView(bindValue, $unit, allowInput: true, name: "Hello", originalUnit: originalUnit, auxPoints: .examples, precision: .fractionLength(0...6))
+                AValueInputContent(bindValue, $unit, allowInput: true, name: "Hello", originalUnit: originalUnit, auxPoints: .examples, precision: .fractionLength(0...6))
             }
             HStack {
                 Text("Hello")
-                AValueAsInputView(bindValue, $unit, allowInput: false, name: "Hello", originalUnit: originalUnit, auxPoints: .examples, precision: .fractionLength(0...6))
+                AValueInputContent(bindValue, $unit, allowInput: false, name: "Hello", originalUnit: originalUnit, auxPoints: .examples, precision: .fractionLength(0...6))
             }
         }
     }
