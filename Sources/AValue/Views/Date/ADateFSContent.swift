@@ -31,7 +31,7 @@ public struct ADateFSContent: View {
             HStack {
                 Text(I18n.timeZone)
                 Spacer()
-                ATimeZoneSelector(bindingTimeZone)
+                ATimeZoneSelector(bindingTimeZone, allowSet: allowSet)
             }
             DatePicker(name, selection: thisBinding, displayedComponents: [.hourAndMinute, .date])
                 .datePickerStyle(.graphical)
@@ -66,6 +66,7 @@ private struct Example: View {
 
     var body: some View {
         ADateFSContent($aValue, name: "hello", allowSet: true)
+        ADateFSContent($aValue, name: "hello", allowSet: false)
     }
 }
 

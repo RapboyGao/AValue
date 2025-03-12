@@ -11,7 +11,7 @@ struct ADateComponentFSContent: View {
     var allowSet: Bool
 
     @ViewBuilder
-    func bindInt(_ name: String, _ bindInt: Binding<Int?>) -> some View {
+    func intView(_ name: String, _ bindInt: Binding<Int?>) -> some View {
         HStack {
             Text(name)
             if allowSet {
@@ -36,6 +36,10 @@ struct ADateComponentFSContent: View {
         Binding {
             value?.year
         } set: { newValue in
+            guard newValue != 0 else {
+                value?.year = nil
+                return
+            }
             guard self.value != nil else {
                 value = DateComponents(year: newValue)
                 return
@@ -48,6 +52,10 @@ struct ADateComponentFSContent: View {
         Binding {
             value?.month
         } set: { newValue in
+            guard newValue != 0 else {
+                value?.month = nil
+                return
+            }
             guard self.value != nil else {
                 value = DateComponents(month: newValue)
                 return
@@ -60,6 +68,10 @@ struct ADateComponentFSContent: View {
         Binding {
             value?.day
         } set: { newValue in
+            guard newValue != 0 else {
+                value?.day = nil
+                return
+            }
             guard self.value != nil else {
                 value = DateComponents(day: newValue)
                 return
@@ -72,6 +84,10 @@ struct ADateComponentFSContent: View {
         Binding {
             value?.hour
         } set: { newValue in
+            guard newValue != 0 else {
+                value?.hour = nil
+                return
+            }
             guard self.value != nil else {
                 value = DateComponents(hour: newValue)
                 return
@@ -84,6 +100,10 @@ struct ADateComponentFSContent: View {
         Binding {
             value?.minute
         } set: { newValue in
+            guard newValue != 0 else {
+                value?.minute = nil
+                return
+            }
             guard self.value != nil else {
                 value = DateComponents(minute: newValue)
                 return
@@ -92,36 +112,12 @@ struct ADateComponentFSContent: View {
         }
     }
 
-    // private var bindSecond: Binding<Int?> {
-    //     Binding {
-    //         value?.second
-    //     } set: { newValue in
-    //         guard self.value != nil else {
-    //             value = DateComponents(second: newValue)
-    //             return
-    //         }
-    //         value?.second = newValue
-    //     }
-    // }
-
-    // private var bindNanosecond: Binding<Int?> {
-    //     Binding {
-    //         value?.nanosecond
-    //     } set: { newValue in
-    //         guard self.value != nil else {
-    //             value = DateComponents(nanosecond: newValue)
-    //             return
-    //         }
-    //         value?.nanosecond = newValue
-    //     }
-    // }
-
     var body: some View {
-        bindInt(AUnit.years.shortName, bindYear)
-        bindInt(I18n.months, bindMonth)
-        bindInt(AUnit.days.shortName, bindDay)
-        bindInt(AUnit.hours.shortName, bindHour)
-        bindInt(AUnit.minutes.shortName, bindMinute)
+        intView(AUnit.years.shortName, bindYear)
+        intView(I18n.months, bindMonth)
+        intView(AUnit.days.shortName, bindDay)
+        intView(AUnit.hours.shortName, bindHour)
+        intView(AUnit.minutes.shortName, bindMinute)
         // bindInt("Second", bindSecond)
         // bindInt("Nanosecond", bindNanosecond)
     }

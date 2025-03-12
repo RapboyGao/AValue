@@ -16,7 +16,6 @@ public struct AValueInputContent: View {
     var precision: NumberFormatStyleConfiguration.Precision
     var designatedType: AValueType?
 
-
     var sheetConfig: ASheetButtonConfig {
         ASheetButtonConfig(.fullScreenCover, .tapGesture, return: .done)
     }
@@ -35,7 +34,6 @@ public struct AValueInputContent: View {
             }
             value = .number(newValue)
         }
-
     }
 
     var bindBool: Binding<Bool> {
@@ -44,7 +42,6 @@ public struct AValueInputContent: View {
         } set: { newValue in
             value = .boolean(newValue)
         }
-
     }
 
     var bindString: Binding<String> {
@@ -53,7 +50,6 @@ public struct AValueInputContent: View {
         } set: { newValue in
             value = .string(newValue)
         }
-
     }
 
     var bindColor: Binding<Color> {
@@ -62,7 +58,6 @@ public struct AValueInputContent: View {
         } set: { newValue in
             value = .init(color: newValue)
         }
-
     }
 
     public var body: some View {
@@ -101,7 +96,6 @@ public struct AValueInputContent: View {
             } else {
                 Text("= ") + Text(value?.description ?? "-")
             }
-
         case .string:
             if allowInput {
                 TextEditor(text: bindString)
@@ -175,7 +169,6 @@ public struct AValueInputContent: View {
     }
 }
 
-
 @available(iOS 16, *)
 private struct Example: View {
     @State private var values: [AValue?]
@@ -204,7 +197,7 @@ private struct Example: View {
     }
 }
 
-@available(iOS 16, *)#Preview{
+@available(iOS 16, *) #Preview {
     List {
         Example()
     }

@@ -48,7 +48,7 @@ private struct TimeZonesView: View {
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 public struct ATimeZoneSelector: View {
     @Binding var timeZone: TimeZone
-
+    var allowSet: Bool
     @Environment(\.locale) private var locale
 
     private func getName(_ someTimeZone: TimeZone) -> String {
@@ -59,24 +59,34 @@ public struct ATimeZoneSelector: View {
         timeZone.secondsFromGMT() == diff * 3600
     }
 
+    @ViewBuilder
+    private var label: some View {
+        Text(getName(timeZone)) + Text(" (") + Text(timeZone.secondsFromGMT() / 3600, format: .number.sign(strategy: .always())) + Text(")")
+    }
+
     public var body: some View {
-        Menu {
-            ForEach(-11 ..< 13) { timeDiff in
-                Menu {
-                    TimeZonesView(offset: timeDiff) { newTimeZone in
-                        timeZone = newTimeZone
+        if allowSet {
+            Menu {
+                ForEach(-11 ..< 13) { timeDiff in
+                    Menu {
+                        TimeZonesView(offset: timeDiff) { newTimeZone in
+                            timeZone = newTimeZone
+                        }
+                    } label: {
+                        Text("UTC") + Text(timeDiff, format: .number.sign(strategy: .always()))
                     }
-                } label: {
-                    Text("UTC") + Text(timeDiff, format: .number.sign(strategy: .always()))
                 }
+            } label: {
+                label
             }
-        } label: {
-            Text(getName(timeZone)) + Text(" (") + Text(timeZone.secondsFromGMT() / 3600, format: .number.sign(strategy: .always())) + Text(")")
+        } else {
+            label
         }
     }
 
-    public init(_ timeZone: Binding<TimeZone>) {
+    public init(_ timeZone: Binding<TimeZone>, allowSet: Bool) {
         self._timeZone = timeZone
+        self.allowSet = allowSet
     }
 }
 
@@ -85,7 +95,7 @@ private struct Example: View {
     @State private var timeZone = TimeZone.current
 
     var body: some View {
-        ATimeZoneSelector($timeZone)
+        ATimeZoneSelector($timeZone, allowSet: false)
     }
 }
 
