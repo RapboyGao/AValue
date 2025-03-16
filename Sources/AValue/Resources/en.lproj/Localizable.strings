@@ -1,5 +1,4 @@
-"Wind Direction" = "Wind Direction";
-"Wind Speed" = "Wind Speed";
+/* Already provided in user's original code */
 "headwind" = "Headwind";
 "crosswind" = "Crosswind";
 "tailwind" = "Tailwind";
@@ -22,3 +21,23 @@
 "wind_direction" = "Wind Direction";
 "wind_speed" = "Wind Speed";
 
+"number.name" = "Number";
+"number.introduction" = "A numeric value (e.g., 42.0)";
+"point.name" = "Point";
+"point.introduction" = "A point with X and Y coordinates";
+"location.name" = "Location";
+"location.introduction" = "Geographic position with latitude and longitude";
+"boolean.name" = "Boolean";
+"boolean.introduction" = "Logical true/false value";
+"string.name" = "String";
+"string.introduction" = "Text information";
+"groundWind.name" = "Ground Wind";
+"groundWind.introduction" = "Ground wind with AWindLimit component";
+"minutes.name" = "Minutes";
+"minutes.introduction" = "Duration in minutes";
+"calendar.name" = "Calendar";
+"calendar.introduction" = "Specific date and time";
+"dateDifference.name" = "Date Difference";
+"dateDifference.introduction" = "Difference between two dates";
+"color.name" = "Color";
+"color.introduction" = "RGB color value with optional color space";

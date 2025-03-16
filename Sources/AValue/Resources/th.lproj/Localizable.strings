@@ -1,24 +1,93 @@
-"Wind Direction" = "ทิศทางลม";
-"Wind Speed" = "ความเร็วลม";
-"headwind" = "ลมปะทะ";
-"crosswind" = "ลมขวาง";
+/* คำศัพท์การบิน "ลมหน้าน้ำ" */
+"headwind" = "ลมหน้าน้ำ";
+
+/* คำศัพท์การบิน "ลมข้าง" */
+"crosswind" = "ลมข้าง";
+
+/* คำศัพท์การบิน "ลมตาม" */
 "tailwind" = "ลมตาม";
-"total_wind" = "ลมรวม";
+
+/* ข้อจำกัดลมรวม */
+"total_wind" = "ลมรวมสูงสุด";
+
+/* ปัจจัยจำกัดความเร็วลม */
 "limit_factor" = "ปัจจัยจำกัด";
-"within_limit" = "ภายในขีดจำกัด";
+
+/* อยู่ในขอบเขตจำกัด */
+"within_limit" = "อยู่ในขีดจำกัด";
+
+/* ทิศทางรันเวย์ */
 "runway_heading" = "ทิศทางรันเวย์";
-"wind_speed_limit" = "ขีดจำกัดความเร็วลม";
-"max_wind_in_all_directions" = "ลมสูงสุดในทุกทิศทาง";
+
+/* ข้อจำกัดความเร็วลม */
+"wind_speed_limit" = "ความเร็วลมสูงสุด";
+
+/* ลมสูงสุดทุกทิศทาง */
+"max_wind_in_all_directions" = "ลมสูงสุดทุกทิศทาง";
+
+/* พิกัดภูมิศาสตร์ */
 "coordinates" = "พิกัด";
+
+/* ละติจูด */
 "latitude" = "ละติจูด";
+
+/* ลองจิจูด */
 "longitude" = "ลองจิจูด";
+
+/* แผนที่ */
 "map" = "แผนที่";
+
+/* ความยาวเวกเตอร์ */
 "vector_length" = "ความยาวเวกเตอร์";
+
+/* มุมทางคณิตศาสตร์ */
 "angle" = "มุม";
-"azimuth" = "มุมทิศ";
-"bearing" = "มุมแบร์ริ่ง";
+
+/* มุมอาซิมุท (วัดจากทิศเหนือ) */
+"azimuth" = "อาซิมุท";
+
+/* ทิศทาง (การบิน) */
+"bearing" = "ทิศทาง";
+
+/* เขตเวลา */
 "time_zone" = "เขตเวลา";
+
+/* เดือนในปฏิทิน */
 "months" = "เดือน";
+
+/* ทิศทางลม */
 "wind_direction" = "ทิศทางลม";
+
+/* ความเร็วลม */
 "wind_speed" = "ความเร็วลม";
 
+/* ----- การแปล AValueType ----- */
+"number.name" = "ตัวเลข";
+"number.introduction" = "ค่าตัวเลข (เช่น 42.0)";
+
+"point.name" = "จุด";
+"point.introduction" = "จุดที่มีพิกัด X และ Y";
+
+"location.name" = "ตำแหน่ง";
+"location.introduction" = "ตำแหน่งทางภูมิศาสตร์ (ละติจูด/ลองจิจูด)";
+
+"boolean.name" = "บูลีน";
+"boolean.introduction" = "ค่าทางตรรกะ (จริง/เท็จ)";
+
+"string.name" = "สตริง";
+"string.introduction" = "ข้อมูลข้อความ";
+
+"groundWind.name" = "ลมพื้นผิว";
+"groundWind.introduction" = "ลมที่มีส่วนประกอบ AWindLimit";
+
+"minutes.name" = "นาที";
+"minutes.introduction" = "ระยะเวลาเป็นนาที";
+
+"calendar.name" = "ปฏิทิน";
+"calendar.introduction" = "วันที่และเวลาเฉพาะ";
+
+"dateDifference.name" = "ผลต่างวันที่";
+"dateDifference.introduction" = "ความแตกต่างระหว่างสองวันที่";
+
+"color.name" = "สี";
+"color.introduction" = "ค่าสี RGB พร้อมพื้นที่สี (เลือกได้)";

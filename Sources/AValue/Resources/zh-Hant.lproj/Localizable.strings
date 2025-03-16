@@ -1,22 +1,93 @@
-"headwind" = "逆風";
+/* 航空常用詞「頂風」 */
+"headwind" = "頂風";
+
+/* 航空常用詞「側風」 */
 "crosswind" = "側風";
+
+/* 航空常用詞「順風」 */
 "tailwind" = "順風";
-"total_wind" = "總風";
+
+/* 飛機的總風量限制 */
+"total_wind" = "總風量";
+
+/* 限制最大風速的因素 */
 "limit_factor" = "限制因素";
+
+/* 風速在限制範圍內 */
 "within_limit" = "在限制範圍內";
-"runway_heading" = "跑道方向";
+
+/* 跑道航向 */
+"runway_heading" = "跑道航向";
+
+/* 風速限制 */
 "wind_speed_limit" = "風速限制";
-"max_wind_in_all_directions" = "所有方向的最大風";
-"coordinates" = "坐標";
+
+/* 全方向最大風速 */
+"max_wind_in_all_directions" = "全方向最大風速";
+
+/* 地理座標 */
+"coordinates" = "座標";
+
+/* 緯度 */
 "latitude" = "緯度";
+
+/* 經度 */
 "longitude" = "經度";
+
+/* 地圖 */
 "map" = "地圖";
+
+/* 向量長度 */
 "vector_length" = "向量長度";
+
+/* 數學角度 */
 "angle" = "角度";
+
+/* 方位角（以正北為基準） */
 "azimuth" = "方位角";
-"bearing" = "方位";
+
+/* 航向角 */
+"bearing" = "航向角";
+
+/* 時區 */
 "time_zone" = "時區";
+
+/* 月份 */
 "months" = "月份";
+
+/* 風向 */
 "wind_direction" = "風向";
+
+/* 風速 */
 "wind_speed" = "風速";
 
+/* ----- AValueType 本地化 ----- */
+"number.name" = "數值";
+"number.introduction" = "表示一個數值類型（例如：42.0）";
+
+"point.name" = "座標點";
+"point.introduction" = "表示具有 X 和 Y 座標的點類型";
+
+"location.name" = "地理位置";
+"location.introduction" = "表示具有緯度和經度的地理座標類型";
+
+"boolean.name" = "布林值";
+"boolean.introduction" = "表示真/假值的邏輯類型";
+
+"string.name" = "字串";
+"string.introduction" = "表示文字資訊的字串類型";
+
+"groundWind.name" = "地面風";
+"groundWind.introduction" = "表示帶有 AWindLimit 組件的地面風類型";
+
+"minutes.name" = "分鐘數";
+"minutes.introduction" = "表示以分鐘為單位的持續時間類型";
+
+"calendar.name" = "日曆時間";
+"calendar.introduction" = "表示特定日期時間的日曆格式類型";
+
+"dateDifference.name" = "日期差值";
+"dateDifference.introduction" = "表示兩個日期之間的時間差類型";
+
+"color.name" = "顏色值";
+"color.introduction" = "表示 RGB 色彩空間的顏色類型";

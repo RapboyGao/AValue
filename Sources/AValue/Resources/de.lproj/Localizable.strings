@@ -1,24 +1,93 @@
-"Wind Direction" = "Windrichtung";
-"Wind Speed" = "Windgeschwindigkeit";
+/* The aviation commonly used word 'Headwind' */
 "headwind" = "Gegenwind";
+
+/* The aviation commonly used word 'Crosswind' */
 "crosswind" = "Seitenwind";
+
+/* The aviation commonly used word 'Tailwind' */
 "tailwind" = "Rückenwind";
+
+/* Total wind limit */
 "total_wind" = "Gesamtwind";
-"limit_factor" = "Limitierender Faktor";
-"within_limit" = "Innerhalb des Limits";
-"runway_heading" = "Startbahnrichtung";
+
+/* Wind limiting factor */
+"limit_factor" = "Begrenzungsfaktor";
+
+/* Wind within limit */
+"within_limit" = "Innerhalb der Grenzwerte";
+
+/* Runway heading */
+"runway_heading" = "Laufbahnausrichtung";
+
+/* Wind speed limit */
 "wind_speed_limit" = "Windgeschwindigkeitsbegrenzung";
-"max_wind_in_all_directions" = "Maximaler Wind in allen Richtungen";
+
+/* Max wind in all directions */
+"max_wind_in_all_directions" = "Maximalwind in alle Richtungen";
+
+/* Coordinates */
 "coordinates" = "Koordinaten";
+
+/* Latitude */
 "latitude" = "Breitengrad";
+
+/* Longitude */
 "longitude" = "Längengrad";
+
+/* Map */
 "map" = "Karte";
+
+/* Vector length */
 "vector_length" = "Vektorlänge";
+
+/* Angle */
 "angle" = "Winkel";
+
+/* Azimuth */
 "azimuth" = "Azimut";
+
+/* Bearing */
 "bearing" = "Peilung";
+
+/* Time zone */
 "time_zone" = "Zeitzone";
+
+/* Months */
 "months" = "Monate";
+
+/* Wind direction */
 "wind_direction" = "Windrichtung";
+
+/* Wind speed */
 "wind_speed" = "Windgeschwindigkeit";
 
+/* ----- AValueType Localization ----- */
+"number.name" = "Zahl";
+"number.introduction" = "Numerischer Wert (z.B. 42.0)";
+
+"point.name" = "Punkt";
+"point.introduction" = "Ein Punkt mit X- und Y-Koordinaten";
+
+"location.name" = "Standort";
+"location.introduction" = "Geografische Position mit Breiten- und Längengrad";
+
+"boolean.name" = "Boolesch";
+"boolean.introduction" = "Logischer Wert (wahr/falsch)";
+
+"string.name" = "Zeichenkette";
+"string.introduction" = "Textinformationen";
+
+"groundWind.name" = "Bodenwind";
+"groundWind.introduction" = "Bodenwind mit AWindLimit-Komponente";
+
+"minutes.name" = "Minuten";
+"minutes.introduction" = "Zeitdauer in Minuten";
+
+"calendar.name" = "Kalenderdatum";
+"calendar.introduction" = "Spezifisches Datum und Uhrzeit";
+
+"dateDifference.name" = "Zeitdifferenz";
+"dateDifference.introduction" = "Differenz zwischen zwei Datumsangaben";
+
+"color.name" = "Farbe";
+"color.introduction" = "RGB-Farbwert mit optionalem Farbraum";

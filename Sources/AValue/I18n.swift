@@ -29,5 +29,11 @@ enum I18n {
     static let windDirection = NSLocalizedString("wind_direction", bundle: .module, comment: "The direction from which the wind is blowing.")
     static let windSpeed = NSLocalizedString("wind_speed", bundle: .module, comment: "The speed of the wind.")
     
+    static func name(for valueType: AValueType) -> String {
+        NSLocalizedString("\(valueType).name", bundle: .module, comment: "The name for value type \(valueType) which is as short as possible.")
+    }
     
+    static func introduction(for valueType: AValueType) -> String {
+        NSLocalizedString("\(valueType).introduction", bundle: .module, comment: "The introduction to describe \(valueType) value type which is as detailed as possible.")
+    }
 }

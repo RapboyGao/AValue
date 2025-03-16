@@ -1,22 +1,97 @@
-"headwind" = "逆风";
+/* The aviation commonly used word 'Headwind' */
+"headwind" = "顶风";
+
+/* The aviation commonly used word 'Crosswind' */
 "crosswind" = "侧风";
+
+/* The aviation commonly used word 'Tailwind' */
 "tailwind" = "顺风";
-"total_wind" = "总风";
+
+/* The aviation commonly used phrase 'Total Wind'. The phrase is used to describe the amount of total wind limit of an aircraft */
+"total_wind" = "总风量";
+
+/* Which one of 'Headwind', 'Crosswind', 'Tailwind', 'Total Wind' limits the max wind. The phrase is used to describe the reason where the max wind comes from. */
 "limit_factor" = "限制因素";
+
+/* The wind is within the given ground wind limit. */
 "within_limit" = "在限制范围内";
-"runway_heading" = "跑道方向";
+
+/* The aviation commonly used word 'runway heading' */
+"runway_heading" = "跑道航向";
+
+/* The aviation commonly used phrase 'Wind speed limit' */
 "wind_speed_limit" = "风速限制";
-"max_wind_in_all_directions" = "所有方向的最大风";
+
+/* The aviation commonly used phrase 'Max Wind in All Directions' */
+"max_wind_in_all_directions" = "全方向最大风速";
+
+/* Referring to latitude and longitude of a position. */
 "coordinates" = "坐标";
+
+/* Latitude of a position. */
 "latitude" = "纬度";
+
+/* Longitude of a position. */
 "longitude" = "经度";
+
+/* The map that shows geographical locations. */
 "map" = "地图";
-"vector_length" = "向量长度";
+
+/* The measurement of a vector */
+"vector_length" = "矢量长度";
+
+/* The angle between a vector and the X-axis in mathematics */
 "angle" = "角度";
+
+/* The angle measured clockwise from the north direction in aviation */
 "azimuth" = "方位角";
-"bearing" = "方位";
+
+/* The angle measured clockwise from the north direction in aviation */
+"bearing" = "方位角";
+
+/* The time zone of a specific location. */
 "time_zone" = "时区";
+
+/* The months used to describe a property <DateComponents>. */
 "months" = "月份";
+
+/* The direction from which the wind is blowing. */
 "wind_direction" = "风向";
+
+/* The speed of the wind. */
 "wind_speed" = "风速";
 
+/* ----- AValueType Localization ----- */
+
+/* The name for value type number which is as short as possible. */
+"number.name" = "数值";
+
+/* The introduction to describe number value type which is as detailed as possible. */
+"number.introduction" = "表示一个数值类型，例如：42.0";
+
+"point.name" = "坐标点";
+"point.introduction" = "表示具有X和Y坐标的点类型";
+
+"location.name" = "地理位置";
+"location.introduction" = "表示具有纬度和经度的地理位置类型";
+
+"boolean.name" = "布尔值";
+"boolean.introduction" = "表示真/假值的逻辑类型";
+
+"string.name" = "字符串";
+"string.introduction" = "表示文本信息的字符序列类型";
+
+"groundWind.name" = "地面风";
+"groundWind.introduction" = "表示具有AWindLimit组件的地面风类型";
+
+"minutes.name" = "分钟数";
+"minutes.introduction" = "表示以分钟为单位的持续时间类型";
+
+"calendar.name" = "日历时间";
+"calendar.introduction" = "表示特定日期时间的日历格式类型";
+
+"dateDifference.name" = "日期差值";
+"dateDifference.introduction" = "表示两个日期之间的时间差类型";
+
+"color.name" = "颜色值";
+"color.introduction" = "表示RGB色彩空间的颜色类型";
