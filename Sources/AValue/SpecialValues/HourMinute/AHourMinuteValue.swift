@@ -113,7 +113,7 @@ public extension AHourMinuteValue {
     }
 
     var description: String {
-        guard self.toNumber() != 0 else {
+        guard toNumber() != 0 else {
             return "00:00"
         }
         switch self {
@@ -124,6 +124,9 @@ public extension AHourMinuteValue {
         case .totalMinutes(let isNegative, let totalMinutes):
             return isNegative ? "-" + String(format: #"%dm"#, totalMinutes) : String(format: #"%dm"#, totalMinutes)
         case .days24HM(let day, let hour, let minute):
+            guard hour != 0 && minute != 0 else {
+                return String(format: "%+1d", day) + "d"
+            }
             let hourMinutePart = String(format: #"%02d:%02d"#, hour, minute)
             guard day != 0 else {
                 return hourMinutePart
