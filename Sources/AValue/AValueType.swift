@@ -36,6 +36,14 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
         self
     }
 
+    public var name: String {
+        I18n.name(for: self)
+    }
+
+    public var introduction: String {
+        I18n.introduction(for: self)
+    }
+
     public func baseValue() -> AValue {
         switch self {
         case .number:
@@ -95,9 +103,9 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
             return .dateDifference(dateComponent)
         case .color:
             return .color(
-                r: .random(in: 0...1),
-                g: .random(in: 0...1),
-                b: .random(in: 0...1),
+                r: .random(in: 0 ... 1),
+                g: .random(in: 0 ... 1),
+                b: .random(in: 0 ... 1),
                 alpha: 1,
                 colorSpace: nil
             )
