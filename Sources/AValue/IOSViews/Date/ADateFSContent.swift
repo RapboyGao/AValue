@@ -36,6 +36,7 @@ public struct ADateFSContent: View {
             DatePicker(name, selection: thisBinding, displayedComponents: [.hourAndMinute, .date])
                 .datePickerStyle(.graphical)
                 .environment(\.timeZone, withDefaultTimeZone)
+                .disabled(!allowSet)
         }
     }
 
