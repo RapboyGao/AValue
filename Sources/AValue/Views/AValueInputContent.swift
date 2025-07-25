@@ -179,11 +179,11 @@ private struct Example: View {
     var body: some View {
         ForEach($values, id: \.wrappedValue?.type) { bindValue in
             HStack {
-                Text("Hello")
+                Text("Value")
                 AValueInputContent(bindValue, $unit, allowInput: true, name: "Hello", originalUnit: originalUnit, auxPoints: .examples, precision: .fractionLength(0...6))
             }
             HStack {
-                Text("Hello")
+                Text("Value")
                 AValueInputContent(bindValue, $unit, allowInput: false, name: "Hello", originalUnit: originalUnit, auxPoints: .examples, precision: .fractionLength(0...6))
             }
         }

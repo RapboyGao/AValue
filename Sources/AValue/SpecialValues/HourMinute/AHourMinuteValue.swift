@@ -7,13 +7,13 @@ public enum AHourMinuteValue: Codable, Sendable, Hashable, CustomStringConvertib
     case days24HM(day: Int, hour: Int, minute: Int)
 }
 
-public extension AHourMinuteValue {
-    init(minutes: Int) {
+extension AHourMinuteValue {
+    public init(minutes: Int) {
         self = .totalMinutes(isNegative: minutes < 0, totalMinutes: abs(minutes))
     }
 }
 
-public extension AHourMinuteValue {
+extension AHourMinuteValue {
     /// - 130 或 0130 1:30 判断为 1小时30分钟
     /// - 321:23 或 32123 判断为 321小时30分钟
     /// - 3 判断为3分钟
@@ -26,9 +26,10 @@ public extension AHourMinuteValue {
     /// - -124+2d 判断为22:36+1天
     /// - +1d 判断为0小时0分钟+1天，必须带正负号
     /// - 12+1d 判断为0小时12分钟+1天
-    init?(string: String?) {
+    public init?(string: String?) {
         // 检查输入字符串是否为空或仅包含空白字符
-        guard let input = string?.trimmingCharacters(in: .whitespacesAndNewlines), !input.isEmpty else {
+        guard let input = string?.trimmingCharacters(in: .whitespacesAndNewlines), !input.isEmpty
+        else {
             return nil
         }
 
@@ -36,19 +37,22 @@ public extension AHourMinuteValue {
         let isNegative = input.hasPrefix("-")
 
         // 检查是否包含天数 (例如: "+1d", "-124+2d")
-        if let dayRange = input.range(of: #"[+\-](\d+)d$"#, options: .regularExpression) { // 天数必须要包含正负号
+        if let dayRange = input.range(of: #"[+\-](\d+)d$"#, options: .regularExpression) {  // 天数必须要包含正负号
             let dayString = input[dayRange]
             let days = Int(dayString.dropLast()) ?? 0
 
             // 移除天数部分以解析剩余的小时和分钟
             let remainingInput = input.replacingOccurrences(of: dayString, with: "")
-            let result = AHourMinuteValue(string: remainingInput) ?? .hourMinute(isNegative: false, hour: 0, minute: 0)
+            let result =
+                AHourMinuteValue(string: remainingInput)
+                ?? .hourMinute(isNegative: false, hour: 0, minute: 0)
             let totalNumber = result.toNumber() + days * 1440
             self = .init(minutes: totalNumber).toDHM()
             return
         }
 
-        let cleanInput = input.replacingOccurrences(of: "+", with: "").replacingOccurrences(of: "-", with: "")
+        let cleanInput = input.replacingOccurrences(of: "+", with: "").replacingOccurrences(
+            of: "-", with: "")
 
         // 解析 "HH:mm" 或 "HHmm" 格式
         let timeComponents = cleanInput.split(separator: ":")
@@ -96,8 +100,8 @@ public extension AHourMinuteValue {
     }
 }
 
-public extension AHourMinuteValue {
-    func toNumber() -> Int {
+extension AHourMinuteValue {
+    public func toNumber() -> Int {
         switch self {
         case .hourMinute(let isNegative, let hour, let minute):
             let result = hour * 60 + minute
@@ -112,19 +116,27 @@ public extension AHourMinuteValue {
         }
     }
 
-    var description: String {
+    public var description: String {
         guard toNumber() != 0 else {
             return "00:00"
         }
         switch self {
         case .hourMinute(let isNegative, let hour, let minute):
-            return isNegative ? "-" + String(format: #"%02d:%02d"#, hour, minute) : String(format: #"%02d:%02d"#, hour, minute)
+            return isNegative
+                ? "-" + String(format: #"%02d:%02d"#, hour, minute)
+                : String(format: #"%02d:%02d"#, hour, minute)
         case .totalHours(let isNegative, let hour):
-            return isNegative ? "-" + String(format: #"%02.3fh"#, hour) : String(format: #"%02.3fh"#, hour)
+            return isNegative
+                ? "-" + String(format: #"%02.3fh"#, hour) : String(format: #"%02.3fh"#, hour)
         case .totalMinutes(let isNegative, let totalMinutes):
-            return isNegative ? "-" + String(format: #"%dm"#, totalMinutes) : String(format: #"%dm"#, totalMinutes)
+            return isNegative
+                ? "-" + String(format: #"%dm"#, totalMinutes)
+                : String(format: #"%dm"#, totalMinutes)
         case .days24HM(let day, let hour, let minute):
-            guard hour != 0 && minute != 0 else {
+            // 如果都为0
+            if day == 0 && hour == 0 && minute == 0 {
+                return "00:00"
+            } else if hour == 0 && minute == 0 {
                 return String(format: "%+1d", day) + "d"
             }
             let hourMinutePart = String(format: #"%02d:%02d"#, hour, minute)
@@ -137,12 +149,12 @@ public extension AHourMinuteValue {
     }
 }
 
-public extension AHourMinuteValue {
-    enum Format: CaseIterable, Sendable, Hashable, Codable {
+extension AHourMinuteValue {
+    public enum Format: CaseIterable, Sendable, Hashable, Codable {
         case hourMinute, totalHours, totalMinutes, days24HM
     }
 
-    var format: Format {
+    public var format: Format {
         switch self {
         case .hourMinute:
             return .hourMinute
@@ -156,7 +168,7 @@ public extension AHourMinuteValue {
     }
 
     @Sendable
-    func toFormat(_ newFormat: Format) -> Self {
+    public func toFormat(_ newFormat: Format) -> Self {
         switch newFormat {
         case .hourMinute:
             return toHM()
@@ -170,7 +182,7 @@ public extension AHourMinuteValue {
     }
 
     @Sendable
-    func toHM() -> AHourMinuteValue {
+    public func toHM() -> AHourMinuteValue {
         let totalMinutes = toNumber()
         let totalMinutesAbs = Double(abs(totalMinutes))
         var hour = (totalMinutesAbs / 60).rounded(.down)
@@ -183,7 +195,7 @@ public extension AHourMinuteValue {
     }
 
     @Sendable
-    func toDHM() -> AHourMinuteValue {
+    public func toDHM() -> AHourMinuteValue {
         let totalMinutes = Double(toNumber())
         var days = (totalMinutes / 1440).rounded(.down)
         let minutesLeft = totalMinutes - days * 1440
@@ -201,20 +213,20 @@ public extension AHourMinuteValue {
     }
 
     @Sendable
-    func toTotalHours() -> AHourMinuteValue {
+    public func toTotalHours() -> AHourMinuteValue {
         let totalMinutes = Double(toNumber())
         return .totalHours(isNegative: totalMinutes < 0, hour: abs(totalMinutes) / 60)
     }
 
     @Sendable
-    func toTotalMinutes() -> AHourMinuteValue {
+    public func toTotalMinutes() -> AHourMinuteValue {
         let totalMinute = toNumber()
         return AHourMinuteValue(minutes: totalMinute)
     }
 }
 
-public extension Array where Element == AHourMinuteValue {
-    func sum(format: AHourMinuteValue.Format) -> AHourMinuteValue {
+extension Array where Element == AHourMinuteValue {
+    public func sum(format: AHourMinuteValue.Format) -> AHourMinuteValue {
         let totalNumber = reduce(0) { partialResult, nextValue in
             partialResult + nextValue.toNumber()
         }
@@ -223,41 +235,50 @@ public extension Array where Element == AHourMinuteValue {
 
     /// 解析公式
     /// - 例如 "3+3:30-:20+3:+5d-23" 解析为 [ +00:03, +03:30,  -00:20, +3:00, +00:00+5d, -00:23]
-    init?(_ expression: String?) {
-        guard let expression = expression
+    public init?(_ expression: String?) {
+        guard var remainingExpression = expression
         else {
             return nil
         }
 
         var result: [AHourMinuteValue] = []
-        var currentIndex = expression.startIndex
 
-        while currentIndex < expression.endIndex {
-            let sign: String
-            if expression[currentIndex] == "+" || expression[currentIndex] == "-" {
-                sign = String(expression[currentIndex])
-                currentIndex = expression.index(after: currentIndex)
-            } else {
-                sign = "+"
+        // 第一个正则表达式，用于匹配第一个不带正负号的子表达式
+        let firstPattern = #"^[+\-]?(\d+:\d+|:\d+|\d+:|\d+d|\d+)"#
+        if let firstMatch = remainingExpression.range(of: firstPattern, options: .regularExpression)
+        {
+            var firstSubExpression = String(remainingExpression[firstMatch])
+            // 如果是\d+d，则在前方加+
+            if firstSubExpression.contains("d") {
+                firstSubExpression = "+" + firstSubExpression
             }
-
-            var nextIndex = currentIndex
-            while nextIndex < expression.endIndex && expression[nextIndex] != "+" && expression[nextIndex] != "-" {
-                nextIndex = expression.index(after: nextIndex)
-            }
-
-            let subExpression = String(expression[currentIndex ..< nextIndex])
-            let signedExpression = sign + subExpression
-
-            if let hourMinuteValue = AHourMinuteValue(string: signedExpression) {
+            if let hourMinuteValue = AHourMinuteValue(string: firstSubExpression) {
                 result.append(hourMinuteValue)
+                remainingExpression.replaceSubrange(firstMatch, with: "")
             } else {
                 return nil
             }
-
-            currentIndex = nextIndex
         }
 
+        // 第二个正则表达式，用于匹配后续带正负号的子表达式
+        let subsequentPattern = #"^[+\-](\d+:\d+|:\d+|\d+:|\d+d|\d+)"#
+        while let match = remainingExpression.range(
+            of: subsequentPattern, options: .regularExpression)
+        {
+            let subExpression = String(remainingExpression[match])
+
+            if let hourMinuteValue = AHourMinuteValue(string: subExpression) {
+                result.append(hourMinuteValue)
+                remainingExpression.replaceSubrange(match, with: "")
+            } else {
+                return nil
+            }
+        }
+
+        // 检查是否还有剩余的表达式
+        if !remainingExpression.isEmpty {
+            return nil
+        }
         self = result
     }
 }
