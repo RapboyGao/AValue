@@ -14,7 +14,8 @@
 "vector_length" = "Longitud del vector";
 "angle" = "Ángulo";
 "azimuth" = "Acimut";
-"bearing" = "Demora";
+/* The angle measured clockwise from the north direction in aviation */
+"bearing" = "Brújula";
 "time_zone" = "Zona horaria";
 "months" = "Meses";
 "wind_direction" = "Dirección del viento";

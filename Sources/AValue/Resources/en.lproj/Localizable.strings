@@ -1,6 +1,10 @@
-/* Already provided in user's original code */
+/* The aviation commonly used word 'Headwind' */
 "headwind" = "Headwind";
+
+/* The aviation commonly used word 'Crosswind' */
 "crosswind" = "Crosswind";
+
+/* The aviation commonly used word 'Tailwind' */
 "tailwind" = "Tailwind";
 "total_wind" = "Total Wind";
 "limit_factor" = "Limit Factor";
@@ -15,6 +19,7 @@
 "vector_length" = "Vector Length";
 "angle" = "Angle";
 "azimuth" = "Azimuth";
+/* The angle measured clockwise from the north direction in aviation */
 "bearing" = "Bearing";
 "time_zone" = "Time Zone";
 "months" = "Months";

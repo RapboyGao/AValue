@@ -14,7 +14,7 @@
 "vector_length" = "Longueur du vecteur";
 "angle" = "Angle";
 "azimuth" = "Azimut";
-"bearing" = "Relèvement";
+"bearing" = "Angle de direction";
 "time_zone" = "Fuseau horaire";
 "months" = "Mois";
 "wind_direction" = "Direction du vent";

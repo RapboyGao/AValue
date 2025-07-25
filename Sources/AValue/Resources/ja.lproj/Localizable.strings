@@ -1,5 +1,10 @@
+/* 航空常用术语 'Headwind' */
 "headwind" = "向かい風";
+
+/* 航空常用术语 'Crosswind' */
 "crosswind" = "横風";
+
+/* 航空常用术语 'Tailwind' */
 "tailwind" = "追い風";
 "total_wind" = "総風量";
 "limit_factor" = "制限要因";
@@ -14,7 +19,7 @@
 "vector_length" = "ベクトル長";
 "angle" = "角度";
 "azimuth" = "方位角";
-"bearing" = "方位";
+"bearing" = "方位角";
 "time_zone" = "タイムゾーン";
 "months" = "月";
 "wind_direction" = "風向";
