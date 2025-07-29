@@ -141,25 +141,25 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
     public func colorForLightTheme() -> Color {
         switch self {
         case .number:
-            return Color(red: 0.0, green: 0.0, blue: 0.5) // Navy Blue
+            return Color(red: 25.0/255.0, green: 118.0/255.0, blue: 210.0/255.0) // Material Blue 700
         case .point:
-            return Color(red: 0.0, green: 0.5, blue: 0.5) // Teal
+            return Color(red: 0.0/255.0, green: 150.0/255.0, blue: 136.0/255.0) // Material Teal 500
         case .location:
-            return Color(red: 0.0, green: 0.5, blue: 0.0) // Dark Green
+            return Color(red: 76.0/255.0, green: 175.0/255.0, blue: 80.0/255.0) // Material Green 500
         case .boolean:
-            return Color(red: 0.5, green: 0.0, blue: 0.0) // Maroon
+            return Color(red: 244.0/255.0, green: 67.0/255.0, blue: 54.0/255.0) // Material Red 500
         case .string:
-            return Color(red: 0.5, green: 0.0, blue: 0.5) // Purple
+            return Color(red: 156.0/255.0, green: 39.0/255.0, blue: 176.0/255.0) // Material Purple 500
         case .groundWind:
-            return Color(red: 0.3, green: 0.3, blue: 0.3) // Dark Gray
+            return Color(red: 97.0/255.0, green: 97.0/255.0, blue: 97.0/255.0) // Material Gray 600
         case .minutes:
-            return Color(red: 0.5, green: 0.5, blue: 0.0) // Olive
+            return Color(red: 255.0/255.0, green: 193.0/255.0, blue: 7.0/255.0) // Material Amber 500
         case .calendar:
-            return Color(red: 0.5, green: 0.25, blue: 0.0) // Brown
+            return Color(red: 205.0/255.0, green: 127.0/255.0, blue: 50.0/255.0) // Material Brown 500
         case .dateDifference:
-            return Color(red: 0.25, green: 0.0, blue: 0.5) // Indigo
+            return Color(red: 103.0/255.0, green: 58.0/255.0, blue: 183.0/255.0) // Material Deep Purple 500
         case .color:
-            return .black
+            return Color(red: 33.0/255.0, green: 33.0/255.0, blue: 33.0/255.0) // Material Gray 900
         }
     }
 
@@ -167,25 +167,25 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
     public func colorForDarkTheme() -> Color {
         switch self {
         case .number:
-            return Color(red: 0.529, green: 0.808, blue: 0.922) // Sky Blue
+            return Color(red: 144.0/255.0, green: 202.0/255.0, blue: 249.0/255.0) // Material Blue 200
         case .point:
-            return Color(red: 0.678, green: 0.847, blue: 0.902) // Light Blue
+            return Color(red: 100.0/255.0, green: 221.0/255.0, blue: 23.0/255.0) // Material Teal 200
         case .location:
-            return Color(red: 0.498, green: 1.0, blue: 0.831) // Aquamarine
+            return Color(red: 165.0/255.0, green: 214.0/255.0, blue: 167.0/255.0) // Material Green 200
         case .boolean:
-            return Color(red: 0.0, green: 1.0, blue: 0.0) // Lime
+            return Color(red: 239.0/255.0, green: 154.0/255.0, blue: 154.0/255.0) // Material Red 200
         case .string:
-            return Color(red: 1.0, green: 0.647, blue: 0.0) // Orange
+            return Color(red: 206.0/255.0, green: 147.0/255.0, blue: 216.0/255.0) // Material Purple 200
         case .groundWind:
-            return Color(red: 1.0, green: 0.0, blue: 0.0) // Bright Red
+            return Color(red: 189.0/255.0, green: 189.0/255.0, blue: 189.0/255.0) // Material Gray 300
         case .minutes:
-            return Color(red: 0.933, green: 0.510, blue: 0.933) // Violet
+            return Color(red: 255.0/255.0, green: 224.0/255.0, blue: 130.0/255.0) // Material Amber 200
         case .calendar:
-            return Color(red: 1.0, green: 0.894, blue: 0.710) // Peach
+            return Color(red: 215.0/255.0, green: 204.0/255.0, blue: 200.0/255.0) // Material Brown 200
         case .dateDifference:
-            return Color(red: 0.627, green: 0.125, blue: 0.941) // Blue Violet
+            return Color(red: 179.0/255.0, green: 157.0/255.0, blue: 219.0/255.0) // Material Deep Purple 200
         case .color:
-            return .white
+            return Color(red: 245.0/255.0, green: 245.0/255.0, blue: 245.0/255.0) // Material Gray 100
         }
     }
 
