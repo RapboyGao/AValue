@@ -39,9 +39,9 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral,
     case color(r: Double, g: Double, b: Double, alpha: Double, colorSpace: AColorSpace?)
 }
 
-extension AValue {
+public extension AValue {
     /// 一个返回 AValue 类型的计算属性
-    public var type: AValueType {
+    var type: AValueType {
         switch self {
         case .number: return .number
         case .point: return .point
@@ -56,7 +56,7 @@ extension AValue {
         }
     }
 
-    public var description: String {
+    var description: String {
         switch self {
         case let .number(value):
             if value.truncatingRemainder(dividingBy: 1) == 0 {
@@ -92,7 +92,7 @@ extension AValue {
             let result = "\(components)"
             guard result != "" else { return "No Diff" }
             return result
-        case let .color(r, g, b, alpha, colorSpace):
+        case let .color(r, g, b, alpha, _):
             // 将 RGB 值转换为 0-255 的整数并格式化为十六进制
             let rInt = Int(r * 255)
             let gInt = Int(g * 255)
@@ -103,7 +103,7 @@ extension AValue {
         }
     }
 
-    @Sendable public func add(_ value: AValue) throws -> AValue {
+    @Sendable func add(_ value: AValue) throws -> AValue {
         switch (self, value) {
         case let (.number(value1), .number(value2)):
             return .number(value1 + value2)
@@ -145,7 +145,7 @@ extension AValue {
         return .calendar(newDate, timeZone: timeZone)
     }
 
-    @Sendable public func subtract(_ value: AValue) throws -> AValue {
+    @Sendable func subtract(_ value: AValue) throws -> AValue {
         switch (self, value) {
         case let (.number(value1), .number(value2)):
             return .number(value1 - value2)
@@ -192,7 +192,7 @@ extension AValue {
         return .calendar(newDate, timeZone: timeZone)
     }
 
-    @Sendable public func multiply(by value: AValue) throws -> AValue {
+    @Sendable func multiply(by value: AValue) throws -> AValue {
         switch (self, value) {
         case let (.number(value1), .number(value2)):
             return .number(value1 * value2)
@@ -211,7 +211,7 @@ extension AValue {
         }
     }
 
-    @Sendable public func divide(by value: AValue) throws -> AValue {
+    @Sendable func divide(by value: AValue) throws -> AValue {
         switch (self, value) {
         case let (.number(value1), .number(value2)):
             guard value2 != 0 else {
@@ -233,50 +233,50 @@ extension AValue {
         }
     }
 
-    @Sendable public func remainder(dividingBy value: AValue) throws -> AValue {
+    @Sendable func remainder(dividingBy value: AValue) throws -> AValue {
         guard case let .number(value1) = self,
-            case let .number(value2) = value
+              case let .number(value2) = value
         else {
             throw AValueError.invalidOperation
         }
         return .number(value1.truncatingRemainder(dividingBy: value2))
     }
 
-    @Sendable public func power(of value: AValue) throws -> AValue {
+    @Sendable func power(of value: AValue) throws -> AValue {
         guard case let .number(value1) = self,
-            case let .number(value2) = value
+              case let .number(value2) = value
         else {
             throw AValueError.invalidOperation
         }
         return .number(pow(value1, value2))
     }
 
-    @Sendable public func and(_ value: AValue) throws -> AValue {
+    @Sendable func and(_ value: AValue) throws -> AValue {
         guard case let .boolean(value1) = self,
-            case let .boolean(value2) = value
+              case let .boolean(value2) = value
         else {
             throw AValueError.invalidOperation
         }
         return .boolean(value1 && value2)
     }
 
-    @Sendable public func or(_ value: AValue) throws -> AValue {
+    @Sendable func or(_ value: AValue) throws -> AValue {
         guard case let .boolean(value1) = self,
-            case let .boolean(value2) = value
+              case let .boolean(value2) = value
         else {
             throw AValueError.invalidOperation
         }
         return .boolean(value1 || value2)
     }
 
-    @Sendable public func not() throws -> AValue {
+    @Sendable func not() throws -> AValue {
         guard case let .boolean(value) = self else {
             throw AValueError.invalidOperation
         }
         return .boolean(!value)
     }
 
-    @Sendable public func isGreater(than value: AValue) throws -> Bool {
+    @Sendable func isGreater(than value: AValue) throws -> Bool {
         switch (self, value) {
         case let (.number(value1), .number(value2)):
             return value1 > value2
@@ -291,15 +291,15 @@ extension AValue {
         }
     }
 
-    @Sendable public func isGreaterOrEqual(to value: AValue) throws -> Bool {
+    @Sendable func isGreaterOrEqual(to value: AValue) throws -> Bool {
         try isGreater(than: value) || self == value
     }
 
-    @Sendable public func isLess(than value: AValue) throws -> Bool {
+    @Sendable func isLess(than value: AValue) throws -> Bool {
         try !isGreaterOrEqual(to: value)
     }
 
-    @Sendable public func isLessThanOrEqual(to value: AValue) throws -> Bool {
+    @Sendable func isLessThanOrEqual(to value: AValue) throws -> Bool {
         try !isGreater(than: value)
     }
 
@@ -307,7 +307,7 @@ extension AValue {
     ///
     /// - Returns: 取负结果作为一个新的 `AValue` 返回
     /// - Throws: 如果操作无效，则抛出 `AValueCalcError`
-    @Sendable public func negative() throws -> AValue {
+    @Sendable func negative() throws -> AValue {
         switch self {
         case let .number(value):
             return .number(-value)
@@ -323,7 +323,7 @@ extension AValue {
         }
     }
 
-    @Sendable public func groundWindComponents() throws -> AWindLimit {
+    @Sendable func groundWindComponents() throws -> AWindLimit {
         if case let .groundWind(limit) = self {
             return limit
         } else {
@@ -331,7 +331,7 @@ extension AValue {
         }
     }
 
-    @Sendable public func absolute() throws -> AValue {
+    @Sendable func absolute() throws -> AValue {
         switch self {
         case let .number(value):
             return .number(abs(value))
@@ -344,7 +344,7 @@ extension AValue {
         }
     }
 
-    @Sendable public func colorMultiply(_ value: AValue) throws -> AValue {
+    @Sendable func colorMultiply(_ value: AValue) throws -> AValue {
         switch (self, value) {
         case let (.color(r1, g1, b1, a1, space1), .color(r2, g2, b2, a2, space2)):
             // 直接对 RGB 相乘，alpha 也可相乘
@@ -353,26 +353,25 @@ extension AValue {
                 g: g1 * g2,
                 b: b1 * b2,
                 alpha: a1 * a2,
-                colorSpace: space1 == space2 ? space1 : nil
-            )
+                colorSpace: space1 == space2 ? space1 : nil)
         default:
             throw AValueError.invalidOperation
         }
     }
 
-    public init(floatLiteral value: Double) {
+    init(floatLiteral value: Double) {
         self = .number(value)
     }
 
-    public init(booleanLiteral value: Bool) {
+    init(booleanLiteral value: Bool) {
         self = .boolean(value)
     }
 
-    public init(stringLiteral value: String) {
+    init(stringLiteral value: String) {
         self = .string(value)
     }
 
-    public init(integerLiteral value: Int) {
+    init(integerLiteral value: Int) {
         self.init(floatLiteral: .init(value))
     }
 }
@@ -474,8 +473,8 @@ extension AValue {
 #if os(macOS) || os(iOS)
 
     @available(iOS 14.0, macOS 11, *)
-    extension AValue {
-        public func getColor() -> Color? {
+    public extension AValue {
+        func getColor() -> Color? {
             guard case let .color(r, g, b, alpha, space) = self else {
                 return nil
             }
@@ -486,7 +485,7 @@ extension AValue {
             }
         }
 
-        public init?(color: Color?) {
+        init?(color: Color?) {
             guard let color = color else {
                 return nil
             }
@@ -510,7 +509,6 @@ extension AValue {
             #elseif canImport(AppKit)
                 let nsColor = NSColor(color)
                 let converted = nsColor.usingColorSpace(.deviceRGB) ?? nsColor
-                let cgColorSpace = converted.cgColor.colorSpace
                 r = converted.redComponent
                 g = converted.greenComponent
                 b = converted.blueComponent
