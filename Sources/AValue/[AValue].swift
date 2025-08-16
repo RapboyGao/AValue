@@ -80,10 +80,10 @@ public extension [AValue] {
         }
     }
 
-    @Sendable func color(at index: Int) throws -> (r: Double, g: Double, b: Double, alpha: Double, colorSpace: AColorSpace?) {
+    @Sendable func color(at index: Int) throws -> AColor {
         let value = try self.value(at: index)
-        if case let .color(r, g, b, alpha, space) = value {
-            return (r, g, b, alpha, space)
+        if case let .color(color) = value {
+            return color
         } else {
             throw AValueError.typeMismatch(expected: .color, actual: value.type)
         }

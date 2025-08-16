@@ -34,9 +34,8 @@ public enum AValue: Codable, Hashable, Sendable, ExpressibleByFloatLiteral,
     /// 表示两个日期之间的差异
     case dateDifference(DateComponents)
 
-    /// 表示一个颜色 (包含 RGB, alpha, 以及可选的 AColorSpace)
-    /// - rgb三个数字都是0-1之间的值
-    case color(r: Double, g: Double, b: Double, alpha: Double, colorSpace: AColorSpace?)
+    /// 表示一个颜色
+    case color(color: AColor)
 }
 
 public extension AValue {
@@ -88,20 +87,21 @@ public extension AValue {
             return result
         case let .calendar(date, timeZone):
             return ADateAndTZ(date: date, timeZone: timeZone).description
-        case let .dateDifference(components):
-            let result = "\(components)"
-            guard result != "" else { return "No Diff" }
-            return result
-        case let .color(r, g, b, alpha, _):
-            // 将 RGB 值转换为 0-255 的整数并格式化为十六进制
-            let rInt = Int(r * 255)
-            let gInt = Int(g * 255)
-            let bInt = Int(b * 255)
-            let alphaInt = Int(alpha * 255)
-            let hexString = String(format: "#%02X%02X%02X%02X", rInt, gInt, bInt, alphaInt)
-            return hexString
-        }
-    }
+        // Fix in description property
+                case let .dateDifference(components):
+                    let result = "\(components)"
+                    guard result != "" else { return "No Diff" }
+                    return result
+                case let .color(color):
+                    // 将 RGB 值转换为 0-255 的整数并格式化为十六进制
+                    let rInt = Int(color.red * 255)
+                    let gInt = Int(color.green * 255)
+                    let bInt = Int(color.blue * 255)
+                    let alphaInt = Int(color.alpha * 255)
+                    let hexString = String(format: "#%02X%02X%02X%02X", rInt, gInt, bInt, alphaInt)
+                    return hexString
+                }
+            }
 
     @Sendable func add(_ value: AValue) throws -> AValue {
         switch (self, value) {
@@ -308,19 +308,20 @@ public extension AValue {
     /// - Returns: 取负结果作为一个新的 `AValue` 返回
     /// - Throws: 如果操作无效，则抛出 `AValueCalcError`
     @Sendable func negative() throws -> AValue {
-        switch self {
-        case let .number(value):
-            return .number(-value)
-        case let .point(x, y):
-            return .point(x: -x, y: -y)
-        case let .minutes(value):
-            return .minutes(-value)
-        case let .color(r, g, b, alpha, space):
-            // 颜色取反: (1 - r, 1 - g, 1 - b)
-            return .color(r: 1 - r, g: 1 - g, b: 1 - b, alpha: alpha, colorSpace: space)
-        default:
-            throw AValueError.invalidOperation
-        }
+        // Fix in negative() function
+                switch self {
+                case let .number(value):
+                    return .number(-value)
+                case let .point(x, y):
+                    return .point(x: -x, y: -y)
+                case let .minutes(value):
+                    return .minutes(-value)
+                case let .color(color):
+                    // 颜色取反: (1 - r, 1 - g, 1 - b)
+                    return .color(color: AColor(colorSpace: color.colorSpace, red: 1 - color.red, green: 1 - color.green, blue: 1 - color.blue, alpha: color.alpha))
+                default:
+                    throw AValueError.invalidOperation
+                }
     }
 
     @Sendable func groundWindComponents() throws -> AWindLimit {
@@ -344,20 +345,23 @@ public extension AValue {
         }
     }
 
-    @Sendable func colorMultiply(_ value: AValue) throws -> AValue {
-        switch (self, value) {
-        case let (.color(r1, g1, b1, a1, space1), .color(r2, g2, b2, a2, space2)):
-            // 直接对 RGB 相乘，alpha 也可相乘
-            return .color(
-                r: r1 * r2,
-                g: g1 * g2,
-                b: b1 * b2,
-                alpha: a1 * a2,
-                colorSpace: space1 == space2 ? space1 : nil)
-        default:
-            throw AValueError.invalidOperation
+    // Fix in colorMultiply() function
+        @Sendable func colorMultiply(_ value: AValue) throws -> AValue {
+            switch (self, value) {
+            case let (.color(color1), .color(color2)):
+                // 直接对 RGB 相乘，alpha 也可相乘
+                let space = color1.colorSpace == color2.colorSpace ? color1.colorSpace : .sRGB
+                return .color(color: AColor(
+                    colorSpace: space,
+                    red: color1.red * color2.red,
+                    green: color1.green * color2.green,
+                    blue: color1.blue * color2.blue,
+                    alpha: color1.alpha * color2.alpha
+                ))
+            default:
+                throw AValueError.invalidOperation
+            }
         }
-    }
 
     init(floatLiteral value: Double) {
         self = .number(value)
@@ -475,14 +479,10 @@ extension AValue {
     @available(iOS 14.0, macOS 11, *)
     public extension AValue {
         func getColor() -> Color? {
-            guard case let .color(r, g, b, alpha, space) = self else {
+            guard case let .color(color) = self else {
                 return nil
             }
-            if let space = space {
-                return Color(space.original, red: r, green: g, blue: b, opacity: alpha)
-            } else {
-                return Color(red: r, green: g, blue: b, opacity: alpha)
-            }
+            return Color(color.colorSpace.original, red: color.red, green: color.green, blue: color.blue, opacity: color.alpha)
         }
 
         init?(color: Color?) {
@@ -502,10 +502,10 @@ extension AValue {
                     guard someColor == color else {
                         continue
                     }
-                    self = .color(r: r, g: g, b: b, alpha: a, colorSpace: myColorSpace)
+                    self = .color(color: AColor(colorSpace: myColorSpace, red: r, green: g, blue: b, alpha: a))
                     return
                 }
-                self = .color(r: r, g: g, b: b, alpha: a, colorSpace: nil)
+                self = .color(color: AColor(colorSpace: .sRGB, red: r, green: g, blue: b, alpha: a))
             #elseif canImport(AppKit)
                 let nsColor = NSColor(color)
                 let converted = nsColor.usingColorSpace(.deviceRGB) ?? nsColor
@@ -519,13 +519,13 @@ extension AValue {
                     guard someColor == color else {
                         continue
                     }
-                    self = .color(r: r, g: g, b: b, alpha: a, colorSpace: myColorSpace)
+                    self = .color(color: AColor(colorSpace: myColorSpace, red: r, green: g, blue: b, alpha: a))
                     return
                 }
-                self = .color(r: r, g: g, b: b, alpha: a, colorSpace: nil)
+                self = .color(color: AColor(colorSpace: .sRGB, red: r, green: g, blue: b, alpha: a))
             #else
                 // 没有可用的 UIKit 或 AppKit，仅使用默认
-                self = .color(r: 0, g: 0, b: 0, alpha: 1, colorSpace: nil)
+                self = .color(color: AColor(colorSpace: .sRGB, red: 0, green: 0, blue: 0, alpha: 1))
             #endif
         }
     }

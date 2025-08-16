@@ -65,7 +65,7 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
         case .dateDifference:
             return .dateDifference(.init())
         case .color:
-            return .color(r: 0, g: 0, b: 0, alpha: 1, colorSpace: nil)
+            return .color(color: AColor(colorSpace: .sRGB, red: 0, green: 0, blue: 0, alpha: 1))
         }
     }
 
@@ -102,13 +102,13 @@ public enum AValueType: String, RawRepresentable, Codable, Hashable, Sendable, C
             )
             return .dateDifference(dateComponent)
         case .color:
-            return .color(
-                r: .random(in: 0 ... 1),
-                g: .random(in: 0 ... 1),
-                b: .random(in: 0 ... 1),
-                alpha: 1,
-                colorSpace: nil
-            )
+            return .color(color: AColor(
+                colorSpace: .sRGB,
+                red: .random(in: 0 ... 1),
+                green: .random(in: 0 ... 1),
+                blue: .random(in: 0 ... 1),
+                alpha: 1
+            ))
         }
     }
 
