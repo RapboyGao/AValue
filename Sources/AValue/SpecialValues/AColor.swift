@@ -1,6 +1,6 @@
 import Foundation
 
-public struct AColor: Codable, Sendable, Hashable {
+public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
     public var colorSpace: AColorSpace
     public var red: Double
     public var green: Double
@@ -65,5 +65,16 @@ public struct AColor: Codable, Sendable, Hashable {
         self.green = green
         self.blue = blue
         self.alpha = alpha
+    }
+
+    public var description: String {
+        // Convert color components from Double (0.0-1.0) to UInt8 (0-255)
+        let r = UInt8(clamping: Int(red * 255.0))
+        let g = UInt8(clamping: Int(green * 255.0))
+        let b = UInt8(clamping: Int(blue * 255.0))
+        let a = UInt8(clamping: Int(alpha * 255.0))
+
+        // Format as hexadecimal string in the format #RRGGBBAA
+        return String(format: "#%02X%02X%02X%02X", r, g, b, a)
     }
 }
