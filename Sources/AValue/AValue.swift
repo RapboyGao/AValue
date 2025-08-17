@@ -93,13 +93,7 @@ public extension AValue {
             guard result != "" else { return "No Diff" }
             return result
         case let .color(color):
-            // 将 RGB 值转换为 0-255 的整数并格式化为十六进制
-            let rInt = Int(color.red * 255)
-            let gInt = Int(color.green * 255)
-            let bInt = Int(color.blue * 255)
-            let alphaInt = Int(color.alpha * 255)
-            let hexString = String(format: "#%02X%02X%02X%02X", rInt, gInt, bInt, alphaInt)
-            return hexString
+            return color.description
         }
     }
 

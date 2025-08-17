@@ -6,7 +6,7 @@ public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
     public var green: Double
     public var blue: Double
     public var alpha: Double
-    
+
     @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11, *)
     public var original: Color {
         get {
@@ -19,25 +19,42 @@ public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
         }
     }
 
+    @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11, *)
+    public var solidColor: Color {
+        get {
+            Color(colorSpace.original, red: red, green: green, blue: blue)
+        }
+        set {
+            guard let newColor = AColor(newValue)
+            else { return }
+            // 保留当前的alpha值，只更新RGB值
+            let currentAlpha = alpha
+            self = newColor
+            alpha = currentAlpha
+        }
+    }
+
     @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
     public init?(_ color: Color?) {
         guard let color = color else {
             return nil
         }
-        
+
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
         var a: CGFloat = 0
-        
+
         // iOS、tvOS和watchOS都使用UIKit
         #if canImport(UIKit)
             let uiColor = UIColor(color)
-            
+
             // 检查是否成功获取RGB组件
             guard uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) else {
                 // 尝试将颜色转换为RGB颜色空间
-                if let rgbColor = uiColor.cgColor.converted(to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent, options: nil) {
+                if let rgbColor = uiColor.cgColor.converted(
+                    to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent, options: nil)
+                {
                     if let components = rgbColor.components, components.count >= 4 {
                         r = CGFloat(components[0])
                         g = CGFloat(components[1])
@@ -49,12 +66,12 @@ public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
                 }
                 return nil
             }
-            
+
             self.red = Double(r)
             self.green = Double(g)
             self.blue = Double(b)
             self.alpha = Double(a)
-            
+
             // 尝试找到匹配的颜色空间
             for myColorSpace in AColorSpace.allCases {
                 let someColor = Color(myColorSpace.original, red: r, green: g, blue: b, opacity: a)
@@ -63,7 +80,7 @@ public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
                     return
                 }
             }
-            
+
             // 如果找不到匹配的颜色空间，使用默认的sRGB
             self.colorSpace = .sRGB
         #elseif canImport(AppKit)
@@ -78,7 +95,7 @@ public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
             self.green = Double(g)
             self.blue = Double(b)
             self.alpha = Double(a)
-            
+
             // 尝试找到匹配的颜色空间
             for myColorSpace in AColorSpace.allCases {
                 let someColor = Color(myColorSpace.original, red: r, green: g, blue: b, opacity: a)
@@ -87,7 +104,7 @@ public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
                     return
                 }
             }
-            
+
             // 如果找不到匹配的颜色空间，使用默认的sRGB
             self.colorSpace = .sRGB
         #elseif canImport(CoreGraphics) && canImport(SwiftUI)
@@ -124,5 +141,64 @@ public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
 
         // Format as hexadecimal string in the format #RRGGBBAA
         return String(format: "#%02X%02X%02X%02X", r, g, b, a)
+    }
+
+    // Calculate relative luminance based on WCAG formula
+    private var relativeLuminance: Double {
+        // Normalize RGB values using gamma correction
+        func adjust(_ value: Double) -> Double {
+            return value <= 0.03928 ? value / 12.92 : pow((value + 0.055) / 1.055, 2.4)
+        }
+
+        let r = adjust(red)
+        let g = adjust(green)
+        let b = adjust(blue)
+
+        // Apply standard coefficients for relative luminance
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    }
+
+    // Calculate contrast ratio between two colors
+    private func contrastRatio(with otherLuminance: Double) -> Double {
+        let luminance1 = max(relativeLuminance, otherLuminance)
+        let luminance2 = min(relativeLuminance, otherLuminance)
+
+        // WCAG contrast ratio formula
+        return (luminance1 + 0.05) / (luminance2 + 0.05)
+    }
+
+    // Boolean indicating if color is hard to see in dark mode (against black background)
+    public var isHardToSeeInDarkMode: Bool {
+        // Black has relative luminance of 0
+        let contrast = contrastRatio(with: 0.0)
+        // WCAG AA standard requires minimum contrast of 4.5:1 for normal text
+        return contrast < 4.5
+    }
+
+    // Boolean indicating if color is hard to see in light mode (against white background)
+    public var isHardToSeeInLightMode: Bool {
+        // White has relative luminance of 1
+        let contrast = contrastRatio(with: 1.0)
+        // WCAG AA standard requires minimum contrast of 4.5:1 for normal text
+        return contrast < 4.5
+    }
+
+    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    public func attributedString(for colorScheme: ColorScheme) -> AttributedString {
+        var string = AttributedString(description)
+        string.foregroundColor = solidColor
+        switch colorScheme {
+        case .dark:
+            if isHardToSeeInDarkMode {
+                string.backgroundColor = .white.opacity(0.7)
+            }
+        case .light:
+            if isHardToSeeInLightMode {
+                string.backgroundColor = .black.opacity(0.7)
+            }
+        @unknown default:
+            break
+        }
+        return string
     }
 }
