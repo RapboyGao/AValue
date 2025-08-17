@@ -214,11 +214,11 @@ public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
         switch colorScheme {
         case .dark:
             if isHardToSeeInDarkMode {
-                string.backgroundColor = .white.opacity(0.7)
+                string.backgroundColor = .white.opacity(0.3)
             }
         case .light:
             if isHardToSeeInLightMode {
-                string.backgroundColor = .black.opacity(0.7)
+                string.backgroundColor = .black.opacity(0.3)
             }
         @unknown default:
             break

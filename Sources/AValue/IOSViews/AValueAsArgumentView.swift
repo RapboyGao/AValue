@@ -32,7 +32,8 @@ public struct AValueAsArgumentView: View {
                 Menu {
                     ForEach(unit.unitType.allUnits) { thisUnit in
                         if let someValue = unit.convert(value: double, to: thisUnit) {
-                            Text("= ") + Text(someValue, format: format) + Text(" ") + Text(thisUnit.symbol)
+                            Text("= ") + Text(someValue, format: format) + Text(" ")
+                                + Text(thisUnit.symbol)
                         } else {
                             Text("- ") + Text(thisUnit.symbol)
                         }
@@ -53,16 +54,18 @@ public struct AValueAsArgumentView: View {
             } label: {
                 Group {
                     if let unit = unit {
-                        Text("(") + Text(x, format: format) + Text(",") + Text(y, format: format) + Text(")") + Text(unit.symbol)
+                        Text("(") + Text(x, format: format) + Text(",")
+                            + Text(y, format: format) + Text(")") + Text(unit.symbol)
                     } else {
-                        Text("(") + Text(x, format: format) + Text(",") + Text(y, format: format) + Text(")")
+                        Text("(") + Text(x, format: format) + Text(",")
+                            + Text(y, format: format) + Text(")")
                     }
                 }
                 .foregroundColor(color)
             } cover: {
-                AValueFSContent(value: .constant(value), type: .point, allowInput: false, name: name, unit: $selectedUnit, originalUnit: unit)
-            } onSheetClosed: {
-                // Do nothing
+                AValueFSContent(
+                    value: .constant(value), type: .point, allowInput: false, name: name,
+                    unit: $selectedUnit, originalUnit: unit)
             }
         case .minutes(let minutes):
             Menu {
@@ -80,16 +83,19 @@ public struct AValueAsArgumentView: View {
                 Text(value.description)
                     .foregroundColor(color)
             } cover: {
-                AValueFSContent(value: .constant(value), type: value.type, allowInput: false, name: name, unit: $selectedUnit, originalUnit: unit)
-            } onSheetClosed: {
-                // Do nothing
+                AValueFSContent(
+                    value: .constant(value), type: value.type, allowInput: false, name: name,
+                    unit: $selectedUnit, originalUnit: unit)
             }
         case .color(let color):
             Text(color.attributedString(for: colorScheme))
         }
     }
 
-    public init(value: AValue, precision: NumberFormatStyleConfiguration.Precision, unit: AUnit?, name: String) {
+    public init(
+        value: AValue, precision: NumberFormatStyleConfiguration.Precision, unit: AUnit?,
+        name: String
+    ) {
         self.value = value
         self.precision = precision
         self.unit = unit
@@ -114,12 +120,16 @@ private struct Example: View {
         List {
             Section("Defaults") {
                 ForEach(examples, id: \.self) { example in
-                    AValueAsArgumentView(value: example, precision: .fractionLength(0 ... 3), unit: .knots, name: "Location")
+                    AValueAsArgumentView(
+                        value: example, precision: .fractionLength(0...3), unit: .knots,
+                        name: "Location")
                 }
             }
             Section("Randoms") {
                 ForEach(examples2, id: \.self) { example in
-                    AValueAsArgumentView(value: example, precision: .fractionLength(0 ... 3), unit: .knots, name: "Location")
+                    AValueAsArgumentView(
+                        value: example, precision: .fractionLength(0...3), unit: .knots,
+                        name: "Location")
                 }
             }
         }
