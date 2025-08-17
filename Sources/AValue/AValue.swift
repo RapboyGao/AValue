@@ -468,22 +468,18 @@ extension AValue {
     }
 }
 
-#if os(macOS) || os(iOS)
-
-    @available(iOS 14.0, macOS 11, *)
-    public extension AValue {
-        func getColor() -> Color? {
-            guard case let .color(color) = self else {
-                return nil
-            }
-            return color.original
+@available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11, *)
+public extension AValue {
+    func getColor() -> Color? {
+        guard case let .color(color) = self else {
+            return nil
         }
-
-        init?(color: Color?) {
-            guard let colorValue = AColor(color)
-            else { return nil }
-            self = .color(color: colorValue)
-        }
+        return color.original
     }
 
-#endif
+    init?(color: Color?) {
+        guard let colorValue = AColor(color)
+        else { return nil }
+        self = .color(color: colorValue)
+    }
+}

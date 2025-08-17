@@ -84,8 +84,8 @@ public struct AValueAsArgumentView: View {
             } onSheetClosed: {
                 // Do nothing
             }
-        case .color:
-            AValueColorLabel(.constant(value))
+        case .color(let color):
+            Text(color.attributedString(for: colorScheme))
         }
     }
 
@@ -111,8 +111,17 @@ private struct Example: View {
     }
 
     var body: some View {
-        List(examples + examples2, id: \.self) { example in
-            AValueAsArgumentView(value: example, precision: .fractionLength(0 ... 3), unit: .knots, name: "Location")
+        List {
+            Section("Defaults") {
+                ForEach(examples, id: \.self) { example in
+                    AValueAsArgumentView(value: example, precision: .fractionLength(0 ... 3), unit: .knots, name: "Location")
+                }
+            }
+            Section("Randoms") {
+                ForEach(examples2, id: \.self) { example in
+                    AValueAsArgumentView(value: example, precision: .fractionLength(0 ... 3), unit: .knots, name: "Location")
+                }
+            }
         }
     }
 }
