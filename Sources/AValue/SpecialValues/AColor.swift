@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
     public var colorSpace: AColorSpace
@@ -6,6 +7,25 @@ public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
     public var green: Double
     public var blue: Double
     public var alpha: Double
+
+    #if canImport(UIKit)
+        @available(iOS 14, tvOS 14, watchOS 7, *)
+        public var uiColor: UIColor {
+            get {
+                switch colorSpace {
+                case .sRGB, .sRGBLinear:
+                    return UIColor(red: red, green: green, blue: blue, alpha: alpha)
+                case .displayP3:
+                    return UIColor(displayP3Red: red, green: green, blue: blue, alpha: alpha)
+                }
+            }
+            set {
+                guard let newColor = AColor(fromUIColor: newValue)
+                else { return }
+                self = newColor
+            }
+        }
+    #endif
 
     @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11, *)
     public var original: Color {
@@ -55,45 +75,7 @@ public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
     #if canImport(UIKit)
         @available(iOS 14, tvOS 14, watchOS 7, *)
         public init?(fromUIColor uiColor: UIColor) {
-            var r: CGFloat = 0
-            var g: CGFloat = 0
-            var b: CGFloat = 0
-            var a: CGFloat = 0
-
-            // 尝试获取RGB组件
-            guard uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) else {
-                // 尝试将颜色转换为RGB颜色空间
-                if let rgbColor = uiColor.cgColor.converted(
-                    to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent, options: nil)
-                {
-                    if let components = rgbColor.components, components.count >= 4 {
-                        r = CGFloat(components[0])
-                        g = CGFloat(components[1])
-                        b = CGFloat(components[2])
-                        a = CGFloat(components[3])
-                    } else {
-                        return nil
-                    }
-                }
-                return nil
-            }
-
-            self.red = Double(r)
-            self.green = Double(g)
-            self.blue = Double(b)
-            self.alpha = Double(a)
-
-            // 尝试找到匹配的颜色空间
-            for myColorSpace in AColorSpace.allCases {
-                let someColor = Color(myColorSpace.original, red: r, green: g, blue: b, opacity: a)
-                if someColor == Color(uiColor) {
-                    self.colorSpace = myColorSpace
-                    return
-                }
-            }
-
-            // 如果找不到匹配的颜色空间，使用默认的sRGB
-            self.colorSpace = .sRGB
+            self.init(fromCGColor: uiColor.cgColor)
         }
     #endif
 
@@ -127,23 +109,30 @@ public struct AColor: Codable, Sendable, Hashable, CustomStringConvertible {
     #endif
 
     // CoreGraphics+SwiftUI平台专用初始化方法
-    #if canImport(CoreGraphics) && canImport(SwiftUI)
+    #if canImport(CoreGraphics)
         @available(iOS 14, macOS 11, tvOS 14, watchOS 7, *)
         public init?(fromCGColor cgColor: CGColor?) {
-            guard let cgColor = cgColor else {
+            // 尝试将颜色转换为RGB颜色空间
+            guard let colorSpace = CGColorSpace(name: CGColorSpace.displayP3),
+                  let rgbColor = cgColor?.converted(
+                      to: colorSpace, intent: .defaultIntent, options: nil),
+                  let components = rgbColor.components,
+                  components.count >= 4
+            else {
                 return nil
             }
+            let r = CGFloat(components[0])
+            let g = CGFloat(components[1])
+            let b = CGFloat(components[2])
+            let a = CGFloat(components[3])
 
-            if let components = cgColor.components, components.count >= 3 {
-                self.red = Double(components[0])
-                self.green = Double(components[1])
-                self.blue = Double(components[2])
-                self.alpha = components.count >= 4 ? Double(components[3]) : 1.0
-                self.colorSpace = .sRGB
-                return
-            }
+            self.red = Double(r)
+            self.green = Double(g)
+            self.blue = Double(b)
+            self.alpha = Double(a)
 
-            return nil
+            // 如果找不到匹配的颜色空间，使用默认的sRGB
+            self.colorSpace = .displayP3
         }
 
     #endif
