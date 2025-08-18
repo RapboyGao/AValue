@@ -25,16 +25,28 @@ public struct AColorFSContent: View {
 
 #if canImport(UIKit) && DEBUG
 
-@available(iOS 14, tvOS 14, watchOS 7, *)
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 private struct Example: View {
     @State private var color: Color? = nil
-    
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    var aColor: AColor? {
+        AColor(color)
+    }
+
     var body: some View {
-        AColorFSContent($color)
+        VStack {
+            AColorFSContent($color)
+            if let aColor {
+                Text(aColor.attributedString(for: colorScheme))
+                Text("\(aColor.colorSpace)")
+            }
+        }
     }
 }
 
-@available(iOS 14, tvOS 14, watchOS 7, *)
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 #Preview {
     Example()
 }

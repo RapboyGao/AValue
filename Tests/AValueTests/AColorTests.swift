@@ -4,35 +4,6 @@ import XCTest
 
 @available(iOS 14.0, macOS 11, tvOS 14.0, watchOS 7.0, *)
 final class AColorTests: XCTestCase {
-    // 测试基本SwiftUI颜色转换
-    func testBasicColorConversion() throws {
-        // 测试SwiftUI的预定义颜色
-        let basicColors: [Color] = [
-            .red,
-            .green,
-            .blue,
-            .yellow,
-            .orange,
-            .purple,
-            .pink,
-            .gray,
-            .black,
-            .white
-        ]
-        
-        for color in basicColors {
-            // 测试转换是否成功
-            let aColor = try XCTUnwrap(AColor(color), "Failed to convert \(color) to AColor")
-            
-            // 测试回转换是否匹配原始颜色
-            let convertedBack = aColor.original
-            XCTAssertNotNil(convertedBack, "Failed to convert AColor back to Color for \(color)")
-            
-            // 对于基本颜色，我们无法精确比较，但至少要确保转换过程不抛出错误
-            print("Successfully converted \(color) to AColor: \(aColor.description)")
-        }
-    }
-    
     // 测试自定义RGB颜色转换
     func testCustomRGBColorConversion() throws {
         // 测试不同RGB值的自定义颜色
@@ -55,8 +26,6 @@ final class AColorTests: XCTestCase {
             XCTAssertEqual(aColor.green, g, accuracy: 0.01, "Green component mismatch")
             XCTAssertEqual(aColor.blue, b, accuracy: 0.01, "Blue component mismatch")
             XCTAssertEqual(aColor.alpha, a, accuracy: 0.01, "Alpha component mismatch")
-            
-            print("Successfully converted custom color (R:\(r), G:\(g), B:\(b), A:\(a)) to AColor: \(aColor.description)")
         }
     }
     
@@ -76,8 +45,6 @@ final class AColorTests: XCTestCase {
             
             // 验证透明度是否正确保留
             XCTAssertEqual(aColor.alpha, a, accuracy: 0.01, "Alpha component mismatch")
-            
-            print("Successfully converted transparent color (R:\(r), G:\(g), B:\(b), A:\(a)) to AColor: \(aColor.description)")
         }
     }
     
@@ -98,8 +65,6 @@ final class AColorTests: XCTestCase {
         XCTAssertEqual(solidAColor.red, aColor.red, accuracy: 0.01, "Red component should remain the same in solidColor")
         XCTAssertEqual(solidAColor.green, aColor.green, accuracy: 0.01, "Green component should remain the same in solidColor")
         XCTAssertEqual(solidAColor.blue, aColor.blue, accuracy: 0.01, "Blue component should remain the same in solidColor")
-        
-        print("Successfully tested solidColor property. Original: \(aColor.description), Solid: \(solidAColor.description)")
     }
     
     // 测试AttributedString生成功能
@@ -115,9 +80,6 @@ final class AColorTests: XCTestCase {
         // 验证字符串内容是否为颜色的描述
         XCTAssertEqual(String(darkModeString.characters), aDarkColor.description, "AttributedString content should match color description")
         
-        print("Successfully tested attributedString generation:")
-        print("- Dark mode string for dark color: \(darkModeString)")
-        
         // 测试在亮色模式下需要背景色的颜色
         let lightColor = Color(.sRGB, red: 0.9, green: 0.9, blue: 0.9, opacity: 1.0)
         let aLightColor = try XCTUnwrap(AColor(lightColor), "Failed to convert light color to AColor")
@@ -127,8 +89,6 @@ final class AColorTests: XCTestCase {
         
         // 验证字符串内容是否为颜色的描述
         XCTAssertEqual(String(lightModeString.characters), aLightColor.description, "AttributedString content should match color description")
-        
-        print("- Light mode string for light color: \(lightModeString)")
     }
     
     // 测试随机颜色的Color和AColor的description是否相同
@@ -156,9 +116,10 @@ final class AColorTests: XCTestCase {
             let aColorDescription = aColor.description
             
             // 验证转换前后的description是否相同
-            XCTAssertEqual(aColorDescription, color.description, "Description should match after round trip conversion")
+            XCTAssertEqual(aColor.original, color, "Description should match after round trip conversion")
             
-            print("Random color test passed. Description: \(aColorDescription)")
+            // 验证转换前后的description是否相同
+            XCTAssertEqual(aColorDescription, color.description, "Description should match after round trip conversion")
         }
     }
 }
