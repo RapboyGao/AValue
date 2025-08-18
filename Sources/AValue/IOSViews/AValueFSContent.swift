@@ -59,7 +59,7 @@ public struct AValueFSContent: View {
                 ADateComponentFSContent($value, allowSet: allowInput)
             }
         case .color:
-            AValueColorLabel($value)
+            AColorFSContent($value)
         }
     }
 
