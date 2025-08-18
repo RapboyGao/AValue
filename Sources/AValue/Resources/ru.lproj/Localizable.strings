@@ -1,5 +1,8 @@
 "Wind Direction" = "Направление ветра";
 "Wind Speed" = "Скорость ветра";
+// Add lowercase key translations to match the test expectations
+"wind_direction" = "Направление ветра";
+"wind_speed" = "Скорость ветра";
 /* Авиационный термин "Встречный ветер" */
 "headwind" = "Встречный ветер";
 

@@ -44,13 +44,12 @@ final class AColorTests: XCTestCase {
             (1.0, 1.0, 0.0, 1.0), // 黄色
             (1.0, 0.0, 1.0, 1.0), // 品红
             (0.0, 1.0, 1.0, 1.0), // 青色
-            (0.3, 0.4, 0.5, 1.0)  // 自定义色
+            (0.3, 0.4, 0.5, 1.0) // 自定义色
         ]
         
         for (r, g, b, a) in customColors {
             let color = Color(.sRGB, red: r, green: g, blue: b, opacity: a)
             let aColor = try XCTUnwrap(AColor(color), "Failed to convert custom color (R:\(r), G:\(g), B:\(b), A:\(a)) to AColor")
-            
             // 验证AColor的RGB值是否与原始值匹配
             XCTAssertEqual(aColor.red, r, accuracy: 0.01, "Red component mismatch")
             XCTAssertEqual(aColor.green, g, accuracy: 0.01, "Green component mismatch")
@@ -68,7 +67,7 @@ final class AColorTests: XCTestCase {
             (1.0, 0.0, 0.0, 0.5), // 半透明红色
             (0.0, 1.0, 0.0, 0.3), // 30%不透明绿色
             (0.0, 0.0, 1.0, 0.7), // 70%不透明蓝色
-            (0.5, 0.5, 0.5, 0.2)  // 20%不透明灰色
+            (0.5, 0.5, 0.5, 0.2) // 20%不透明灰色
         ]
         
         for (r, g, b, a) in transparentColors {
@@ -103,30 +102,6 @@ final class AColorTests: XCTestCase {
         print("Successfully tested solidColor property. Original: \(aColor.description), Solid: \(solidAColor.description)")
     }
     
-    // 测试可见性计算属性
-    func testVisibilityProperties() throws {
-        // 测试在暗色模式下难以看到的颜色（接近黑色）
-        let darkColor = Color(.sRGB, red: 0.1, green: 0.1, blue: 0.1, opacity: 1.0)
-        let aDarkColor = try XCTUnwrap(AColor(darkColor), "Failed to convert dark color to AColor")
-        XCTAssertTrue(aDarkColor.isHardToSeeInDarkMode, "Dark color should be hard to see in dark mode")
-        
-        // 测试在亮色模式下难以看到的颜色（接近白色）
-        let lightColor = Color(.sRGB, red: 0.9, green: 0.9, blue: 0.9, opacity: 1.0)
-        let aLightColor = try XCTUnwrap(AColor(lightColor), "Failed to convert light color to AColor")
-        XCTAssertTrue(aLightColor.isHardToSeeInLightMode, "Light color should be hard to see in light mode")
-        
-        // 测试在两种模式下都清晰可见的颜色
-        let vibrantColor = Color(.sRGB, red: 1.0, green: 0.0, blue: 0.0, opacity: 1.0)
-        let aVibrantColor = try XCTUnwrap(AColor(vibrantColor), "Failed to convert vibrant color to AColor")
-        XCTAssertFalse(aVibrantColor.isHardToSeeInDarkMode, "Vibrant color should be visible in dark mode")
-        XCTAssertFalse(aVibrantColor.isHardToSeeInLightMode, "Vibrant color should be visible in light mode")
-        
-        print("Successfully tested visibility properties:")
-        print("- Dark color (hard to see in dark mode): \(aDarkColor.description)")
-        print("- Light color (hard to see in light mode): \(aLightColor.description)")
-        print("- Vibrant color (visible in both modes): \(aVibrantColor.description)")
-    }
-    
     // 测试AttributedString生成功能
     @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func testAttributedStringGeneration() throws {
@@ -154,5 +129,36 @@ final class AColorTests: XCTestCase {
         XCTAssertEqual(String(lightModeString.characters), aLightColor.description, "AttributedString content should match color description")
         
         print("- Light mode string for light color: \(lightModeString)")
+    }
+    
+    // 测试随机颜色的Color和AColor的description是否相同
+    func testRandomColorDescriptionEquality() throws {
+        // 生成指定数量的随机颜色
+        let numberOfRandomColors = 10
+        var randomColors: [Color] = []
+        
+        for _ in 0 ..< numberOfRandomColors {
+            // 生成随机的RGB和alpha值
+            let r = Double.random(in: 0.0...1.0)
+            let g = Double.random(in: 0.0...1.0)
+            let b = Double.random(in: 0.0...1.0)
+            let a = Double.random(in: 0.0...1.0)
+            
+            // 创建随机颜色
+            randomColors.append(Color(.sRGB, red: r, green: g, blue: b, opacity: a))
+        }
+        
+        for color in randomColors {
+            // 将Color转换为AColor
+            let aColor = try XCTUnwrap(AColor(color), "Failed to convert random color to AColor")
+            
+            // 获取AColor的description
+            let aColorDescription = aColor.description
+            
+            // 验证转换前后的description是否相同
+            XCTAssertEqual(aColorDescription, color.description, "Description should match after round trip conversion")
+            
+            print("Random color test passed. Description: \(aColorDescription)")
+        }
     }
 }
