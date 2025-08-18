@@ -23,13 +23,6 @@ final class AValueTests: XCTestCase {
         XCTAssert(longitude.toDMS().toString(digits: 1) == "W002°03'04.0\"")
     }
 
-    func testHMDescription() throws {
-        for timeValue in [1552, -1552, 35, -20] {
-            let time = AHourMinuteValue(minutes: timeValue)
-            print(time.toHM(), time.toDHM(), time.toTotalHours(), time.toTotalMinutes())
-        }
-    }
-
     func testParseAHourMinuteExpression() throws {
         let expression = "1235-150"
         let value: [AHourMinuteValue]? = .init(expression)
@@ -40,25 +33,5 @@ final class AValueTests: XCTestCase {
         let color = Color(.sRGB, red: 0.5, green: 0.5, blue: 0.5, opacity: 0.3)
         let value = AValue(color: color)
         XCTAssertEqual(color, value?.getColor())
-        if let value = value {
-            print(value)
-        }
-    }
-
-    func testColorMultiply() throws {
-        let color1 = Color(red: 0.3, green: 0.5, blue: 0.07)
-        let color2 = Color(red: 0.5, green: 0.3, blue: 0.07)
-        print(color1.colorMultiply(color2))
-    }
-
-    func testColor3() throws {
-        let color1 = Color(red: 0.3, green: 0.5, blue: 0.07)
-        let color2 = Color(red: 0.5, green: 0.3, blue: 0.07)
-        guard let value1 = AValue(color: color1),
-              let value2 = AValue(color: color2),
-              let value3 = try? value1.multiply(by: value2),
-              let someColor = value3.getColor()
-        else { return }
-        print(someColor)
     }
 }

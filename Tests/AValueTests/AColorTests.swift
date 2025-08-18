@@ -116,7 +116,7 @@ final class AColorTests: XCTestCase {
             let aColorDescription = aColor.description
             
             // 验证转换前后的description是否相同
-            XCTAssertEqual(aColor.original, color, "Description should match after round trip conversion")
+            XCTAssertEqual(aColor.original, color,"Original should match after round trip conversion")
             
             // 验证转换前后的description是否相同
             XCTAssertEqual(aColorDescription, color.description, "Description should match after round trip conversion")
