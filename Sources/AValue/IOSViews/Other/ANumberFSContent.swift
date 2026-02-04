@@ -13,19 +13,26 @@ public struct ANumberFSContent: View {
     public var body: some View {
         Group {
             if allowSet {
-                TextField(name, value: $value, format: AMathFormatStyle.fractionLength(20))
                 #if os(iOS)
-                    .aKeyboardView { uiTextField in
-                        AMathExpressionKeyboard(uiTextField, AMathFormatStyle.fractionLength(20))
-                            .frame(height: 260)
-                    }
-                #endif
+                AMathFormatTextfield(
+                    number: $value,
+                    precision: .fractionLength(0...20),
+                    placeholder: name
+                )
+                .focused($isFocused)
+                .submitLabel(.done)
+                .onSubmit {
+                    dismiss()
+                }
+                #else
+                TextField(name, value: $value, format: AMathFormatStyle.fractionLength(20))
                     .font(.largeTitle)
                     .focused($isFocused)
                     .submitLabel(.done)
                     .onSubmit {
                         dismiss()
                     }
+                #endif
 
             } else if let value = value {
                 Text(value, format: .number.precision(.significantDigits(0 ... 20)))

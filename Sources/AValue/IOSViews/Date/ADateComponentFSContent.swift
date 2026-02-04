@@ -15,12 +15,17 @@ struct ADateComponentFSContent: View {
         HStack {
             Text(name)
             if allowSet {
-                TextField(name, value: bindInt, format: .number)
-                    .aKeyboardView { uiTextfield in
-                        AIntKeyboard(uiTextfield)
-                            .frame(height: 250)
+                ACustomKeyboardOptionalFormatField(
+                    name,
+                    value: bindInt,
+                    format: .number,
+                    configure: { textField in
+                        textField.textAlignment = .right
                     }
-                    .multilineTextAlignment(.trailing)
+                ) { context, _ in
+                    AIntKeyboard(context)
+                        .frame(height: 250)
+                }
             } else {
                 Spacer()
                 if let number = bindInt.wrappedValue {

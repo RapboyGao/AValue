@@ -5,20 +5,16 @@ import SwiftUI
 #if os(iOS)
 
 @available(iOS 16, *)
-public struct AHMKeyboard: View {
+public struct AHMKeyboard: View, AKeyboardProtocol {
     @Binding var format: AHourMinuteValue.Format
-    private var textfield: UITextField
-    private let lettersFont: Font = .system(size: 10)
-    private let numbersFont: Font = .system(size: 23)
-    private let connerRadius: CGFloat = 4
+    public var input: ACustomKeyboardInputContext
 
     @State private var turnDirection: Angle = .zero
-    private let updateText: (String) -> Void
 
     @ViewBuilder
     private func makeTextButton(_ text: String) -> some View {
         AKeyButton(connerRadius) {
-            textfield.insertText(text)
+            input.insertText(text)
         } content: { _ in
             Text(text).font(numbersFont)
                 .bold()
@@ -28,7 +24,7 @@ public struct AHMKeyboard: View {
     @ViewBuilder
     private func makeNumberButton(_ number: Int) -> some View {
         AKeyButton(connerRadius) {
-            textfield.insertText(number.formatted(.number))
+            input.insertText(number.formatted(.number))
         } content: { _ in
             ANumKeyVStack(number, letters: lettersFont, number: numbersFont)
                 .bold()
@@ -38,7 +34,7 @@ public struct AHMKeyboard: View {
     @ViewBuilder
     private func makeDayButton() -> some View {
         AKeyButton(connerRadius) {
-            textfield.insertText("d")
+            input.insertText("d")
         } content: { _ in
             Text(AUnit.days.shortName)
                 .font(numbersFont)
@@ -54,23 +50,22 @@ public struct AHMKeyboard: View {
                 return .blue
             }
         } action: {
-            guard let text = textfield.text,
-                  let hmValues = [AHourMinuteValue](text)
+            guard let hmValues = [AHourMinuteValue](input.text)
             else { return }
             let hasDay = hmValues.contains {
                 $0.format == .days24HM
             }
             let newHourMinuteValue = hasDay ? hmValues.sum(format: .days24HM) : hmValues.sum(format: .hourMinute)
             let newText = newHourMinuteValue.description
-            guard textfield.text == newText
+            guard input.text == newText
             else {
-                updateText(newText)
+                input.setText(newText)
                 format = hasDay ? .days24HM : .hourMinute
                 return
             }
             switch newHourMinuteValue.toNumber() {
             case 0 ..< 1440:
-                textfield.resignFirstResponder()
+                input.dismissKeyboard()
             default:
                 switch format {
                 case .hourMinute, .totalHours, .totalMinutes:
@@ -79,7 +74,7 @@ public struct AHMKeyboard: View {
                     format = .hourMinute
                 }
                 let newText = newHourMinuteValue.toFormat(format).description
-                updateText(newText)
+                input.setText(newText)
             }
 
         } content: { isClicked in
@@ -102,7 +97,7 @@ public struct AHMKeyboard: View {
                 makeDayButton()
 
                 AKeyButton(connerRadius, colors: .sameAsBackground) {
-                    textfield.insertText(":")
+                    input.insertText(":")
                 } content: { isClicked in
                     Text(":")
                         .bold(isClicked)
@@ -110,7 +105,7 @@ public struct AHMKeyboard: View {
                 }
                 makeNumberButton(0)
                 AKeyButton(connerRadius, colors: .sameAsBackground, sound: 1155) {
-                    updateText("")
+                    input.setText("")
                     withAnimation {
                         turnDirection -= .degrees(360)
                     }
@@ -125,36 +120,37 @@ public struct AHMKeyboard: View {
             .frame(width: screenWidth)
         }
         .onAppear {
-            if textfield.text == "00:00" {
-                updateText("")
+            if input.text == "00:00" {
+                input.setText("")
             }
         }
     }
 
-    public init(_ textfield: UITextField) {
-        self.textfield = textfield
+    public init(_ context: ACustomKeyboardInputContext) {
+        self.input = context
         let someState = State(initialValue: AHourMinuteValue.Format.hourMinute)
         self._format = someState.projectedValue
-        self.updateText = { textfield.text = $0 }
+    }
+
+    public init(_ context: ACustomKeyboardInputContext, format: Binding<AHourMinuteValue.Format>) {
+        self.input = context
+        self._format = format
+    }
+
+    public init(_ textfield: UITextField) {
+        self.init(.make(textField: textfield))
     }
 
     public init(_ textfield: UITextField, format: Binding<AHourMinuteValue.Format>) {
-        self.textfield = textfield
-        self._format = format
-        self.updateText = { textfield.text = $0 }
+        self.init(.make(textField: textfield), format: format)
     }
 
     public init(_ textfield: UITextField, _ bindText: Binding<String>) {
-        self.textfield = textfield
-        let someState = State(initialValue: AHourMinuteValue.Format.hourMinute)
-        self._format = someState.projectedValue
-        self.updateText = { bindText.wrappedValue = $0 }
+        self.init(.make(textField: textfield, bindString: bindText))
     }
 
     public init(_ textfield: UITextField, _ bindText: Binding<String>, format: Binding<AHourMinuteValue.Format>) {
-        self.textfield = textfield
-        self._format = format
-        self.updateText = { bindText.wrappedValue = $0 }
+        self.init(.make(textField: textfield, bindString: bindText), format: format)
     }
 }
 

@@ -4,20 +4,16 @@ import SwiftUI
 #if os(iOS)
 
 @available(iOS 16, *)
-public struct ALatitudeKeyboard: View {
+public struct ALatitudeKeyboard: View, AKeyboardProtocol {
     @Binding private var format: ACoordinateFormat
-    @Binding private var string: String
-    private var textfield: UITextField
-    private let lettersFont: Font = .system(size: 10)
-    private let numbersFont: Font = .system(size: 23)
-    private let connerRadius: CGFloat = 4
+    public var input: ACustomKeyboardInputContext
 
     @State private var turnDirection: Angle = .zero
 
     @ViewBuilder
     private func makeTextButton(_ text: String) -> some View {
         AKeyButton(connerRadius) {
-            textfield.insertText(text)
+            input.insertText(text)
         } content: { _ in
             Text(text).font(numbersFont)
                 .bold()
@@ -27,7 +23,7 @@ public struct ALatitudeKeyboard: View {
     @ViewBuilder
     private func makeNumberButton(_ number: Int) -> some View {
         AKeyButton(connerRadius) {
-            textfield.insertText(number.formatted(.number))
+            input.insertText(number.formatted(.number))
         } content: { _ in
             ANumKeyVStack(number, letters: lettersFont, number: numbersFont)
                 .bold()
@@ -43,10 +39,9 @@ public struct ALatitudeKeyboard: View {
                 return .blue
             }
         } action: {
-            guard let text = textfield.text,
-                  var latitude = try? ALatitude(text)
+            guard var latitude = try? ALatitude(input.text)
             else { return }
-            if text == latitude.description {
+            if input.text == latitude.description {
                 // 如果已经一样了
                 let nextFormat = latitude.format.nextFormat
                 format = nextFormat
@@ -55,7 +50,7 @@ public struct ALatitudeKeyboard: View {
                 format = latitude.format
             }
             let newContent = latitude.description
-            string = newContent
+            input.setText(newContent)
         } content: { isClicked in
             Text("=")
                 .font(numbersFont)
@@ -68,7 +63,7 @@ public struct ALatitudeKeyboard: View {
             KeyBoardSpaceAroundStack(columns: 4, rowSpace: 5, columnSpace: 5) {
                 ForEach(1 ..< 4, content: makeNumberButton)
                 AKeyButton(connerRadius, sound: 1155) {
-                    textfield.deleteBackward()
+                    input.deleteBackward()
                 } content: { isPressed in
                     Image(systemName: isPressed ? "delete.left.fill" : "delete.left")
                         .font(.system(size: 24))
@@ -82,7 +77,7 @@ public struct ALatitudeKeyboard: View {
                 makeTextButton("S")
 
                 AKeyButton(connerRadius, colors: .sameAsBackground) {
-                    textfield.insertText(".")
+                    input.insertText(".")
                 } content: { isPressed in
                     Text(".")
                         .font(numbersFont)
@@ -91,7 +86,7 @@ public struct ALatitudeKeyboard: View {
                 makeNumberButton(0)
 
                 AKeyButton(connerRadius, colors: .sameAsBackground, sound: 1155) {
-                    textfield.text = ""
+                    input.clear()
                     withAnimation {
                         turnDirection -= .degrees(360)
                     }
@@ -106,15 +101,18 @@ public struct ALatitudeKeyboard: View {
         }
     }
 
-    public init(_ textfield: UITextField, string bindString: Binding<String>, format: Binding<ACoordinateFormat>) {
-        self.textfield = textfield
-        self._string = bindString
+    public init(_ context: ACustomKeyboardInputContext, format: Binding<ACoordinateFormat>) {
+        self.input = context
         self._format = format
+    }
+
+    public init(_ textfield: UITextField, string bindString: Binding<String>, format: Binding<ACoordinateFormat>) {
+        self.init(.make(textField: textfield, bindString: bindString), format: format)
     }
 
     public init(_ textfield: UITextField, string bindString: Binding<String>) {
         let defaultFormat = State(initialValue: ACoordinateFormat.degreesM)
-        self.init(textfield, string: bindString, format: defaultFormat.projectedValue)
+        self.init(.make(textField: textfield, bindString: bindString), format: defaultFormat.projectedValue)
     }
 }
 

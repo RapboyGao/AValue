@@ -15,13 +15,17 @@ public struct AHMTextfield: View {
 
     public var body: some View {
         if allowSet {
-            AFormatOptionalTextfield(placeholder, value: $value, format: formatStyle) { textfield, bindString in
-                textfield.aKeyboardView { uiTextfield in
-                    AHMKeyboard(uiTextfield, bindString, format: $format)
-                        .frame(height: 250)
+            ACustomKeyboardOptionalFormatField(
+                placeholder,
+                value: $value,
+                format: formatStyle,
+                configure: { textField in
+                    textField.textAlignment = .right
                 }
+            ) { context, _ in
+                AHMKeyboard(context, format: $format)
+                    .frame(height: 250)
             }
-            .multilineTextAlignment(.trailing)
         } else if let value = value {
             Spacer()
             switch value {

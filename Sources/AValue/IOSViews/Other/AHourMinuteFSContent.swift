@@ -16,14 +16,19 @@ public struct AHourMinuteFSContent: View {
         Group {
             if allowSet {
                 #if os(iOS)
-                AFormatOptionalTextfield(name, value: $value, format: AHMFormat(format: format)) { textfield, bindString in
-                    textfield.aKeyboardView { uiTextField in
-                        AHMKeyboard(uiTextField, bindString)
-                            .frame(height: 260)
-                    }
+                ACustomKeyboardOptionalFormatField(
+                    name,
+                    value: $value,
+                    format: AHMFormat(format: format),
+                    focused: Binding(
+                        get: { isFocused },
+                        set: { isFocused = $0 }
+                    )
+                ) { context, _ in
+                    AHMKeyboard(context, format: $format)
+                        .frame(height: 260)
                 }
                 .font(.largeTitle)
-                .focused($isFocused)
                 .submitLabel(.done)
                 .onSubmit {
                     dismiss()

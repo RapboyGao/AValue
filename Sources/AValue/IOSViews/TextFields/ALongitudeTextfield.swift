@@ -15,13 +15,16 @@ public struct ALongitudeTextfield: View {
 
     public var body: some View {
         if allowSet {
-            AFormatOptionalTextfield(placeholder, value: $value, format: formatStyle) { textfield, bindString in
-                textfield
-                    .aKeyboardView { uiTextfield in
-                        ALongitudeKeyboard(uiTextfield, string: bindString, format: $format)
-                            .frame(height: 250)
-                    }
-                    .multilineTextAlignment(.trailing)
+            ACustomKeyboardOptionalFormatField(
+                placeholder,
+                value: $value,
+                format: formatStyle,
+                configure: { textField in
+                    textField.textAlignment = .right
+                }
+            ) { context, _ in
+                ALongitudeKeyboard(context, format: $format)
+                    .frame(height: 250)
             }
         } else if let value = value {
             Spacer()
